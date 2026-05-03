@@ -1,5 +1,8 @@
 name: Run Analysis
 
+permissions:
+  contents: write
+
 on:
   workflow_dispatch:
   push:
@@ -14,6 +17,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          persist-credentials: true
 
       - name: Set up Python
         uses: actions/setup-python@v5
