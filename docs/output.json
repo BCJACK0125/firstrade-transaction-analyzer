@@ -1333,7 +1333,7 @@
       "annual_rate": 0.05,
       "source": "fallback",
       "label": "13-week Treasury Bill fallback",
-      "warning": "No module named 'yfinance'"
+      "warning": "float() argument must be a string or a real number, not 'Series'"
     },
     "capital_base": 16563.87,
     "method": "Daily realized PnL divided by total external capital, annualized with 252 trading days.",
