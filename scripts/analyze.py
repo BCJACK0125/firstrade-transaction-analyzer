@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 import json
+import math
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 from fifo import calculate_fifo_pnl
@@ -15,6 +17,9 @@ DATA_DIR = Path(__file__).resolve().parents[1] / "data"
 CSV_PATH = DATA_DIR / "transactions.csv"
 JSON_PATH = DATA_DIR / "output.json"
 REPORT_PATH = DATA_DIR / "report.html"
+POSITIONS_PATH = DATA_DIR / "67744964-positions.xlsx"
+TRADING_DAYS = 252
+DEFAULT_RISK_FREE_RATE = 0.05
 
 
 def _get_column(df: pd.DataFrame, candidates: list[str]) -> str:
@@ -61,6 +66,64 @@ def _to_float(value: object) -> float:
     return float(text)
 
 
+def _clean_records(value: object) -> object:
+    if isinstance(value, dict):
+        return {k: _clean_records(v) for k, v in value.items()}
+    if isinstance(value, list):
+        return [_clean_records(v) for v in value]
+    if isinstance(value, float):
+        if math.isnan(value) or math.isinf(value):
+            return None
+        return value
+    if pd.isna(value):
+        return None
+    return value
+
+
+def _account_value(mapping: dict, account: str) -> float:
+    return float(mapping.get(account, 0.0))
+
+
+def _read_positions_reference() -> pd.DataFrame | None:
+    if not POSITIONS_PATH.exists():
+        return None
+    try:
+        df = pd.read_excel(POSITIONS_PATH)
+    except Exception:
+        return None
+    if "代號" not in df.columns:
+        return None
+    return df
+
+
+def _fetch_risk_free_rate() -> dict:
+    try:
+        import yfinance as yf
+
+        data = yf.download("^IRX", period="5d", progress=False, auto_adjust=False)
+        close = data["Close"].dropna()
+        if not close.empty:
+            annual_rate = float(close.iloc[-1]) / 100.0
+            return {
+                "annual_rate": annual_rate,
+                "source": "yfinance:^IRX",
+                "label": "13-week Treasury Bill (^IRX)",
+            }
+    except Exception as exc:
+        return {
+            "annual_rate": DEFAULT_RISK_FREE_RATE,
+            "source": "fallback",
+            "label": "13-week Treasury Bill fallback",
+            "warning": str(exc),
+        }
+
+    return {
+        "annual_rate": DEFAULT_RISK_FREE_RATE,
+        "source": "fallback",
+        "label": "13-week Treasury Bill fallback",
+    }
+
+
 def _mock_prices(df: pd.DataFrame) -> dict:
     symbol_col = _get_column(df, ["symbol", "ticker"])
     price_col = _get_column(df, ["price", "trade_price", "avg_price"])
@@ -85,6 +148,28 @@ def _mock_prices(df: pd.DataFrame) -> dict:
             continue
         prices[symbol] = price
     return prices
+
+
+def _inventory_summary(inventory: dict[str, list[dict]], prices: dict) -> dict:
+    summary: dict[str, dict] = {}
+    for symbol, lots in inventory.items():
+        qty = sum(float(lot["qty"]) for lot in lots)
+        cost = sum(float(lot["price"]) * float(lot["qty"]) for lot in lots)
+        if abs(qty) < 1e-9:
+            continue
+        price = float(prices.get(symbol, 0.0))
+        market_value = qty * price
+        summary[symbol] = {
+            "symbol": symbol,
+            "qty": qty,
+            "avg_cost": cost / qty if qty else 0.0,
+            "cost": cost,
+            "last_price": price,
+            "market_value": market_value,
+            "unrealized_pnl": market_value - cost,
+            "lots": lots,
+        }
+    return summary
 
 
 def _compute_reconciliation(
@@ -213,6 +298,248 @@ def _build_timeseries(realized: list[dict]) -> dict:
             "weekly": dd_weekly,
             "monthly": dd_monthly,
         },
+    }
+
+
+def _compute_risk_metrics(timeseries: dict, invested_cost: dict) -> dict:
+    daily = timeseries.get("daily", [])
+    risk_free = _fetch_risk_free_rate()
+    capital = abs(float(invested_cost.get("total", 0.0))) if invested_cost.get("enabled") else 0.0
+
+    if not daily or capital <= 0:
+        return {
+            "enabled": False,
+            "reason": "daily returns require realized PnL and positive invested capital",
+            "risk_free": risk_free,
+        }
+
+    returns = np.array([float(item.get("total", 0.0)) / capital for item in daily], dtype=float)
+    if len(returns) < 2 or float(np.std(returns, ddof=1)) == 0.0:
+        return {
+            "enabled": False,
+            "reason": "not enough return dispersion for Sharpe Ratio",
+            "risk_free": risk_free,
+            "capital_base": capital,
+        }
+
+    daily_rf = (1.0 + float(risk_free["annual_rate"])) ** (1.0 / TRADING_DAYS) - 1.0
+    excess = returns - daily_rf
+    annual_return = float(np.mean(returns) * TRADING_DAYS)
+    annual_volatility = float(np.std(returns, ddof=1) * math.sqrt(TRADING_DAYS))
+    sharpe = float(np.mean(excess) / np.std(returns, ddof=1) * math.sqrt(TRADING_DAYS))
+
+    if sharpe >= 1.5:
+        interpretation = "strong"
+    elif sharpe >= 1.0:
+        interpretation = "healthy"
+    elif sharpe >= 0.0:
+        interpretation = "thin"
+    else:
+        interpretation = "negative"
+
+    return {
+        "enabled": True,
+        "sharpe_ratio": sharpe,
+        "annualized_return": annual_return,
+        "annualized_volatility": annual_volatility,
+        "average_daily_return": float(np.mean(returns)),
+        "risk_free": risk_free,
+        "capital_base": capital,
+        "method": "Daily realized PnL divided by total external capital, annualized with 252 trading days.",
+        "interpretation": interpretation,
+    }
+
+
+def _compute_symbol_analysis(
+    realized: list[dict],
+    inventory_summary: dict,
+    positions_df: pd.DataFrame | None,
+) -> dict:
+    symbols = set(inventory_summary)
+    symbols.update(str(item.get("symbol", "")).upper() for item in realized if item.get("symbol"))
+
+    positions = {}
+    if positions_df is not None:
+        for _, row in positions_df.iterrows():
+            symbol = str(row.get("代號", "")).strip().upper()
+            if not symbol or symbol == "NAN":
+                continue
+            positions[symbol] = {
+                "qty": _to_float(row.get("數量")),
+                "price": _to_float(row.get("價格")),
+                "market_value": _to_float(row.get("市值")),
+                "cost": _to_float(row.get("成本")),
+                "unrealized_pnl": _to_float(row.get("益損 $")),
+                "unrealized_pct": _to_float(row.get("益損 %")) / 100.0,
+                "day_pnl": _to_float(row.get("當日益損$")),
+                "weight": _to_float(str(row.get("持倉佔比", "0")).replace("%", "")) / 100.0,
+                "beta": _to_float(row.get("貝塔")),
+                "pe": _to_float(row.get("本益比")),
+            }
+            symbols.add(symbol)
+
+    rows = []
+    for symbol in sorted(symbols):
+        trades = [item for item in realized if str(item.get("symbol", "")).upper() == symbol]
+        realized_pnl = sum(float(item.get("pnl", 0.0)) for item in trades)
+        wins = [float(item.get("pnl", 0.0)) for item in trades if float(item.get("pnl", 0.0)) > 0]
+        losses = [float(item.get("pnl", 0.0)) for item in trades if float(item.get("pnl", 0.0)) < 0]
+        inv = inventory_summary.get(symbol, {})
+        ref = positions.get(symbol, {})
+        qty = float(inv.get("qty", ref.get("qty", 0.0)))
+        unrealized_pnl = float(inv.get("unrealized_pnl", ref.get("unrealized_pnl", 0.0)))
+        total_pnl = realized_pnl + unrealized_pnl
+        last_dates = [
+            pd.to_datetime(item.get("realized_date"), errors="coerce")
+            for item in trades
+            if item.get("realized_date")
+        ]
+        last_trade = max([d for d in last_dates if not pd.isna(d)], default=pd.NaT)
+
+        rows.append(
+            {
+                "symbol": symbol,
+                "status": "current" if abs(qty) > 1e-9 else "closed",
+                "qty": qty,
+                "trade_count": len(trades),
+                "win_rate": len(wins) / len(trades) if trades else 0.0,
+                "realized_pnl": realized_pnl,
+                "unrealized_pnl": unrealized_pnl,
+                "total_pnl": total_pnl,
+                "market_value": float(inv.get("market_value", ref.get("market_value", 0.0))),
+                "cost": float(inv.get("cost", ref.get("cost", 0.0))),
+                "avg_cost": float(inv.get("avg_cost", ref.get("cost", 0.0) / qty if qty else 0.0)),
+                "last_price": float(inv.get("last_price", ref.get("price", 0.0))),
+                "last_trade_date": None if pd.isna(last_trade) else last_trade.strftime("%Y-%m-%d"),
+                "best_trade": max([float(item.get("pnl", 0.0)) for item in trades], default=0.0),
+                "worst_trade": min([float(item.get("pnl", 0.0)) for item in trades], default=0.0),
+                "reference": ref,
+            }
+        )
+
+    return {
+        "enabled": True,
+        "current_count": sum(1 for row in rows if row["status"] == "current"),
+        "closed_count": sum(1 for row in rows if row["status"] == "closed"),
+        "symbols": rows,
+    }
+
+
+def _audit_row(name: str, formula: str, expected: float, actual: float, tolerance: float) -> dict:
+    delta = float(actual) - float(expected)
+    return {
+        "name": name,
+        "formula": formula,
+        "expected": float(expected),
+        "actual": float(actual),
+        "delta": delta,
+        "tolerance": tolerance,
+        "status": "ok" if abs(delta) <= tolerance else "warn",
+    }
+
+
+def _compute_metric_audit(
+    realized: list[dict],
+    unrealized: list[float],
+    health: dict,
+    reconciliation: dict,
+    timeseries: dict,
+    asset_value: dict,
+    asset_allocation: dict,
+    inventory_summary: dict,
+    positions_df: pd.DataFrame | None,
+) -> dict:
+    pnls = [float(item["pnl"]) for item in realized]
+    wins = [p for p in pnls if p > 0]
+    losses = [p for p in pnls if p < 0]
+    avg_win = float(np.mean(wins)) if wins else 0.0
+    avg_loss = abs(float(np.mean(losses))) if losses else 1.0
+    checks = [
+        _audit_row("Total PnL", "sum(realized pnl) + sum(unrealized pnl)", sum(pnls) + sum(unrealized), health.get("total", 0.0), 0.01),
+        _audit_row("Win Rate", "winning realized trades / realized trades", len(wins) / len(pnls) if pnls else 0.0, health.get("win_rate", 0.0), 0.0001),
+        _audit_row("Profit Factor", "average win / abs(average loss)", avg_win / avg_loss if avg_loss else 0.0, health.get("profit_factor", 0.0), 0.0001),
+        _audit_row("Health Score", "clamp(50 + profit_factor * 10, 0, 100)", min(100.0, max(0.0, 50.0 + health.get("profit_factor", 0.0) * 10.0)), health.get("score", 0.0), 0.0001),
+    ]
+
+    daily = timeseries.get("daily", [])
+    if daily:
+        checks.append(
+            _audit_row(
+                "Daily Realized Sum",
+                "last daily cumulative total",
+                sum(pnls),
+                daily[-1].get("cumulative_total", 0.0),
+                0.01,
+            )
+        )
+
+    if reconciliation.get("enabled"):
+        checks.append(
+            _audit_row(
+                "Reconciliation Delta",
+                "realized_total - (net_cashflow + remaining_cost_basis)",
+                reconciliation.get("realized_total", 0.0) - reconciliation.get("expected_realized", 0.0),
+                reconciliation.get("delta", 0.0),
+                0.01,
+            )
+        )
+
+    if asset_value.get("enabled"):
+        checks.append(
+            _audit_row(
+                "Asset Value",
+                "sum(total_by_account)",
+                sum(float(v) for v in asset_value.get("total_by_account", {}).values()),
+                asset_value.get("total", 0.0),
+                0.01,
+            )
+        )
+
+    if asset_allocation.get("enabled"):
+        ratios = asset_allocation.get("ratios", {})
+        checks.append(
+            _audit_row(
+                "Allocation Ratio",
+                "cash + cash stock + margin stock + other ratios",
+                1.0,
+                sum(float(v) for v in ratios.values()),
+                0.001,
+            )
+        )
+
+    position_checks = []
+    if positions_df is not None:
+        for _, row in positions_df.iterrows():
+            symbol = str(row.get("代號", "")).strip().upper()
+            if not symbol:
+                continue
+            ref_qty = _to_float(row.get("數量"))
+            ref_cost = _to_float(row.get("成本"))
+            inv = inventory_summary.get(symbol, {})
+            calc_qty = float(inv.get("qty", 0.0))
+            calc_cost = float(inv.get("cost", 0.0))
+            position_checks.append(
+                {
+                    "symbol": symbol,
+                    "reference_qty": ref_qty,
+                    "calculated_qty": calc_qty,
+                    "qty_delta": calc_qty - ref_qty,
+                    "reference_cost": ref_cost,
+                    "calculated_cost": calc_cost,
+                    "cost_delta": calc_cost - ref_cost,
+                    "status": "ok" if abs(calc_qty - ref_qty) <= 1e-6 and abs(calc_cost - ref_cost) <= 0.05 else "warn",
+                }
+            )
+
+    return {
+        "enabled": True,
+        "checks": checks,
+        "positions_reference": {
+            "enabled": positions_df is not None,
+            "source": str(POSITIONS_PATH.name),
+            "checks": position_checks,
+        },
+        "status": "ok" if all(row["status"] == "ok" for row in checks) else "warn",
     }
 
 
@@ -376,6 +703,9 @@ def main() -> None:
 
     prices = _mock_prices(df)
 
+    inventory_summary = _inventory_summary(inventory, prices)
+    positions_df = _read_positions_reference()
+
     unrealized = []
     unrealized_by_account: dict[str, float] = {}
     for stock, lots in inventory.items():
@@ -393,6 +723,19 @@ def main() -> None:
     asset_value = _compute_asset_value(df, inventory, prices)
     asset_allocation = _compute_asset_allocation(asset_value)
     pnl_by_account = _compute_pnl_by_account(realized, unrealized_by_account)
+    risk_metrics = _compute_risk_metrics(timeseries, invested_cost)
+    symbol_analysis = _compute_symbol_analysis(realized, inventory_summary, positions_df)
+    metric_audit = _compute_metric_audit(
+        realized,
+        unrealized,
+        health,
+        reconciliation,
+        timeseries,
+        asset_value,
+        asset_allocation,
+        inventory_summary,
+        positions_df,
+    )
 
     output = {
         "realized": realized,
@@ -404,10 +747,13 @@ def main() -> None:
         "asset_value": asset_value,
         "asset_allocation": asset_allocation,
         "pnl_by_account": pnl_by_account,
+        "risk_metrics": risk_metrics,
+        "symbol_analysis": symbol_analysis,
+        "metric_audit": metric_audit,
     }
 
     JSON_PATH.parent.mkdir(parents=True, exist_ok=True)
-    JSON_PATH.write_text(json.dumps(output, indent=2), encoding="utf-8")
+    JSON_PATH.write_text(json.dumps(_clean_records(output), indent=2), encoding="utf-8")
 
     REPORT_PATH.write_text(
         """<!doctype html>

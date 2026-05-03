@@ -8,6 +8,7 @@ on:
   push:
     paths:
       - "data/transactions.csv"
+      - "data/*-positions.xlsx"
       - "scripts/*.py"
       - ".github/workflows/analyze.yml"
 
@@ -26,7 +27,7 @@ jobs:
           python-version: "3.12"
 
       - name: Install deps
-        run: pip install pandas numpy
+        run: pip install pandas numpy openpyxl yfinance
 
       - name: Run analysis
         run: python scripts/analyze.py
