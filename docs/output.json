@@ -1269,5 +1269,28 @@
       "weekly": -91.90989999999998,
       "monthly": -12.20989999999999
     }
+  },
+  "invested_cost": {
+    "enabled": true,
+    "total": 16563.87,
+    "by_account": {
+      "\u73fe\u91d1": 16563.87
+    }
+  },
+  "asset_value": {
+    "enabled": true,
+    "cash_by_account": {
+      "\u73fe\u91d1": 0.8499999999967258,
+      "\u878d\u8cc7": 14748.210000000003
+    },
+    "holdings_by_account": {
+      "\u73fe\u91d1": 3652.19,
+      "\u878d\u8cc7": 758.38
+    },
+    "total_by_account": {
+      "\u73fe\u91d1": 3653.039999999997,
+      "\u878d\u8cc7": 15506.590000000002
+    },
+    "total": 19159.629999999997
   }
 }
