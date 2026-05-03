@@ -634,26 +634,120 @@ def _compute_invested_cost(df: pd.DataFrame) -> dict:
         account_col = None
 
     total = 0.0
+    deposit_total = 0.0
+    rebate_total = 0.0
     by_account: dict[str, float] = {}
+    rows: list[dict] = []
 
     for _, row in df.iterrows():
         action_raw = str(row[action_col]).strip()
+        action_norm = action_raw.casefold()
         desc_norm = " ".join(str(row[desc_col]).split()).casefold()
         amount = _to_float(row[amount_col])
 
-        is_deposit = action_raw == "存款" and "wire funds received" in desc_norm
-        is_rebate = action_raw == "其他" and "rebate for wire" in desc_norm
+        is_deposit = action_norm == "存款".casefold() and "wire funds received" in desc_norm
+        is_rebate = action_norm == "其他".casefold() and "rebate for wire" in desc_norm
 
         if not (is_deposit or is_rebate):
             continue
 
         total += amount
+        if is_deposit:
+            deposit_total += amount
+        if is_rebate:
+            rebate_total += amount
         account = "unknown"
         if account_col:
             account = str(row[account_col]).strip() or "unknown"
         by_account[account] = by_account.get(account, 0.0) + amount
+        rows.append(
+            {
+                "date": str(row.get("date", "")),
+                "account_type": account,
+                "type": "deposit" if is_deposit else "wire_rebate",
+                "description": str(row[desc_col]),
+                "amount": amount,
+            }
+        )
 
-    return {"enabled": True, "total": total, "by_account": by_account}
+    return {
+        "enabled": True,
+        "total": total,
+        "deposit_total": deposit_total,
+        "rebate_total": rebate_total,
+        "by_account": by_account,
+        "rows": rows,
+        "method": "交易類別=存款且說明含 Wire Funds Received，加上交易類別=其他且說明含 rebate for wire；大小寫不敏感。",
+    }
+
+
+def _compute_performance_summary(realized: list[dict], unrealized: list[float], invested_cost: dict) -> dict:
+    realized_total = sum(float(item["pnl"]) for item in realized)
+    unrealized_total = sum(float(item) for item in unrealized)
+    total_pnl = realized_total + unrealized_total
+    invested_total = float(invested_cost.get("total", 0.0)) if invested_cost.get("enabled") else 0.0
+
+    return {
+        "enabled": invested_total > 0,
+        "invested_cost": invested_total,
+        "realized_pnl": realized_total,
+        "unrealized_pnl": unrealized_total,
+        "total_pnl": total_pnl,
+        "return_pct": total_pnl / invested_total if invested_total else 0.0,
+        "realized_return_pct": realized_total / invested_total if invested_total else 0.0,
+        "unrealized_return_pct": unrealized_total / invested_total if invested_total else 0.0,
+    }
+
+
+def _build_recommendations(
+    health: dict,
+    performance_summary: dict,
+    risk_metrics: dict,
+    asset_allocation: dict,
+    symbol_analysis: dict,
+) -> list[dict]:
+    recommendations: list[dict] = []
+    return_pct = performance_summary.get("return_pct", 0.0)
+    realized = performance_summary.get("realized_pnl", 0.0)
+    unrealized = performance_summary.get("unrealized_pnl", 0.0)
+    sharpe = risk_metrics.get("sharpe_ratio", 0.0) if risk_metrics.get("enabled") else 0.0
+
+    if return_pct >= 0.12:
+        recommendations.append({"tone": "praise", "title": "投入資金效率亮眼", "body": "目前報酬率已達雙位數，代表交易成果相對投入成本有明確貢獻。"})
+    elif return_pct > 0:
+        recommendations.append({"tone": "praise", "title": "整體仍維持正報酬", "body": "目前總損益為正，建議持續追蹤哪些個股貢獻主要收益，避免獲利過度集中。"})
+    else:
+        recommendations.append({"tone": "warn", "title": "總報酬仍需修復", "body": "目前報酬率為負，優先檢查虧損最大的持倉與停損規則。"})
+
+    if realized > 0 and unrealized > 0:
+        recommendations.append({"tone": "praise", "title": "已實現與未實現收益同步", "body": "已落袋與現倉浮盈皆為正，表示交易節奏與持倉品質目前配合良好。"})
+    elif realized > 0 and unrealized < 0:
+        recommendations.append({"tone": "warn", "title": "現倉拖累部分獲利", "body": "已實現損益為正，但未實現損益為負，建議檢查浮虧部位是否仍符合原始交易假設。"})
+    elif realized < 0 and unrealized > 0:
+        recommendations.append({"tone": "info", "title": "現倉正在修復已實現虧損", "body": "未實現收益為正，但已實現損益為負，後續可留意獲利落袋與風險釋放。"})
+
+    if health.get("win_rate", 0.0) >= 0.65 and health.get("profit_factor", 0.0) >= 1.2:
+        recommendations.append({"tone": "praise", "title": "勝率與盈虧比結構健康", "body": "勝率和 Profit Factor 同時站在較佳區間，代表策略不是只靠單一大賺交易支撐。"})
+    elif health.get("profit_factor", 0.0) < 1.0:
+        recommendations.append({"tone": "warn", "title": "盈虧比需要改善", "body": "Profit Factor 低於 1 時，應優先降低虧損交易幅度或提高獲利交易延伸空間。"})
+
+    if risk_metrics.get("enabled"):
+        if sharpe >= 1.5:
+            recommendations.append({"tone": "praise", "title": "風險調整後報酬強勢", "body": "Sharpe Ratio 高於 1.5，代表目前承擔的波動換來相當有效的超額報酬。"})
+        elif sharpe < 0.5:
+            recommendations.append({"tone": "warn", "title": "波動補償不足", "body": "Sharpe Ratio 偏低，建議降低高波動部位或提高交易篩選標準。"})
+
+    ratios = asset_allocation.get("ratios", {}) if asset_allocation.get("enabled") else {}
+    if ratios.get("margin_stock", 0.0) > 0.45:
+        recommendations.append({"tone": "warn", "title": "融資股票占比偏高", "body": "融資曝險會放大回撤，若市場波動升高，建議預先設定降槓桿條件。"})
+
+    symbols = symbol_analysis.get("symbols", [])
+    current_losers = [row for row in symbols if row.get("status") == "current" and row.get("unrealized_pnl", 0.0) < 0]
+    if current_losers:
+        worst = min(current_losers, key=lambda row: row.get("unrealized_pnl", 0.0))
+        recommendations.append({"tone": "warn", "title": f"{worst['symbol']} 是目前主要浮虧來源", "body": "建議確認它的部位大小、停損線與持有理由是否仍然一致。"})
+
+    return recommendations[:6]
 
 
 def _compute_asset_value(
@@ -808,11 +902,19 @@ def main() -> None:
     reconciliation = _compute_reconciliation(df, realized, inventory)
     timeseries = _build_timeseries(realized)
     invested_cost = _compute_invested_cost(df)
+    performance_summary = _compute_performance_summary(realized, unrealized, invested_cost)
     asset_value = _compute_asset_value(df, inventory, prices)
     asset_allocation = _compute_asset_allocation(asset_value)
     pnl_by_account = _compute_pnl_by_account(realized, unrealized_by_account)
     risk_metrics = _compute_risk_metrics(timeseries, invested_cost)
     symbol_analysis = _compute_symbol_analysis(realized, inventory_summary, positions_df)
+    recommendations = _build_recommendations(
+        health,
+        performance_summary,
+        risk_metrics,
+        asset_allocation,
+        symbol_analysis,
+    )
     metric_audit = _compute_metric_audit(
         realized,
         unrealized,
@@ -832,12 +934,14 @@ def main() -> None:
         "reconciliation": reconciliation,
         "timeseries": timeseries,
         "invested_cost": invested_cost,
+        "performance_summary": performance_summary,
         "asset_value": asset_value,
         "asset_allocation": asset_allocation,
         "pnl_by_account": pnl_by_account,
         "market_prices": market_price_info,
         "risk_metrics": risk_metrics,
         "symbol_analysis": symbol_analysis,
+        "recommendations": recommendations,
         "metric_audit": metric_audit,
     }
 

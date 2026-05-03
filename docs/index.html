@@ -86,6 +86,18 @@
     .tag.warn { color: #fde68a; border-color: rgba(245, 158, 11, 0.5); background: rgba(120, 53, 15, 0.32); }
     .tag.bad { color: #fecdd3; border-color: rgba(251, 113, 133, 0.5); background: rgba(136, 19, 55, 0.32); }
 
+    .recommendation {
+      min-height: 118px;
+      padding: 14px;
+      border-radius: 8px;
+      background: rgba(15, 23, 42, 0.72);
+      border: 1px solid rgba(148, 163, 184, 0.18);
+    }
+
+    .recommendation.praise { border-color: rgba(34, 197, 94, 0.36); }
+    .recommendation.warn { border-color: rgba(245, 158, 11, 0.44); }
+    .recommendation.info { border-color: rgba(34, 211, 238, 0.36); }
+
     select, button {
       border: 1px solid rgba(125, 211, 252, 0.26);
       border-radius: 8px;
@@ -165,10 +177,23 @@
       <p class="mt-2 text-sm muted">請確認 `docs/output.json` 已由分析流程產生。</p>
     </section>
 
-    <section class="grid gap-4 md:grid-cols-2 xl:grid-cols-6">
+    <section class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
       <div class="card p-4">
         <p class="label">Total PnL</p>
         <p id="total" class="value mt-2">-</p>
+      </div>
+      <div class="card p-4">
+        <p class="label">Total Realized</p>
+        <p id="realizedPnl" class="value mt-2">-</p>
+      </div>
+      <div class="card p-4">
+        <p class="label">Total Unrealized</p>
+        <p id="unrealizedPnl" class="value mt-2">-</p>
+      </div>
+      <div class="card p-4">
+        <p class="label">Return on Capital</p>
+        <p id="returnPct" class="value mt-2">-</p>
+        <p id="investedCost" class="mt-1 text-xs muted">-</p>
       </div>
       <div class="card p-4">
         <p class="label">Win Rate</p>
@@ -191,6 +216,17 @@
         <p class="label">Max Drawdown</p>
         <p id="maxDrawdown" class="value mt-2">-</p>
       </div>
+    </section>
+
+    <section class="panel p-5">
+      <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <p class="label">Advisor Notes</p>
+          <h2 class="text-lg font-semibold">分析建議</h2>
+        </div>
+        <span id="investedMethod" class="tag">Capital Basis</span>
+      </div>
+      <div id="recommendationList" class="grid gap-3 md:grid-cols-2 xl:grid-cols-3"></div>
     </section>
 
     <section class="grid gap-5 xl:grid-cols-3">
@@ -314,10 +350,20 @@
     const renderKpis = (data) => {
       const health = data.health || {};
       const risk = data.risk_metrics || {};
+      const performance = data.performance_summary || {};
+      const invested = data.invested_cost || {};
       const dailyDrawdown = ((data.timeseries || {}).max_drawdown || {}).daily || 0;
 
       $('total').textContent = fmtSigned(health.total);
       $('total').className = `value mt-2 ${tone(health.total)}`;
+      $('realizedPnl').textContent = fmtSigned(performance.realized_pnl);
+      $('realizedPnl').className = `value mt-2 ${tone(performance.realized_pnl)}`;
+      $('unrealizedPnl').textContent = fmtSigned(performance.unrealized_pnl);
+      $('unrealizedPnl').className = `value mt-2 ${tone(performance.unrealized_pnl)}`;
+      $('returnPct').textContent = pct(performance.return_pct);
+      $('returnPct').className = `value mt-2 ${tone(performance.return_pct)}`;
+      $('investedCost').textContent = `投入成本 ${fmtMoney(performance.invested_cost || invested.total || 0)}`;
+      $('investedMethod').textContent = `Deposits ${fmtMoney(invested.deposit_total || 0)} · Rebates ${fmtMoney(invested.rebate_total || 0)}`;
       $('winRate').textContent = pct(health.win_rate);
       $('profitFactor').textContent = num.format(health.profit_factor || 0);
       $('healthScore').textContent = Math.round(health.score || 0);
@@ -336,6 +382,18 @@
         $('sharpeRatio').textContent = 'N/A';
         $('riskMethod').textContent = risk.reason || '';
       }
+    };
+
+    const renderRecommendations = (data) => {
+      const rows = data.recommendations || [];
+      const toneLabel = { praise: 'Strength', warn: 'Review', info: 'Watch' };
+      $('recommendationList').innerHTML = rows.map(row => `
+        <article class="recommendation ${row.tone || 'info'}">
+          <span class="tag ${row.tone === 'praise' ? 'current' : row.tone === 'warn' ? 'warn' : ''}">${toneLabel[row.tone] || 'Note'}</span>
+          <h3 class="mt-3 font-semibold">${row.title}</h3>
+          <p class="mt-2 text-sm muted">${row.body}</p>
+        </article>
+      `).join('') || '<p class="text-sm muted">目前沒有特別需要提醒的事項。</p>';
     };
 
     const renderAllocation = (data) => {
@@ -516,6 +574,7 @@
         renderEquity('daily');
         renderSymbols();
         renderAudit(data);
+        renderRecommendations(data);
         bindControls();
       })
       .catch(error => {
