@@ -234,11 +234,11 @@ def _compute_invested_cost(df: pd.DataFrame) -> dict:
 
     for _, row in df.iterrows():
         action_raw = str(row[action_col]).strip()
-        desc = str(row[desc_col]).strip().lower()
+        desc_norm = " ".join(str(row[desc_col]).split()).casefold()
         amount = _to_float(row[amount_col])
 
-        is_deposit = action_raw == "存款" and "wire funds received" in desc
-        is_rebate = action_raw == "其他" and "rebate for wire" in desc
+        is_deposit = action_raw == "存款" and "wire funds received" in desc_norm
+        is_rebate = action_raw == "其他" and "rebate for wire" in desc_norm
 
         if not (is_deposit or is_rebate):
             continue
@@ -299,6 +299,64 @@ def _compute_asset_value(
     }
 
 
+def _compute_asset_allocation(asset_value: dict) -> dict:
+    if not asset_value.get("enabled"):
+        return {"enabled": False, "reason": asset_value.get("reason", "asset_value disabled")}
+
+    cash_by_account = asset_value.get("cash_by_account", {})
+    holdings_by_account = asset_value.get("holdings_by_account", {})
+
+    cash_balance = float(cash_by_account.get("現金", 0.0))
+    cash_stock = float(holdings_by_account.get("現金", 0.0))
+    margin_stock = float(holdings_by_account.get("融資", 0.0))
+    total = float(asset_value.get("total", 0.0))
+
+    other = total - (cash_balance + cash_stock + margin_stock)
+
+    ratios = {}
+    if total != 0:
+        ratios = {
+            "cash_balance": cash_balance / total,
+            "cash_stock": cash_stock / total,
+            "margin_stock": margin_stock / total,
+            "other": other / total,
+        }
+
+    return {
+        "enabled": True,
+        "cash_balance": cash_balance,
+        "cash_stock": cash_stock,
+        "margin_stock": margin_stock,
+        "other": other,
+        "total": total,
+        "ratios": ratios,
+    }
+
+
+def _compute_pnl_by_account(realized: list[dict], unrealized_by_account: dict) -> dict:
+    realized_by_account: dict[str, float] = {}
+    for item in realized:
+        account = str(item.get("account_type", "unknown") or "unknown")
+        realized_by_account[account] = realized_by_account.get(account, 0.0) + float(item["pnl"])
+
+    total_by_account: dict[str, float] = {}
+    accounts = set(realized_by_account) | set(unrealized_by_account)
+    for account in accounts:
+        total_by_account[account] = realized_by_account.get(account, 0.0) + float(
+            unrealized_by_account.get(account, 0.0)
+        )
+
+    total = sum(total_by_account.values())
+
+    return {
+        "enabled": True,
+        "realized": realized_by_account,
+        "unrealized": unrealized_by_account,
+        "total": total_by_account,
+        "total_all": total,
+    }
+
+
 def main() -> None:
     if not CSV_PATH.exists():
         raise FileNotFoundError(f"Missing CSV: {CSV_PATH}")
@@ -319,17 +377,22 @@ def main() -> None:
     prices = _mock_prices(df)
 
     unrealized = []
+    unrealized_by_account: dict[str, float] = {}
     for stock, lots in inventory.items():
         for lot in lots:
             price = prices.get(stock, 100.0)
             pnl = (price - float(lot["price"])) * float(lot["qty"])
             unrealized.append(pnl)
+            account = str(lot.get("account_type", "unknown") or "unknown")
+            unrealized_by_account[account] = unrealized_by_account.get(account, 0.0) + pnl
 
     health = calculate_health(realized, unrealized)
     reconciliation = _compute_reconciliation(df, realized, inventory)
     timeseries = _build_timeseries(realized)
     invested_cost = _compute_invested_cost(df)
     asset_value = _compute_asset_value(df, inventory, prices)
+    asset_allocation = _compute_asset_allocation(asset_value)
+    pnl_by_account = _compute_pnl_by_account(realized, unrealized_by_account)
 
     output = {
         "realized": realized,
@@ -339,6 +402,8 @@ def main() -> None:
         "timeseries": timeseries,
         "invested_cost": invested_cost,
         "asset_value": asset_value,
+        "asset_allocation": asset_allocation,
+        "pnl_by_account": pnl_by_account,
     }
 
     JSON_PATH.parent.mkdir(parents=True, exist_ok=True)

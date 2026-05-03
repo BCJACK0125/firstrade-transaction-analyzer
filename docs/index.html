@@ -2,128 +2,533 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
-  <title>投資分析 Dashboard</title>
+  <title>投資健康分析 Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Noto+Sans+TC:wght@400;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --ink: #e2e8f0;
+      --accent: #22d3ee;
+      --accent-2: #f472b6;
+      --accent-3: #22c55e;
+      --accent-4: #f59e0b;
+      --muted: #94a3b8;
+      --panel: rgba(15, 23, 42, 0.82);
+      --panel-border: rgba(148, 163, 184, 0.25);
+    }
+
+    body {
+      font-family: "Space Grotesk", "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(34, 211, 238, 0.15), transparent 45%),
+        radial-gradient(circle at 30% 10%, rgba(244, 114, 182, 0.12), transparent 38%),
+        radial-gradient(circle at 80% 0%, rgba(34, 197, 94, 0.12), transparent 40%),
+        linear-gradient(180deg, #0b1020 0%, #0b1220 45%, #0f172a 100%);
+      color: var(--ink);
+      min-height: 100vh;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background:
+        linear-gradient(90deg, rgba(148, 163, 184, 0.12) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(148, 163, 184, 0.12) 1px, transparent 1px);
+      background-size: 120px 120px;
+      opacity: 0.12;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .section {
+      animation: rise 0.55s ease both;
+    }
+
+    @keyframes rise {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: 1.25rem;
+      box-shadow: 0 20px 60px rgba(15, 23, 42, 0.4);
+      backdrop-filter: blur(12px);
+      position: relative;
+      z-index: 1;
+    }
+
+    .card {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      border-radius: 1rem;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 10px 35px rgba(15, 23, 42, 0.35);
+    }
+
+    .kpi-label {
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 0.7rem;
+    }
+
+    .kpi-value {
+      font-size: 1.35rem;
+      font-weight: 700;
+    }
+
+    .kpi-arrow {
+      margin-left: 0.35rem;
+      font-size: 0.9rem;
+    }
+
+    .trend-positive {
+      color: #22c55e;
+    }
+
+    .trend-negative {
+      color: #f43f5e;
+    }
+
+    .trend-neutral {
+      color: #e2e8f0;
+    }
+
+    .cyber-border {
+      border: 1px solid rgba(34, 211, 238, 0.3);
+      box-shadow: 0 0 24px rgba(34, 211, 238, 0.1);
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.2rem 0.7rem;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      font-size: 0.75rem;
+      color: #cbd5f5;
+    }
+
+    .period-btn {
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      background: rgba(30, 41, 59, 0.7);
+      color: #cbd5f5;
+      transition: all 0.2s ease;
+    }
+
+    .period-btn.is-active {
+      background: rgba(34, 211, 238, 0.9);
+      color: #0f172a;
+      border-color: rgba(34, 211, 238, 0.8);
+      box-shadow: 0 0 16px rgba(34, 211, 238, 0.35);
+    }
+
+    .insight-item {
+      padding: 0.5rem 0.75rem;
+      border-radius: 0.75rem;
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(148, 163, 184, 0.15);
+    }
+
+    .status-good {
+      border-color: rgba(34, 211, 238, 0.6);
+      color: #7dd3fc;
+    }
+
+    .status-bad {
+      border-color: rgba(244, 63, 94, 0.7);
+      color: #fca5a5;
+    }
+
+    .loading-bar {
+      height: 0.8rem;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(148, 163, 184, 0.2), rgba(226, 232, 240, 0.35), rgba(148, 163, 184, 0.2));
+      background-size: 200% 100%;
+      animation: shimmer 1.3s linear infinite;
+    }
+
+    .loading-block {
+      height: 4.5rem;
+      border-radius: 1rem;
+      background: linear-gradient(90deg, rgba(148, 163, 184, 0.18), rgba(226, 232, 240, 0.3), rgba(148, 163, 184, 0.18));
+      background-size: 200% 100%;
+      animation: shimmer 1.3s linear infinite;
+    }
+
+    @keyframes shimmer {
+      0% {
+        background-position: 200% 0;
+      }
+      100% {
+        background-position: -200% 0;
+      }
+    }
+  </style>
 </head>
 
-<body class="bg-gray-100 p-6">
-
-  <h1 class="text-2xl font-bold mb-6">📊 投資健康分析 Dashboard</h1>
-
-  <!-- KPI -->
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
-    <div class="bg-white p-4 rounded-xl shadow">
-      <p class="text-gray-400">總損益</p>
-      <h2 id="total" class="text-xl font-bold">-</h2>
-    </div>
-
-    <div class="bg-white p-4 rounded-xl shadow">
-      <p class="text-gray-400">勝率</p>
-      <h2 id="win_rate" class="text-xl font-bold">-</h2>
-    </div>
-
-    <div class="bg-white p-4 rounded-xl shadow">
-      <p class="text-gray-400">盈虧比</p>
-      <h2 id="pf" class="text-xl font-bold">-</h2>
-    </div>
-
-    <div class="bg-white p-4 rounded-xl shadow">
-      <p class="text-gray-400">健康分數</p>
-      <h2 id="score" class="text-xl font-bold">-</h2>
-    </div>
-
-    <div class="bg-white p-4 rounded-xl shadow">
-      <p class="text-gray-400">Max Drawdown</p>
-      <h2 id="max_drawdown" class="text-xl font-bold">-</h2>
-    </div>
-  </div>
-
-  <!-- 資產概況 -->
-  <div class="bg-white p-6 rounded-xl shadow mb-6">
-    <h3 class="mb-4 font-semibold">資產概況</h3>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div class="bg-gray-50 p-4 rounded-lg">
-        <p class="text-gray-400">投入成本</p>
-        <h2 id="invested" class="text-xl font-bold">-</h2>
-        <p class="text-xs text-gray-500">匯入資金與線上匯款回饋</p>
+<body class="p-6">
+  <div class="max-w-6xl mx-auto space-y-6">
+    <header class="panel p-6 section">
+      <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+        <div>
+          <p class="tag">Portfolio Intel</p>
+          <h1 class="text-3xl font-bold mt-3">投資健康分析 Dashboard</h1>
+          <p class="text-sm text-slate-400 mt-2">
+            資產結構、收益來源與風險訊號一覽，專為現金/融資帳戶打造。
+          </p>
+        </div>
+        <div class="text-right text-sm text-slate-400">
+          <p>更新時間</p>
+          <p id="lastUpdated" class="text-slate-200 font-semibold">--</p>
+          <p class="mt-2"><span id="dataStatus" class="tag">Loading</span></p>
+        </div>
       </div>
-      <div class="bg-gray-50 p-4 rounded-lg">
-        <p class="text-gray-400">目前總資產價值</p>
-        <h2 id="asset_total" class="text-xl font-bold">-</h2>
-        <p class="text-xs text-gray-500">
-          現金: <span id="asset_cash">-</span> / 融資: <span id="asset_margin">-</span>
-        </p>
+    </header>
+
+    <div id="loadingOverlay" class="panel p-6 section">
+      <div class="flex items-center justify-between">
+        <h3 class="font-semibold">載入中</h3>
+        <span class="tag">Sync</span>
+      </div>
+      <p class="text-sm text-slate-400 mt-2">正在取得最新分析資料...</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mt-5">
+        <div class="loading-block"></div>
+        <div class="loading-block"></div>
+        <div class="loading-block"></div>
+        <div class="loading-block"></div>
+        <div class="loading-block"></div>
+      </div>
+      <div class="mt-4 space-y-2">
+        <div class="loading-bar"></div>
+        <div class="loading-bar" style="width: 80%"></div>
+        <div class="loading-bar" style="width: 60%"></div>
       </div>
     </div>
-  </div>
 
-  <!-- 健康分數條 -->
-  <div class="bg-white p-6 rounded-xl shadow mb-6">
-    <p class="mb-2 text-gray-500">健康分數</p>
-    <div class="w-full bg-gray-200 rounded-full h-4">
-      <div id="scoreBar" class="h-4 rounded-full bg-blue-500" style="width:0%"></div>
+    <div id="emptyState" class="panel p-6 section hidden">
+      <h3 class="font-semibold">尚無可顯示的交易資料</h3>
+      <p class="text-sm text-slate-400 mt-2">
+        請確認 transactions.csv 已更新並完成分析流程，或稍後再試。
+      </p>
     </div>
-  </div>
 
-  <!-- Timeframe and Charts -->
-  <div class="bg-white p-6 rounded-xl shadow mb-6">
-    <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
-      <h3 class="font-semibold">績效曲線</h3>
-      <div class="space-x-2">
-        <button class="period-btn px-3 py-1 rounded bg-blue-600 text-white" data-period="daily">日</button>
-        <button class="period-btn px-3 py-1 rounded bg-gray-200" data-period="weekly">週</button>
-        <button class="period-btn px-3 py-1 rounded bg-gray-200" data-period="monthly">月</button>
+    <!-- KPI -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 section">
+      <div class="card p-4">
+        <p class="kpi-label">Total PnL</p>
+        <h2 class="kpi-value">
+          <span id="total">-</span>
+          <span id="total_arrow" class="kpi-arrow"></span>
+        </h2>
+      </div>
+
+      <div class="card p-4">
+        <p class="kpi-label">Win Rate</p>
+        <h2 id="win_rate" class="kpi-value">-</h2>
+      </div>
+
+      <div class="card p-4">
+        <p class="kpi-label">Profit Factor</p>
+        <h2 id="pf" class="kpi-value">-</h2>
+      </div>
+
+      <div class="card p-4">
+        <p class="kpi-label">Health Score</p>
+        <h2 id="score" class="kpi-value">-</h2>
+      </div>
+
+      <div class="card p-4">
+        <p class="kpi-label">Max Drawdown</p>
+        <h2 class="kpi-value">
+          <span id="max_drawdown">-</span>
+          <span id="max_drawdown_arrow" class="kpi-arrow"></span>
+        </h2>
       </div>
     </div>
-    <canvas id="equityChart"></canvas>
-  </div>
 
-  <div class="bg-white p-6 rounded-xl shadow mb-6">
-    <h3 class="mb-4 font-semibold">回撤（Drawdown）</h3>
-    <canvas id="drawdownChart"></canvas>
-  </div>
-
-  <!-- PnL Chart -->
-  <div class="bg-white p-6 rounded-xl shadow mb-6">
-    <h3 class="mb-4 font-semibold">已實現損益（交易序列）</h3>
-    <canvas id="pnlChart"></canvas>
-  </div>
-
-  <!-- Reconciliation -->
-  <div class="bg-white p-6 rounded-xl shadow mb-6">
-    <h3 class="mb-4 font-semibold">對帳檢查</h3>
-    <div class="grid grid-cols-2 gap-4 text-sm text-gray-700">
-      <div>買入金額合計: <span id="rec_buy">-</span></div>
-      <div>賣出金額合計: <span id="rec_sell">-</span></div>
-      <div>現金流合計: <span id="rec_cashflow">-</span></div>
-      <div>剩餘成本: <span id="rec_cost">-</span></div>
-      <div>已實現損益合計: <span id="rec_realized">-</span></div>
-      <div>預期已實現: <span id="rec_expected">-</span></div>
-      <div>差異 (delta): <span id="rec_delta">-</span></div>
-      <div>狀態: <span id="rec_status">-</span></div>
+    <!-- 資產概況 -->
+    <div class="panel p-6 section">
+      <h3 class="mb-4 font-semibold">資產概況</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="card p-4 cyber-border">
+          <p class="kpi-label">投入成本</p>
+          <h2 id="invested" class="kpi-value">-</h2>
+          <p class="text-xs text-slate-400">匯入資金與線上匯款回饋</p>
+        </div>
+        <div class="card p-4">
+          <p class="kpi-label">目前總資產價值</p>
+          <h2 id="asset_total" class="kpi-value">-</h2>
+          <p class="text-xs text-slate-400">
+            現金帳戶: <span id="asset_cash">-</span> / 融資帳戶: <span id="asset_margin">-</span>
+          </p>
+        </div>
+      </div>
     </div>
-  </div>
 
-  <!-- Insights -->
-  <div class="bg-white p-6 rounded-xl shadow">
-    <h3 class="mb-4 font-semibold">📌 分析建議</h3>
-    <ul id="insights" class="list-disc pl-5 text-gray-700"></ul>
+    <!-- 資產占比 -->
+    <div class="panel p-6 section">
+      <h3 class="mb-4 font-semibold">資產占比</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+        <div class="h-64">
+          <canvas id="allocationChart"></canvas>
+        </div>
+        <div class="space-y-3 text-sm text-slate-200">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="inline-block w-3 h-3 rounded-full" style="background:#38bdf8"></span>
+              現金
+            </div>
+            <div>
+              <span id="alloc_cash_value">-</span>
+              <span id="alloc_cash_pct" class="text-slate-400 ml-2">-</span>
+            </div>
+          </div>
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="inline-block w-3 h-3 rounded-full" style="background:#22d3ee"></span>
+              現金股票
+            </div>
+            <div>
+              <span id="alloc_cash_stock_value">-</span>
+              <span id="alloc_cash_stock_pct" class="text-slate-400 ml-2">-</span>
+            </div>
+          </div>
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="inline-block w-3 h-3 rounded-full" style="background:#f59e0b"></span>
+              融資股票
+            </div>
+            <div>
+              <span id="alloc_margin_stock_value">-</span>
+              <span id="alloc_margin_stock_pct" class="text-slate-400 ml-2">-</span>
+            </div>
+          </div>
+          <div id="alloc_other_row" class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="inline-block w-3 h-3 rounded-full" style="background:#9ca3af"></span>
+              其他
+            </div>
+            <div>
+              <span id="alloc_other_value">-</span>
+              <span id="alloc_other_pct" class="text-slate-400 ml-2">-</span>
+            </div>
+          </div>
+          <div class="pt-2 border-t border-slate-700 text-sm text-slate-400">
+            總資產: <span id="alloc_total">-</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 收益來源 -->
+    <div class="panel p-6 section">
+      <h3 class="mb-4 font-semibold">收益來源</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+        <div class="h-64">
+          <canvas id="pnlSourceChart"></canvas>
+        </div>
+        <div class="space-y-3 text-sm text-slate-200">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="inline-block w-3 h-3 rounded-full" style="background:#38bdf8"></span>
+              現金收益
+            </div>
+            <div>
+              <span id="pnl_cash_value">-</span>
+              <span id="pnl_cash_pct" class="text-slate-400 ml-2">-</span>
+            </div>
+          </div>
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="inline-block w-3 h-3 rounded-full" style="background:#22c55e"></span>
+              融資收益
+            </div>
+            <div>
+              <span id="pnl_margin_value">-</span>
+              <span id="pnl_margin_pct" class="text-slate-400 ml-2">-</span>
+            </div>
+          </div>
+          <div id="pnl_other_row" class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="inline-block w-3 h-3 rounded-full" style="background:#9ca3af"></span>
+              其他
+            </div>
+            <div>
+              <span id="pnl_other_value">-</span>
+              <span id="pnl_other_pct" class="text-slate-400 ml-2">-</span>
+            </div>
+          </div>
+          <div class="pt-2 border-t border-slate-700 text-sm text-slate-400">
+            總收益: <span id="pnl_total">-</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 健康分數條 -->
+    <div class="panel p-6 section">
+      <p class="mb-2 text-slate-400">健康分數</p>
+      <div class="w-full bg-slate-800/60 rounded-full h-4">
+        <div id="scoreBar" class="h-4 rounded-full" style="width:0%; background:linear-gradient(90deg, #22d3ee, #f472b6)"></div>
+      </div>
+    </div>
+
+    <!-- Timeframe and Charts -->
+    <div class="panel p-6 section">
+      <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+        <h3 class="font-semibold">績效曲線</h3>
+        <div class="space-x-2">
+          <button class="period-btn px-3 py-1 rounded is-active" data-period="daily">日</button>
+          <button class="period-btn px-3 py-1 rounded" data-period="weekly">週</button>
+          <button class="period-btn px-3 py-1 rounded" data-period="monthly">月</button>
+        </div>
+      </div>
+      <canvas id="equityChart"></canvas>
+    </div>
+
+    <div class="panel p-6 section">
+      <h3 class="mb-4 font-semibold">回撤（Drawdown）</h3>
+      <canvas id="drawdownChart"></canvas>
+    </div>
+
+    <!-- PnL Chart -->
+    <div class="panel p-6 section">
+      <h3 class="mb-4 font-semibold">已實現損益（交易序列）</h3>
+      <canvas id="pnlChart"></canvas>
+    </div>
+
+    <!-- Reconciliation -->
+    <div class="panel p-6 section">
+      <h3 class="mb-4 font-semibold">對帳檢查</h3>
+      <div class="grid grid-cols-2 gap-4 text-sm text-slate-200">
+        <div>買入金額合計: <span id="rec_buy">-</span></div>
+        <div>賣出金額合計: <span id="rec_sell">-</span></div>
+        <div>現金流合計: <span id="rec_cashflow">-</span></div>
+        <div>剩餘成本: <span id="rec_cost">-</span></div>
+        <div>已實現損益合計: <span id="rec_realized">-</span></div>
+        <div>預期已實現: <span id="rec_expected">-</span></div>
+        <div>差異 (delta): <span id="rec_delta">-</span></div>
+        <div>狀態: <span id="rec_status">-</span></div>
+      </div>
+    </div>
+
+    <!-- Insights -->
+    <div class="panel p-6 section">
+      <h3 class="mb-4 font-semibold">📌 分析建議</h3>
+      <ul id="insights" class="space-y-2 text-sm"></ul>
+    </div>
   </div>
 
 <script>
+Chart.defaults.color = '#cbd5f5';
+Chart.defaults.borderColor = 'rgba(148, 163, 184, 0.2)';
+Chart.defaults.font.family = 'Space Grotesk, Noto Sans TC, PingFang TC, Microsoft JhengHei, sans-serif';
+
+const loadingEl = document.getElementById('loadingOverlay');
+const emptyEl = document.getElementById('emptyState');
+const statusEl = document.getElementById('dataStatus');
+
+const setLoading = (isLoading) => {
+  if (loadingEl) loadingEl.classList.toggle('hidden', !isLoading);
+};
+
+const setEmpty = (isEmpty) => {
+  if (emptyEl) emptyEl.classList.toggle('hidden', !isEmpty);
+};
+
+const setStatus = (text, statusClass) => {
+  if (!statusEl) return;
+  statusEl.textContent = text;
+  statusEl.classList.remove('status-good', 'status-bad');
+  if (statusClass) statusEl.classList.add(statusClass);
+};
+
+setLoading(true);
+setEmpty(false);
+setStatus('LOADING', '');
+
 fetch('./output.json')
   .then(res => res.json())
   .then(data => {
 
+    setLoading(false);
+
+    if (!data || !Array.isArray(data.realized) || data.realized.length === 0) {
+      setEmpty(true);
+      setStatus('NO DATA', 'status-bad');
+      return;
+    }
+    setEmpty(false);
+
     const health = data.health;
-    const formatNumber = (value) => Number(value || 0).toFixed(2);
+    const currencyFormatter = new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+    const numberFormatter = new Intl.NumberFormat('en-US', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+    const formatNumber = (value) => numberFormatter.format(Number(value || 0));
+    const formatCurrency = (value) => currencyFormatter.format(Number(value || 0));
+    const formatSignedCurrency = (value) => {
+      const num = Number(value || 0);
+      const sign = num > 0 ? '+' : num < 0 ? '-' : '';
+      return sign + currencyFormatter.format(Math.abs(num));
+    };
+    const formatPercent = (value) => (Number(value || 0) * 100).toFixed(1) + "%";
+
+    const animateValue = (element, value, formatter, duration = 900) => {
+      const start = performance.now();
+      const from = 0;
+      const to = Number(value || 0);
+      const render = (time) => {
+        const progress = Math.min((time - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const current = from + (to - from) * eased;
+        element.innerText = formatter(current);
+        if (progress < 1) requestAnimationFrame(render);
+      };
+      requestAnimationFrame(render);
+    };
+
+    const totalEl = document.getElementById('total');
+    const totalArrow = document.getElementById('total_arrow');
+    const maxDrawdownEl = document.getElementById('max_drawdown');
+    const maxDrawdownArrow = document.getElementById('max_drawdown_arrow');
+
+    const setTrend = (value, numberEl, arrowEl) => {
+      const num = Number(value || 0);
+      const cls = num > 0 ? 'trend-positive' : num < 0 ? 'trend-negative' : 'trend-neutral';
+      numberEl.classList.remove('trend-positive', 'trend-negative', 'trend-neutral');
+      arrowEl.classList.remove('trend-positive', 'trend-negative', 'trend-neutral');
+      numberEl.classList.add(cls);
+      arrowEl.classList.add(cls);
+      arrowEl.textContent = num > 0 ? '▲' : num < 0 ? '▼' : '';
+    };
 
     // KPI
-    document.getElementById('total').innerText = health.total.toFixed(2);
-    document.getElementById('win_rate').innerText = (health.win_rate * 100).toFixed(1) + "%";
-    document.getElementById('pf').innerText = health.profit_factor.toFixed(2);
-    document.getElementById('score').innerText = health.score;
+    animateValue(totalEl, health.total, formatSignedCurrency);
+    setTrend(health.total, totalEl, totalArrow);
+    animateValue(document.getElementById('win_rate'), health.win_rate, formatPercent);
+    animateValue(document.getElementById('pf'), health.profit_factor, formatNumber);
+    animateValue(document.getElementById('score'), health.score, (v) => Math.round(v));
 
     // Score bar
     document.getElementById('scoreBar').style.width = health.score + "%";
@@ -131,7 +536,7 @@ fetch('./output.json')
     // 資產概況
     const invested = data.invested_cost;
     if (invested && invested.enabled) {
-      document.getElementById('invested').innerText = formatNumber(invested.total);
+      animateValue(document.getElementById('invested'), invested.total, formatCurrency);
     } else {
       document.getElementById('invested').innerText = 'N/A';
     }
@@ -142,40 +547,197 @@ fetch('./output.json')
       const cashValue = totals['現金'] || 0;
       const marginValue = totals['融資'] || 0;
       const totalValue = assetValue.total || (cashValue + marginValue);
-      document.getElementById('asset_total').innerText = formatNumber(totalValue);
-      document.getElementById('asset_cash').innerText = formatNumber(cashValue);
-      document.getElementById('asset_margin').innerText = formatNumber(marginValue);
+      animateValue(document.getElementById('asset_total'), totalValue, formatCurrency);
+      animateValue(document.getElementById('asset_cash'), cashValue, formatCurrency);
+      animateValue(document.getElementById('asset_margin'), marginValue, formatCurrency);
     } else {
       document.getElementById('asset_total').innerText = 'N/A';
       document.getElementById('asset_cash').innerText = 'N/A';
       document.getElementById('asset_margin').innerText = 'N/A';
     }
 
-    // Insights（簡單規則）
-    const insights = [];
-
-    if (health.win_rate < 0.5) insights.push("⚠️ 勝率偏低");
-    if (health.profit_factor < 1) insights.push("⚠️ 賺小賠大");
-    if (health.score > 70) insights.push("✅ 整體表現穩健");
-
-    const ul = document.getElementById('insights');
-    insights.forEach(i => {
-      const li = document.createElement('li');
-      li.innerText = i;
-      ul.appendChild(li);
-    });
-
     const timeseries = data.timeseries || {};
+    const allocation = data.asset_allocation || {};
+    const pnlByAccount = data.pnl_by_account || {};
+
     let equityChart = null;
     let drawdownChart = null;
+    let allocationChart = null;
+    let pnlSourceChart = null;
 
     const periodButtons = document.querySelectorAll('.period-btn');
 
     const colorMap = {
-      '現金': '#2563eb',
-      '融資': '#16a34a',
-      'unknown': '#6b7280'
+      '現金': '#38bdf8',
+      '融資': '#22c55e',
+      'unknown': '#94a3b8'
     };
+
+    const renderAllocation = (alloc) => {
+      if (!alloc || !alloc.enabled) {
+        document.getElementById('alloc_other_row').style.display = 'none';
+        return;
+      }
+
+      const cash = alloc.cash_balance || 0;
+      const cashStock = alloc.cash_stock || 0;
+      const marginStock = alloc.margin_stock || 0;
+      const other = alloc.other || 0;
+      const total = alloc.total || (cash + cashStock + marginStock + other);
+      const ratios = alloc.ratios || {};
+
+      animateValue(document.getElementById('alloc_cash_value'), cash, formatCurrency, 650);
+      animateValue(document.getElementById('alloc_cash_stock_value'), cashStock, formatCurrency, 650);
+      animateValue(document.getElementById('alloc_margin_stock_value'), marginStock, formatCurrency, 650);
+      animateValue(document.getElementById('alloc_other_value'), other, formatCurrency, 650);
+      animateValue(document.getElementById('alloc_total'), total, formatCurrency, 650);
+
+      document.getElementById('alloc_cash_pct').innerText = formatPercent(ratios.cash_balance || 0);
+      document.getElementById('alloc_cash_stock_pct').innerText = formatPercent(ratios.cash_stock || 0);
+      document.getElementById('alloc_margin_stock_pct').innerText = formatPercent(ratios.margin_stock || 0);
+      document.getElementById('alloc_other_pct').innerText = formatPercent(ratios.other || 0);
+
+      document.getElementById('alloc_other_row').style.display = Math.abs(other) > 0.01 ? 'flex' : 'none';
+
+      const labels = ['現金', '現金股票', '融資股票'];
+      const values = [cash, cashStock, marginStock];
+      const colors = ['#38bdf8', '#22d3ee', '#f59e0b'];
+      if (Math.abs(other) > 0.01) {
+        labels.push('其他');
+        values.push(other);
+        colors.push('#9ca3af');
+      }
+
+      if (allocationChart) {
+        allocationChart.data.labels = labels;
+        allocationChart.data.datasets[0].data = values;
+        allocationChart.data.datasets[0].backgroundColor = colors;
+        allocationChart.update();
+      } else {
+        allocationChart = new Chart(document.getElementById('allocationChart'), {
+          type: 'doughnut',
+          data: {
+            labels,
+            datasets: [{
+              data: values,
+              backgroundColor: colors,
+              borderWidth: 0
+            }]
+          },
+          options: {
+            cutout: '65%',
+            plugins: { legend: { display: false } }
+          }
+        });
+      }
+    };
+
+    const renderPnlSource = (pnl) => {
+      if (!pnl || !pnl.enabled) {
+        document.getElementById('pnl_other_row').style.display = 'none';
+        return;
+      }
+
+      const totals = pnl.total || {};
+      const cash = totals['現金'] || 0;
+      const margin = totals['融資'] || 0;
+      const total = pnl.total_all || (cash + margin);
+      const other = total - cash - margin;
+
+      animateValue(document.getElementById('pnl_cash_value'), cash, formatSignedCurrency, 650);
+      animateValue(document.getElementById('pnl_margin_value'), margin, formatSignedCurrency, 650);
+      animateValue(document.getElementById('pnl_other_value'), other, formatSignedCurrency, 650);
+      animateValue(document.getElementById('pnl_total'), total, formatSignedCurrency, 650);
+
+      const base = total === 0 ? 1 : Math.abs(total);
+      document.getElementById('pnl_cash_pct').innerText = formatPercent(cash / base);
+      document.getElementById('pnl_margin_pct').innerText = formatPercent(margin / base);
+      document.getElementById('pnl_other_pct').innerText = formatPercent(other / base);
+
+      document.getElementById('pnl_other_row').style.display = Math.abs(other) > 0.01 ? 'flex' : 'none';
+
+      const labels = ['現金', '融資'];
+      const values = [cash, margin];
+      const colors = ['#38bdf8', '#22c55e'];
+      if (Math.abs(other) > 0.01) {
+        labels.push('其他');
+        values.push(other);
+        colors.push('#9ca3af');
+      }
+
+      if (pnlSourceChart) {
+        pnlSourceChart.data.labels = labels;
+        pnlSourceChart.data.datasets[0].data = values;
+        pnlSourceChart.data.datasets[0].backgroundColor = colors;
+        pnlSourceChart.update();
+      } else {
+        pnlSourceChart = new Chart(document.getElementById('pnlSourceChart'), {
+          type: 'bar',
+          data: {
+            labels,
+            datasets: [{
+              label: 'PnL',
+              data: values,
+              backgroundColor: colors,
+              borderRadius: 6
+            }]
+          },
+          options: {
+            plugins: { legend: { display: false } },
+            scales: { y: { ticks: { callback: (v) => v } } }
+          }
+        });
+      }
+    };
+
+    renderAllocation(allocation);
+    renderPnlSource(pnlByAccount);
+
+    const insights = [];
+
+    if (health.win_rate < 0.5) insights.push("⚠️ 勝率偏低，建議檢視進出場策略");
+    if (health.profit_factor < 1) insights.push("⚠️ 盈虧比偏弱，注意止損與獲利空間");
+    if (health.score > 70) insights.push("✅ 整體表現穩健");
+
+    if (allocation && allocation.enabled) {
+      const ratios = allocation.ratios || {};
+      if ((ratios.margin_stock || 0) > 0.5) {
+        insights.push("⚠️ 融資股票占比偏高，請留意槓桿風險");
+      }
+      if ((ratios.cash_balance || 0) < 0.1) {
+        insights.push("⚠️ 現金部位偏低，流動性可能不足");
+      }
+      if ((ratios.cash_balance || 0) > 0.2) {
+        insights.push("✅ 現金部位充足，風險緩衝較佳");
+      }
+    }
+
+    if (pnlByAccount && pnlByAccount.enabled) {
+      const totals = pnlByAccount.total || {};
+      const cashPnl = totals['現金'] || 0;
+      const marginPnl = totals['融資'] || 0;
+      if (cashPnl > 0 && marginPnl > 0) {
+        insights.push("✅ 現金與融資皆有正向貢獻");
+      }
+      if (marginPnl < 0 && cashPnl > 0) {
+        insights.push("⚠️ 融資部位拖累收益，建議降低槓桿曝險");
+      }
+      if (marginPnl > cashPnl && marginPnl > 0) {
+        insights.push("⚠️ 收益高度仰賴融資部位，留意波動放大");
+      }
+    }
+
+    if (insights.length === 0) {
+      insights.push("✅ 資產結構與收益分布穩定");
+    }
+
+    const ul = document.getElementById('insights');
+    insights.forEach(i => {
+      const li = document.createElement('li');
+      li.className = 'insight-item';
+      li.innerText = i;
+      ul.appendChild(li);
+    });
 
     const buildAccountSeries = (series) => {
       const accountSet = new Set();
@@ -210,14 +772,15 @@ fetch('./output.json')
       const drawdown = series.map(item => item.drawdown || 0);
       const maxDrawdown = (timeseries.max_drawdown || {})[period] || 0;
 
-      document.getElementById('max_drawdown').innerText = formatNumber(maxDrawdown);
+      animateValue(maxDrawdownEl, maxDrawdown, formatSignedCurrency, 650);
+      setTrend(maxDrawdown, maxDrawdownEl, maxDrawdownArrow);
 
       const accountSeries = buildAccountSeries(series);
       const datasets = [
         {
           label: 'Total',
           data: totalCumulative,
-          borderColor: '#111827',
+          borderColor: '#e2e8f0',
           borderWidth: 2,
           pointRadius: 0,
           tension: 0.2
@@ -263,8 +826,8 @@ fetch('./output.json')
             datasets: [{
               label: 'Drawdown',
               data: drawdown,
-              borderColor: '#dc2626',
-              backgroundColor: 'rgba(220,38,38,0.2)',
+              borderColor: '#f43f5e',
+              backgroundColor: 'rgba(244,63,94,0.2)',
               fill: true,
               pointRadius: 0,
               tension: 0.2
@@ -280,17 +843,17 @@ fetch('./output.json')
 
     periodButtons.forEach(btn => {
       btn.addEventListener('click', () => {
-        periodButtons.forEach(b => {
-          b.classList.remove('bg-blue-600', 'text-white');
-          b.classList.add('bg-gray-200');
-        });
-        btn.classList.remove('bg-gray-200');
-        btn.classList.add('bg-blue-600', 'text-white');
+        periodButtons.forEach(b => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
         renderTimeseries(btn.dataset.period);
       });
     });
 
     renderTimeseries('daily');
+
+    const lastLabel = (timeseries.daily || []).slice(-1)[0];
+    document.getElementById('lastUpdated').innerText = lastLabel ? lastLabel.date : new Date().toISOString().slice(0, 10);
+    setStatus('LIVE', 'status-good');
 
     // PnL Chart
     const pnlData = data.realized.map((x, i) => ({
@@ -307,21 +870,30 @@ fetch('./output.json')
         datasets: [{
           label: 'PnL',
           data: pnlData.map(d => d.y),
-          borderWidth: 2
+          borderWidth: 2,
+          borderColor: '#22d3ee',
+          backgroundColor: 'rgba(34,211,238,0.15)',
+          pointRadius: 0,
+          tension: 0.2,
+          fill: true
         }]
+      },
+      options: {
+        responsive: true,
+        interaction: { mode: 'index', intersect: false }
       }
     });
 
     // Reconciliation
     const rec = data.reconciliation;
     if (rec && rec.enabled) {
-      document.getElementById('rec_buy').innerText = rec.total_buy_amount.toFixed(2);
-      document.getElementById('rec_sell').innerText = rec.total_sell_amount.toFixed(2);
-      document.getElementById('rec_cashflow').innerText = rec.net_cashflow.toFixed(2);
-      document.getElementById('rec_cost').innerText = rec.remaining_cost_basis.toFixed(2);
-      document.getElementById('rec_realized').innerText = rec.realized_total.toFixed(2);
-      document.getElementById('rec_expected').innerText = rec.expected_realized.toFixed(2);
-      document.getElementById('rec_delta').innerText = rec.delta.toFixed(2);
+      document.getElementById('rec_buy').innerText = formatCurrency(rec.total_buy_amount);
+      document.getElementById('rec_sell').innerText = formatCurrency(rec.total_sell_amount);
+      document.getElementById('rec_cashflow').innerText = formatSignedCurrency(rec.net_cashflow);
+      document.getElementById('rec_cost').innerText = formatCurrency(rec.remaining_cost_basis);
+      document.getElementById('rec_realized').innerText = formatSignedCurrency(rec.realized_total);
+      document.getElementById('rec_expected').innerText = formatSignedCurrency(rec.expected_realized);
+      document.getElementById('rec_delta').innerText = formatSignedCurrency(rec.delta);
       document.getElementById('rec_status').innerText = Math.abs(rec.delta) < 0.01 ? 'OK' : 'CHECK';
     } else {
       document.getElementById('rec_status').innerText = 'N/A';
@@ -330,9 +902,12 @@ fetch('./output.json')
   })
   .catch(err => {
     console.error(err);
+    setLoading(false);
+    setEmpty(true);
+    setStatus('ERROR', 'status-bad');
     alert("讀取資料失敗，請確認 GitHub Actions 是否已執行");
   });
-</script>
++</script>
 
-</body>
-</html>
++</body>
++</html>
