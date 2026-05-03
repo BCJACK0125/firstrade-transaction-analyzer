@@ -1330,9 +1330,10 @@
     "annualized_volatility": 0.2861452243030358,
     "average_daily_return": 0.009540095400410654,
     "risk_free": {
-      "annual_rate": 0.03575000047683716,
-      "source": "yfinance:^IRX",
-      "label": "13-week Treasury Bill (^IRX)"
+      "annual_rate": 0.05,
+      "source": "fallback",
+      "label": "13-week Treasury Bill fallback",
+      "warning": "No module named 'yfinance'"
     },
     "capital_base": 16563.87,
     "method": "Daily realized PnL divided by total external capital, annualized with 252 trading days.",
