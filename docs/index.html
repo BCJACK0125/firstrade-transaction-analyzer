@@ -434,9 +434,12 @@
   </div>
 
 <script>
-Chart.defaults.color = '#cbd5f5';
-Chart.defaults.borderColor = 'rgba(148, 163, 184, 0.2)';
-Chart.defaults.font.family = 'Space Grotesk, Noto Sans TC, PingFang TC, Microsoft JhengHei, sans-serif';
+const chartAvailable = typeof Chart !== 'undefined';
+if (chartAvailable) {
+  Chart.defaults.color = '#cbd5f5';
+  Chart.defaults.borderColor = 'rgba(148, 163, 184, 0.2)';
+  Chart.defaults.font.family = 'Space Grotesk, Noto Sans TC, PingFang TC, Microsoft JhengHei, sans-serif';
+}
 
 const loadingEl = document.getElementById('loadingOverlay');
 const emptyEl = document.getElementById('emptyState');
@@ -608,6 +611,8 @@ fetch('./output.json')
         colors.push('#9ca3af');
       }
 
+      if (!chartAvailable) return;
+
       if (allocationChart) {
         allocationChart.data.labels = labels;
         allocationChart.data.datasets[0].data = values;
@@ -664,6 +669,8 @@ fetch('./output.json')
         values.push(other);
         colors.push('#9ca3af');
       }
+
+      if (!chartAvailable) return;
 
       if (pnlSourceChart) {
         pnlSourceChart.data.labels = labels;
@@ -798,6 +805,8 @@ fetch('./output.json')
         });
       });
 
+      if (!chartAvailable) return;
+
       if (equityChart) {
         equityChart.data.labels = labels;
         equityChart.data.datasets = datasets;
@@ -813,6 +822,8 @@ fetch('./output.json')
           }
         });
       }
+
+      if (!chartAvailable) return;
 
       if (drawdownChart) {
         drawdownChart.data.labels = labels;
@@ -856,33 +867,35 @@ fetch('./output.json')
     setStatus('LIVE', 'status-good');
 
     // PnL Chart
-    const pnlData = data.realized.map((x, i) => ({
-      x: i,
-      y: x.pnl
-    }));
+    if (chartAvailable) {
+      const pnlData = data.realized.map((x, i) => ({
+        x: i,
+        y: x.pnl
+      }));
 
-    const ctx = document.getElementById('pnlChart');
+      const ctx = document.getElementById('pnlChart');
 
-    new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: pnlData.map(d => d.x),
-        datasets: [{
-          label: 'PnL',
-          data: pnlData.map(d => d.y),
-          borderWidth: 2,
-          borderColor: '#22d3ee',
-          backgroundColor: 'rgba(34,211,238,0.15)',
-          pointRadius: 0,
-          tension: 0.2,
-          fill: true
-        }]
-      },
-      options: {
-        responsive: true,
-        interaction: { mode: 'index', intersect: false }
-      }
-    });
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: pnlData.map(d => d.x),
+          datasets: [{
+            label: 'PnL',
+            data: pnlData.map(d => d.y),
+            borderWidth: 2,
+            borderColor: '#22d3ee',
+            backgroundColor: 'rgba(34,211,238,0.15)',
+            pointRadius: 0,
+            tension: 0.2,
+            fill: true
+          }]
+        },
+        options: {
+          responsive: true,
+          interaction: { mode: 'index', intersect: false }
+        }
+      });
+    }
 
     // Reconciliation
     const rec = data.reconciliation;
