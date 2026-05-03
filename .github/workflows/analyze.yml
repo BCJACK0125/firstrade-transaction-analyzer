@@ -31,14 +31,15 @@ jobs:
       - name: Run analysis
         run: python scripts/analyze.py
 
-      - name: Sync outputs to frontend
+      - name: Sync outputs to docs
         run: |
-          cp data/output.json frontend/output.json
+          mkdir -p docs
+          cp data/output.json docs/output.json
 
       - name: Commit results
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
-          git add data/output.json data/report.html frontend/output.json
+          git add data/output.json data/report.html docs/output.json
           git commit -m "update analysis" || echo "no changes"
           git push
