@@ -16,8 +16,40 @@ class Lot:
 
 
 def _normalize_columns(df: pd.DataFrame) -> pd.DataFrame:
-    rename_map = {c: c.strip().lower() for c in df.columns}
+    column_aliases = {
+        "日期": "date",
+        "交易類別": "action",
+        "數量": "qty",
+        "代號": "symbol",
+        "價格": "price",
+        "賬戶類別": "account_type",
+        "說明": "description",
+        "金額": "amount",
+    }
+
+    rename_map = {}
+    for c in df.columns:
+        stripped = c.strip()
+        lowered = stripped.lower()
+        if stripped in column_aliases:
+            rename_map[c] = column_aliases[stripped]
+        elif lowered in column_aliases:
+            rename_map[c] = column_aliases[lowered]
+        else:
+            rename_map[c] = lowered
+
     return df.rename(columns=rename_map)
+
+
+def _to_float(value: object) -> float:
+    if value is None or (isinstance(value, float) and pd.isna(value)):
+        return 0.0
+    if isinstance(value, (int, float)):
+        return float(value)
+    text = str(value).strip().replace(",", "")
+    if text == "":
+        return 0.0
+    return float(text)
 
 
 def _get_column(df: pd.DataFrame, candidates: Iterable[str]) -> str:
@@ -40,12 +72,23 @@ def calculate_fifo_pnl(df: pd.DataFrame) -> Tuple[List[dict], Dict[str, List[dic
     realized: List[dict] = []
     inventory: Dict[str, List[Lot]] = {}
 
+    action_map = {
+        "買進": "buy",
+        "賣出": "sell",
+        "buy": "buy",
+        "sell": "sell",
+    }
+
     for _, row in df.iterrows():
         symbol = str(row[symbol_col]).strip().upper()
-        action = str(row[action_col]).strip().lower()
-        qty = float(row[qty_col])
-        price = float(row[price_col])
+        action_raw = str(row[action_col]).strip()
+        action = action_map.get(action_raw, action_raw.lower())
+        qty = _to_float(row[qty_col])
+        price = _to_float(row[price_col])
         date = str(row[date_col])
+
+        if not symbol or symbol.lower() == "nan":
+            continue
 
         if qty <= 0:
             qty = abs(qty)
@@ -88,7 +131,8 @@ def calculate_fifo_pnl(df: pd.DataFrame) -> Tuple[List[dict], Dict[str, List[dic
                 inventory[symbol].insert(0, Lot(date=date, price=price, qty=-remaining))
             continue
 
-        raise ValueError(f"Unknown action: {action}")
+        # Ignore non-trade rows like dividends, deposits, transfers.
+        continue
 
     inventory_out: Dict[str, List[dict]] = {}
     for symbol, lots in inventory.items():
