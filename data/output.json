@@ -1288,8 +1288,8 @@
       "\u878d\u8cc7": 758.38
     },
     "total_by_account": {
-      "\u878d\u8cc7": 15506.590000000002,
-      "\u73fe\u91d1": 3653.039999999997
+      "\u73fe\u91d1": 3653.039999999997,
+      "\u878d\u8cc7": 15506.590000000002
     },
     "total": 19159.629999999997
   },
@@ -1318,22 +1318,21 @@
       "\u878d\u8cc7": 0.0
     },
     "total": {
-      "\u878d\u8cc7": 668.1402000000002,
-      "\u73fe\u91d1": 1926.5451000000005
+      "\u73fe\u91d1": 1926.5451000000005,
+      "\u878d\u8cc7": 668.1402000000002
     },
     "total_all": 2594.6853000000006
   },
   "risk_metrics": {
     "enabled": true,
-    "sharpe_ratio": 8.231167090037001,
+    "sharpe_ratio": 8.278928282184543,
     "annualized_return": 2.404104040903485,
     "annualized_volatility": 0.2861452243030358,
     "average_daily_return": 0.009540095400410654,
     "risk_free": {
-      "annual_rate": 0.05,
-      "source": "fallback",
-      "label": "13-week Treasury Bill fallback",
-      "warning": "No module named 'yfinance'"
+      "annual_rate": 0.03575000047683716,
+      "source": "yfinance:^IRX",
+      "label": "13-week Treasury Bill (^IRX)"
     },
     "capital_base": 16563.87,
     "method": "Daily realized PnL divided by total external capital, annualized with 252 trading days.",
@@ -1360,18 +1359,7 @@
         "last_trade_date": "2026-04-22",
         "best_trade": 56.04000000000002,
         "worst_trade": 5.340000000000003,
-        "reference": {
-          "qty": 1.0,
-          "price": 361.8502,
-          "market_value": 361.85,
-          "cost": 322.7,
-          "unrealized_pnl": 39.15,
-          "unrealized_pct": 0.1213,
-          "day_pnl": 7.36,
-          "weight": 0.07780000000000001,
-          "beta": 1.96,
-          "pe": 127.21
-        }
+        "reference": {}
       },
       {
         "symbol": "AMZN",
@@ -1389,18 +1377,7 @@
         "last_trade_date": "2026-03-17",
         "best_trade": 4.849999999999994,
         "worst_trade": 4.849999999999994,
-        "reference": {
-          "qty": 2.0,
-          "price": 267.5501,
-          "market_value": 535.1,
-          "cost": 473.1,
-          "unrealized_pnl": 62.0,
-          "unrealized_pct": 0.1311,
-          "day_pnl": 4.98,
-          "weight": 0.115,
-          "beta": 1.38,
-          "pe": 36.69
-        }
+        "reference": {}
       },
       {
         "symbol": "CPER",
@@ -1418,18 +1395,7 @@
         "last_trade_date": null,
         "best_trade": 0.0,
         "worst_trade": 0.0,
-        "reference": {
-          "qty": 3.0,
-          "price": 36.4,
-          "market_value": 109.2,
-          "cost": 110.07,
-          "unrealized_pnl": -0.87,
-          "unrealized_pct": -0.0079,
-          "day_pnl": -0.39,
-          "weight": 0.0235,
-          "beta": 0.49,
-          "pe": 0.0
-        }
+        "reference": {}
       },
       {
         "symbol": "GOOG",
@@ -1447,18 +1413,7 @@
         "last_trade_date": "2026-05-01",
         "best_trade": 66.44,
         "worst_trade": 66.44,
-        "reference": {
-          "qty": 2.0,
-          "price": 382.45,
-          "market_value": 764.9,
-          "cost": 758.38,
-          "unrealized_pnl": 6.52,
-          "unrealized_pct": 0.0086,
-          "day_pnl": 1.02,
-          "weight": 0.16440000000000002,
-          "beta": 1.13,
-          "pe": 32.13
-        }
+        "reference": {}
       },
       {
         "symbol": "LITE",
@@ -1494,18 +1449,7 @@
         "last_trade_date": "2026-03-04",
         "best_trade": 4.300000000000011,
         "worst_trade": 4.300000000000011,
-        "reference": {
-          "qty": 2.0,
-          "price": 413.2416,
-          "market_value": 826.48,
-          "cost": 773.0,
-          "unrealized_pnl": 53.48,
-          "unrealized_pct": 0.0692,
-          "day_pnl": 10.92,
-          "weight": 0.1777,
-          "beta": 1.11,
-          "pe": 26.55
-        }
+        "reference": {}
       },
       {
         "symbol": "NFLX",
@@ -1577,18 +1521,7 @@
         "last_trade_date": null,
         "best_trade": 0.0,
         "worst_trade": 0.0,
-        "reference": {
-          "qty": 1.0,
-          "price": 673.5501,
-          "market_value": 673.55,
-          "cost": 619.5,
-          "unrealized_pnl": 54.05,
-          "unrealized_pct": 0.0872,
-          "day_pnl": 5.81,
-          "weight": 0.1448,
-          "beta": 1.19,
-          "pe": 33.49
-        }
+        "reference": {}
       },
       {
         "symbol": "SATS",
@@ -1606,18 +1539,7 @@
         "last_trade_date": null,
         "best_trade": 0.0,
         "worst_trade": 0.0,
-        "reference": {
-          "qty": 1.0,
-          "price": 123.0,
-          "market_value": 123.0,
-          "cost": 122.27,
-          "unrealized_pnl": 0.73,
-          "unrealized_pct": 0.006,
-          "day_pnl": -0.14,
-          "weight": 0.0264,
-          "beta": 1.0,
-          "pe": 0.0
-        }
+        "reference": {}
       },
       {
         "symbol": "SLV",
@@ -1635,18 +1557,7 @@
         "last_trade_date": null,
         "best_trade": 0.0,
         "worst_trade": 0.0,
-        "reference": {
-          "qty": 3.0,
-          "price": 68.1896,
-          "market_value": 204.57,
-          "cost": 224.84,
-          "unrealized_pnl": -20.27,
-          "unrealized_pct": -0.0902,
-          "day_pnl": 4.59,
-          "weight": 0.044000000000000004,
-          "beta": 0.53,
-          "pe": 0.0
-        }
+        "reference": {}
       },
       {
         "symbol": "SNDK",
@@ -1682,18 +1593,7 @@
         "last_trade_date": "2026-03-05",
         "best_trade": -82.84989999999999,
         "worst_trade": -82.84989999999999,
-        "reference": {
-          "qty": 1.0,
-          "price": 391.34,
-          "market_value": 391.34,
-          "cost": 468.88,
-          "unrealized_pnl": -77.54,
-          "unrealized_pct": -0.1654,
-          "day_pnl": 9.71,
-          "weight": 0.08410000000000001,
-          "beta": 1.92,
-          "pe": 342.02
-        }
+        "reference": {}
       },
       {
         "symbol": "VOO",
@@ -1711,18 +1611,7 @@
         "last_trade_date": null,
         "best_trade": 0.0,
         "worst_trade": 0.0,
-        "reference": {
-          "qty": 1.0,
-          "price": 661.95,
-          "market_value": 661.95,
-          "cost": 629.5,
-          "unrealized_pnl": 32.45,
-          "unrealized_pct": 0.051500000000000004,
-          "day_pnl": 1.37,
-          "weight": 0.1423,
-          "beta": 1.0,
-          "pe": 26.2
-        }
+        "reference": {}
       }
     ]
   },
@@ -1803,110 +1692,9 @@
       }
     ],
     "positions_reference": {
-      "enabled": true,
+      "enabled": false,
       "source": "67744964-positions.xlsx",
-      "checks": [
-        {
-          "symbol": "AMD",
-          "reference_qty": 1.0,
-          "calculated_qty": 1.0,
-          "qty_delta": 0.0,
-          "reference_cost": 322.7,
-          "calculated_cost": 322.7,
-          "cost_delta": 0.0,
-          "status": "ok"
-        },
-        {
-          "symbol": "AMZN",
-          "reference_qty": 2.0,
-          "calculated_qty": 2.0,
-          "qty_delta": 0.0,
-          "reference_cost": 473.1,
-          "calculated_cost": 473.1,
-          "cost_delta": 0.0,
-          "status": "ok"
-        },
-        {
-          "symbol": "CPER",
-          "reference_qty": 3.0,
-          "calculated_qty": 3.0,
-          "qty_delta": 0.0,
-          "reference_cost": 110.07,
-          "calculated_cost": 110.07,
-          "cost_delta": 0.0,
-          "status": "ok"
-        },
-        {
-          "symbol": "GOOG",
-          "reference_qty": 2.0,
-          "calculated_qty": 2.0,
-          "qty_delta": 0.0,
-          "reference_cost": 758.38,
-          "calculated_cost": 758.38,
-          "cost_delta": 0.0,
-          "status": "ok"
-        },
-        {
-          "symbol": "MSFT",
-          "reference_qty": 2.0,
-          "calculated_qty": 2.0,
-          "qty_delta": 0.0,
-          "reference_cost": 773.0,
-          "calculated_cost": 773.0,
-          "cost_delta": 0.0,
-          "status": "ok"
-        },
-        {
-          "symbol": "QQQ",
-          "reference_qty": 1.0,
-          "calculated_qty": 1.0,
-          "qty_delta": 0.0,
-          "reference_cost": 619.5,
-          "calculated_cost": 619.5,
-          "cost_delta": 0.0,
-          "status": "ok"
-        },
-        {
-          "symbol": "SATS",
-          "reference_qty": 1.0,
-          "calculated_qty": 1.0,
-          "qty_delta": 0.0,
-          "reference_cost": 122.27,
-          "calculated_cost": 122.27,
-          "cost_delta": 0.0,
-          "status": "ok"
-        },
-        {
-          "symbol": "SLV",
-          "reference_qty": 3.0,
-          "calculated_qty": 3.0,
-          "qty_delta": 0.0,
-          "reference_cost": 224.84,
-          "calculated_cost": 224.83999999999997,
-          "cost_delta": -2.842170943040401e-14,
-          "status": "ok"
-        },
-        {
-          "symbol": "TSLA",
-          "reference_qty": 1.0,
-          "calculated_qty": 1.0,
-          "qty_delta": 0.0,
-          "reference_cost": 468.88,
-          "calculated_cost": 468.88,
-          "cost_delta": 0.0,
-          "status": "ok"
-        },
-        {
-          "symbol": "VOO",
-          "reference_qty": 1.0,
-          "calculated_qty": 1.0,
-          "qty_delta": 0.0,
-          "reference_cost": 629.5,
-          "calculated_cost": 629.5,
-          "cost_delta": 0.0,
-          "status": "ok"
-        }
-      ]
+      "checks": []
     },
     "status": "ok"
   }

@@ -103,7 +103,10 @@ def _fetch_risk_free_rate() -> dict:
         data = yf.download("^IRX", period="5d", progress=False, auto_adjust=False)
         close = data["Close"].dropna()
         if not close.empty:
-            annual_rate = float(close.iloc[-1]) / 100.0
+            last_close = close.iloc[-1]
+            if hasattr(last_close, "iloc"):
+                last_close = last_close.iloc[0]
+            annual_rate = float(last_close) / 100.0
             return {
                 "annual_rate": annual_rate,
                 "source": "yfinance:^IRX",

@@ -494,7 +494,7 @@
       $('symbolSort').addEventListener('change', renderSymbols);
     };
 
-    fetch('./output.json')
+    fetch(`./output.json?v=${Date.now()}`, { cache: 'no-store' })
       .then(res => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return res.json();
