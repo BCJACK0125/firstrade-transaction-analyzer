@@ -12,7 +12,7 @@
   <h1 class="text-2xl font-bold mb-6">📊 投資健康分析 Dashboard</h1>
 
   <!-- KPI -->
-  <div class="grid grid-cols-4 gap-4 mb-6">
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
     <div class="bg-white p-4 rounded-xl shadow">
       <p class="text-gray-400">總損益</p>
       <h2 id="total" class="text-xl font-bold">-</h2>
@@ -32,6 +32,11 @@
       <p class="text-gray-400">健康分數</p>
       <h2 id="score" class="text-xl font-bold">-</h2>
     </div>
+
+    <div class="bg-white p-4 rounded-xl shadow">
+      <p class="text-gray-400">Max Drawdown</p>
+      <h2 id="max_drawdown" class="text-xl font-bold">-</h2>
+    </div>
   </div>
 
   <!-- 健康分數條 -->
@@ -42,10 +47,43 @@
     </div>
   </div>
 
+  <!-- Timeframe and Charts -->
+  <div class="bg-white p-6 rounded-xl shadow mb-6">
+    <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+      <h3 class="font-semibold">績效曲線</h3>
+      <div class="space-x-2">
+        <button class="period-btn px-3 py-1 rounded bg-blue-600 text-white" data-period="daily">日</button>
+        <button class="period-btn px-3 py-1 rounded bg-gray-200" data-period="weekly">週</button>
+        <button class="period-btn px-3 py-1 rounded bg-gray-200" data-period="monthly">月</button>
+      </div>
+    </div>
+    <canvas id="equityChart"></canvas>
+  </div>
+
+  <div class="bg-white p-6 rounded-xl shadow mb-6">
+    <h3 class="mb-4 font-semibold">回撤（Drawdown）</h3>
+    <canvas id="drawdownChart"></canvas>
+  </div>
+
   <!-- PnL Chart -->
   <div class="bg-white p-6 rounded-xl shadow mb-6">
     <h3 class="mb-4 font-semibold">已實現損益（交易序列）</h3>
     <canvas id="pnlChart"></canvas>
+  </div>
+
+  <!-- Reconciliation -->
+  <div class="bg-white p-6 rounded-xl shadow mb-6">
+    <h3 class="mb-4 font-semibold">對帳檢查</h3>
+    <div class="grid grid-cols-2 gap-4 text-sm text-gray-700">
+      <div>買入金額合計: <span id="rec_buy">-</span></div>
+      <div>賣出金額合計: <span id="rec_sell">-</span></div>
+      <div>現金流合計: <span id="rec_cashflow">-</span></div>
+      <div>剩餘成本: <span id="rec_cost">-</span></div>
+      <div>已實現損益合計: <span id="rec_realized">-</span></div>
+      <div>預期已實現: <span id="rec_expected">-</span></div>
+      <div>差異 (delta): <span id="rec_delta">-</span></div>
+      <div>狀態: <span id="rec_status">-</span></div>
+    </div>
   </div>
 
   <!-- Insights -->
@@ -84,6 +122,135 @@ fetch('./output.json')
       ul.appendChild(li);
     });
 
+    const timeseries = data.timeseries || {};
+    let equityChart = null;
+    let drawdownChart = null;
+
+    const periodButtons = document.querySelectorAll('.period-btn');
+
+    const colorMap = {
+      '現金': '#2563eb',
+      '融資': '#16a34a',
+      'unknown': '#6b7280'
+    };
+
+    const formatNumber = (value) => Number(value || 0).toFixed(2);
+
+    const buildAccountSeries = (series) => {
+      const accountSet = new Set();
+      series.forEach(item => {
+        const byAccount = item.by_account || {};
+        Object.keys(byAccount).forEach(key => accountSet.add(key));
+      });
+
+      const accounts = Array.from(accountSet);
+      const running = {};
+      const cumulative = {};
+      accounts.forEach(key => {
+        running[key] = 0;
+        cumulative[key] = [];
+      });
+
+      series.forEach(item => {
+        const byAccount = item.by_account || {};
+        accounts.forEach(key => {
+          running[key] += Number(byAccount[key] || 0);
+          cumulative[key].push(running[key]);
+        });
+      });
+
+      return { accounts, cumulative };
+    };
+
+    const renderTimeseries = (period) => {
+      const series = timeseries[period] || [];
+      const labels = series.map(item => item.date);
+      const totalCumulative = series.map(item => item.cumulative_total || 0);
+      const drawdown = series.map(item => item.drawdown || 0);
+      const maxDrawdown = (timeseries.max_drawdown || {})[period] || 0;
+
+      document.getElementById('max_drawdown').innerText = formatNumber(maxDrawdown);
+
+      const accountSeries = buildAccountSeries(series);
+      const datasets = [
+        {
+          label: 'Total',
+          data: totalCumulative,
+          borderColor: '#111827',
+          borderWidth: 2,
+          pointRadius: 0,
+          tension: 0.2
+        }
+      ];
+
+      accountSeries.accounts.forEach(key => {
+        datasets.push({
+          label: key,
+          data: accountSeries.cumulative[key],
+          borderColor: colorMap[key] || '#9ca3af',
+          borderWidth: 2,
+          pointRadius: 0,
+          tension: 0.2
+        });
+      });
+
+      if (equityChart) {
+        equityChart.data.labels = labels;
+        equityChart.data.datasets = datasets;
+        equityChart.update();
+      } else {
+        equityChart = new Chart(document.getElementById('equityChart'), {
+          type: 'line',
+          data: { labels, datasets },
+          options: {
+            responsive: true,
+            interaction: { mode: 'index', intersect: false },
+            scales: { y: { ticks: { callback: (v) => v } } }
+          }
+        });
+      }
+
+      if (drawdownChart) {
+        drawdownChart.data.labels = labels;
+        drawdownChart.data.datasets[0].data = drawdown;
+        drawdownChart.update();
+      } else {
+        drawdownChart = new Chart(document.getElementById('drawdownChart'), {
+          type: 'line',
+          data: {
+            labels,
+            datasets: [{
+              label: 'Drawdown',
+              data: drawdown,
+              borderColor: '#dc2626',
+              backgroundColor: 'rgba(220,38,38,0.2)',
+              fill: true,
+              pointRadius: 0,
+              tension: 0.2
+            }]
+          },
+          options: {
+            responsive: true,
+            interaction: { mode: 'index', intersect: false }
+          }
+        });
+      }
+    };
+
+    periodButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        periodButtons.forEach(b => {
+          b.classList.remove('bg-blue-600', 'text-white');
+          b.classList.add('bg-gray-200');
+        });
+        btn.classList.remove('bg-gray-200');
+        btn.classList.add('bg-blue-600', 'text-white');
+        renderTimeseries(btn.dataset.period);
+      });
+    });
+
+    renderTimeseries('daily');
+
     // PnL Chart
     const pnlData = data.realized.map((x, i) => ({
       x: i,
@@ -103,6 +270,21 @@ fetch('./output.json')
         }]
       }
     });
+
+    // Reconciliation
+    const rec = data.reconciliation;
+    if (rec && rec.enabled) {
+      document.getElementById('rec_buy').innerText = rec.total_buy_amount.toFixed(2);
+      document.getElementById('rec_sell').innerText = rec.total_sell_amount.toFixed(2);
+      document.getElementById('rec_cashflow').innerText = rec.net_cashflow.toFixed(2);
+      document.getElementById('rec_cost').innerText = rec.remaining_cost_basis.toFixed(2);
+      document.getElementById('rec_realized').innerText = rec.realized_total.toFixed(2);
+      document.getElementById('rec_expected').innerText = rec.expected_realized.toFixed(2);
+      document.getElementById('rec_delta').innerText = rec.delta.toFixed(2);
+      document.getElementById('rec_status').innerText = Math.abs(rec.delta) < 0.01 ? 'OK' : 'CHECK';
+    } else {
+      document.getElementById('rec_status').innerText = 'N/A';
+    }
 
   })
   .catch(err => {

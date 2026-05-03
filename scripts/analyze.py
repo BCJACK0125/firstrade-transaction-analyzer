@@ -137,6 +137,85 @@ def _compute_reconciliation(
     }
 
 
+def _build_timeseries(realized: list[dict]) -> dict:
+    if not realized:
+        return {
+            "daily": [],
+            "weekly": [],
+            "monthly": [],
+            "max_drawdown": {"daily": 0.0, "weekly": 0.0, "monthly": 0.0},
+        }
+
+    df = pd.DataFrame(realized)
+    if "realized_date" not in df.columns:
+        df["realized_date"] = df.get("sell_date")
+        if "side" in df.columns:
+            df.loc[df["side"] == "short", "realized_date"] = df.get("buy_date")
+
+    df["realized_date"] = pd.to_datetime(df["realized_date"], errors="coerce")
+    df = df.dropna(subset=["realized_date"])
+    if df.empty:
+        return {
+            "daily": [],
+            "weekly": [],
+            "monthly": [],
+            "max_drawdown": {"daily": 0.0, "weekly": 0.0, "monthly": 0.0},
+        }
+
+    if "account_type" not in df.columns:
+        df["account_type"] = "unknown"
+    else:
+        df["account_type"] = df["account_type"].fillna("unknown")
+
+    def _aggregate(freq: str) -> tuple[list[dict], float]:
+        period = df["realized_date"].dt.to_period(freq).dt.to_timestamp()
+        grouped = (
+            df.assign(period=period)
+            .groupby(["period", "account_type"], dropna=False)["pnl"]
+            .sum()
+            .reset_index()
+        )
+
+        pivot = grouped.pivot(index="period", columns="account_type", values="pnl").fillna(0.0)
+        pivot = pivot.sort_index()
+        pivot["total"] = pivot.sum(axis=1)
+        pivot["cumulative_total"] = pivot["total"].cumsum()
+        pivot["drawdown"] = pivot["cumulative_total"] - pivot["cumulative_total"].cummax()
+
+        rows: list[dict] = []
+        account_cols = [c for c in pivot.columns if c not in ["total", "cumulative_total", "drawdown"]]
+
+        for idx, row in pivot.iterrows():
+            by_account = {c: float(row[c]) for c in account_cols}
+            rows.append(
+                {
+                    "date": idx.strftime("%Y-%m-%d"),
+                    "total": float(row["total"]),
+                    "by_account": by_account,
+                    "cumulative_total": float(row["cumulative_total"]),
+                    "drawdown": float(row["drawdown"]),
+                }
+            )
+
+        max_drawdown = float(pivot["drawdown"].min()) if not pivot.empty else 0.0
+        return rows, max_drawdown
+
+    daily, dd_daily = _aggregate("D")
+    weekly, dd_weekly = _aggregate("W")
+    monthly, dd_monthly = _aggregate("M")
+
+    return {
+        "daily": daily,
+        "weekly": weekly,
+        "monthly": monthly,
+        "max_drawdown": {
+            "daily": dd_daily,
+            "weekly": dd_weekly,
+            "monthly": dd_monthly,
+        },
+    }
+
+
 def main() -> None:
     if not CSV_PATH.exists():
         raise FileNotFoundError(f"Missing CSV: {CSV_PATH}")
@@ -165,12 +244,14 @@ def main() -> None:
 
     health = calculate_health(realized, unrealized)
     reconciliation = _compute_reconciliation(df, realized, inventory)
+    timeseries = _build_timeseries(realized)
 
     output = {
         "realized": realized,
         "unrealized": unrealized,
         "health": health,
         "reconciliation": reconciliation,
+        "timeseries": timeseries,
     }
 
     JSON_PATH.parent.mkdir(parents=True, exist_ok=True)

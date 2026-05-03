@@ -13,6 +13,7 @@ class Lot:
     date: str
     price: float
     qty: float
+    account_type: str
 
 
 def _normalize_columns(df: pd.DataFrame) -> pd.DataFrame:
@@ -68,6 +69,10 @@ def calculate_fifo_pnl(df: pd.DataFrame) -> Tuple[List[dict], Dict[str, List[dic
     action_col = _get_column(df, ["action", "side", "type"])
     qty_col = _get_column(df, ["qty", "quantity", "shares"])
     price_col = _get_column(df, ["price", "trade_price", "avg_price"])
+    try:
+        account_col = _get_column(df, ["account_type", "account", "accounttype"])
+    except ValueError:
+        account_col = None
 
     realized: List[dict] = []
     inventory: Dict[str, List[Lot]] = {}
@@ -86,6 +91,11 @@ def calculate_fifo_pnl(df: pd.DataFrame) -> Tuple[List[dict], Dict[str, List[dic
         qty = _to_float(row[qty_col])
         price = _to_float(row[price_col])
         date = str(row[date_col])
+        account_type = "unknown"
+        if account_col:
+            account_type = str(row[account_col]).strip()
+            if not account_type or account_type.lower() == "nan":
+                account_type = "unknown"
 
         if not symbol or symbol.lower() == "nan":
             continue
@@ -114,6 +124,8 @@ def calculate_fifo_pnl(df: pd.DataFrame) -> Tuple[List[dict], Dict[str, List[dic
                         "qty": matched,
                         "pnl": pnl,
                         "side": "short",
+                        "account_type": lot.account_type,
+                        "realized_date": date,
                     }
                 )
 
@@ -124,7 +136,7 @@ def calculate_fifo_pnl(df: pd.DataFrame) -> Tuple[List[dict], Dict[str, List[dic
                     lots.pop(0)
 
             if remaining > 0:
-                lots.append(Lot(date=date, price=price, qty=remaining))
+                lots.append(Lot(date=date, price=price, qty=remaining, account_type=account_type))
             continue
 
         if action.startswith("s"):
@@ -148,6 +160,8 @@ def calculate_fifo_pnl(df: pd.DataFrame) -> Tuple[List[dict], Dict[str, List[dic
                         "qty": matched,
                         "pnl": pnl,
                         "side": "long",
+                        "account_type": lot.account_type,
+                        "realized_date": date,
                     }
                 )
 
@@ -159,7 +173,9 @@ def calculate_fifo_pnl(df: pd.DataFrame) -> Tuple[List[dict], Dict[str, List[dic
 
             if remaining > 0:
                 # Short sell or missing inventory; record as negative inventory lot.
-                inventory[symbol].append(Lot(date=date, price=price, qty=-remaining))
+                inventory[symbol].append(
+                    Lot(date=date, price=price, qty=-remaining, account_type=account_type)
+                )
             continue
 
         # Ignore non-trade rows like dividends, deposits, transfers.
@@ -168,7 +184,14 @@ def calculate_fifo_pnl(df: pd.DataFrame) -> Tuple[List[dict], Dict[str, List[dic
     inventory_out: Dict[str, List[dict]] = {}
     for symbol, lots in inventory.items():
         inventory_out[symbol] = [
-            {"date": lot.date, "price": lot.price, "qty": lot.qty} for lot in lots if lot.qty != 0
+            {
+                "date": lot.date,
+                "price": lot.price,
+                "qty": lot.qty,
+                "account_type": lot.account_type,
+            }
+            for lot in lots
+            if lot.qty != 0
         ]
 
     return realized, inventory_out
