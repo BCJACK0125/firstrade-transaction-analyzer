@@ -64,12 +64,26 @@ def _to_float(value: object) -> float:
 def _mock_prices(df: pd.DataFrame) -> dict:
     symbol_col = _get_column(df, ["symbol", "ticker"])
     price_col = _get_column(df, ["price", "trade_price", "avg_price"])
+    action_col = _get_column(df, ["action", "side", "type"])
+    action_map = {
+        "買進": "buy",
+        "賣出": "sell",
+        "buy": "buy",
+        "sell": "sell",
+    }
     prices = {}
     for _, row in df.iterrows():
         symbol = str(row[symbol_col]).strip().upper()
         if not symbol or symbol.lower() == "nan":
             continue
-        prices[symbol] = _to_float(row[price_col])
+        action_raw = str(row[action_col]).strip()
+        action = action_map.get(action_raw, action_raw.lower())
+        if not (action.startswith("b") or action.startswith("s")):
+            continue
+        price = _to_float(row[price_col])
+        if price <= 0:
+            continue
+        prices[symbol] = price
     return prices
 
 
@@ -82,7 +96,9 @@ def main() -> None:
 
     if "date" in df.columns:
         df["date"] = pd.to_datetime(df["date"], errors="coerce")
-        df = df.sort_values("date")
+        df["_row_order"] = range(len(df))
+        df = df.sort_values(["date", "_row_order"], kind="mergesort")
+        df = df.drop(columns=["_row_order"])
     else:
         df = df.sort_index()
 
