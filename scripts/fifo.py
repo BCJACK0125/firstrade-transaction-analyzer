@@ -94,7 +94,37 @@ def calculate_fifo_pnl(df: pd.DataFrame) -> Tuple[List[dict], Dict[str, List[dic
             qty = abs(qty)
 
         if action.startswith("b"):
-            inventory.setdefault(symbol, []).append(Lot(date=date, price=price, qty=qty))
+            if symbol not in inventory:
+                inventory[symbol] = []
+
+            remaining = qty
+            lots = inventory[symbol]
+            while remaining > 0 and lots and lots[0].qty < 0:
+                lot = lots[0]
+                matched = min(remaining, abs(lot.qty))
+                pnl = (lot.price - price) * matched
+
+                realized.append(
+                    {
+                        "symbol": symbol,
+                        "buy_date": date,
+                        "buy_price": price,
+                        "sell_date": lot.date,
+                        "sell_price": lot.price,
+                        "qty": matched,
+                        "pnl": pnl,
+                        "side": "short",
+                    }
+                )
+
+                lot.qty += matched
+                remaining -= matched
+
+                if lot.qty >= 0:
+                    lots.pop(0)
+
+            if remaining > 0:
+                lots.append(Lot(date=date, price=price, qty=remaining))
             continue
 
         if action.startswith("s"):
@@ -117,6 +147,7 @@ def calculate_fifo_pnl(df: pd.DataFrame) -> Tuple[List[dict], Dict[str, List[dic
                         "sell_price": price,
                         "qty": matched,
                         "pnl": pnl,
+                        "side": "long",
                     }
                 )
 
@@ -128,7 +159,7 @@ def calculate_fifo_pnl(df: pd.DataFrame) -> Tuple[List[dict], Dict[str, List[dic
 
             if remaining > 0:
                 # Short sell or missing inventory; record as negative inventory lot.
-                inventory[symbol].insert(0, Lot(date=date, price=price, qty=-remaining))
+                inventory[symbol].append(Lot(date=date, price=price, qty=-remaining))
             continue
 
         # Ignore non-trade rows like dividends, deposits, transfers.

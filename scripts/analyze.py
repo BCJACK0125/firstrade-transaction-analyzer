@@ -87,6 +87,56 @@ def _mock_prices(df: pd.DataFrame) -> dict:
     return prices
 
 
+def _compute_reconciliation(
+    df: pd.DataFrame, realized: list[dict], inventory: dict[str, list[dict]]
+) -> dict:
+    try:
+        action_col = _get_column(df, ["action", "side", "type"])
+        amount_col = _get_column(df, ["amount", "total", "cashflow"])
+    except ValueError as exc:
+        return {"enabled": False, "reason": str(exc)}
+
+    action_map = {
+        "買進": "buy",
+        "賣出": "sell",
+        "buy": "buy",
+        "sell": "sell",
+    }
+
+    total_buy = 0.0
+    total_sell = 0.0
+
+    for _, row in df.iterrows():
+        action_raw = str(row[action_col]).strip()
+        action = action_map.get(action_raw, action_raw.lower())
+        if action.startswith("b"):
+            total_buy += _to_float(row[amount_col])
+        elif action.startswith("s"):
+            total_sell += _to_float(row[amount_col])
+
+    net_cashflow = total_buy + total_sell
+
+    remaining_cost_basis = 0.0
+    for lots in inventory.values():
+        for lot in lots:
+            remaining_cost_basis += float(lot["price"]) * float(lot["qty"])
+
+    realized_total = sum(float(item["pnl"]) for item in realized)
+    expected_realized = net_cashflow + remaining_cost_basis
+    delta = realized_total - expected_realized
+
+    return {
+        "enabled": True,
+        "total_buy_amount": total_buy,
+        "total_sell_amount": total_sell,
+        "net_cashflow": net_cashflow,
+        "remaining_cost_basis": remaining_cost_basis,
+        "realized_total": realized_total,
+        "expected_realized": expected_realized,
+        "delta": delta,
+    }
+
+
 def main() -> None:
     if not CSV_PATH.exists():
         raise FileNotFoundError(f"Missing CSV: {CSV_PATH}")
@@ -114,11 +164,13 @@ def main() -> None:
             unrealized.append(pnl)
 
     health = calculate_health(realized, unrealized)
+    reconciliation = _compute_reconciliation(df, realized, inventory)
 
     output = {
         "realized": realized,
         "unrealized": unrealized,
         "health": health,
+        "reconciliation": reconciliation,
     }
 
     JSON_PATH.parent.mkdir(parents=True, exist_ok=True)
