@@ -39,6 +39,25 @@
     </div>
   </div>
 
+  <!-- 資產概況 -->
+  <div class="bg-white p-6 rounded-xl shadow mb-6">
+    <h3 class="mb-4 font-semibold">資產概況</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="bg-gray-50 p-4 rounded-lg">
+        <p class="text-gray-400">投入成本</p>
+        <h2 id="invested" class="text-xl font-bold">-</h2>
+        <p class="text-xs text-gray-500">匯入資金與線上匯款回饋</p>
+      </div>
+      <div class="bg-gray-50 p-4 rounded-lg">
+        <p class="text-gray-400">目前總資產價值</p>
+        <h2 id="asset_total" class="text-xl font-bold">-</h2>
+        <p class="text-xs text-gray-500">
+          現金: <span id="asset_cash">-</span> / 融資: <span id="asset_margin">-</span>
+        </p>
+      </div>
+    </div>
+  </div>
+
   <!-- 健康分數條 -->
   <div class="bg-white p-6 rounded-xl shadow mb-6">
     <p class="mb-2 text-gray-500">健康分數</p>
@@ -98,6 +117,7 @@ fetch('./output.json')
   .then(data => {
 
     const health = data.health;
+    const formatNumber = (value) => Number(value || 0).toFixed(2);
 
     // KPI
     document.getElementById('total').innerText = health.total.toFixed(2);
@@ -107,6 +127,29 @@ fetch('./output.json')
 
     // Score bar
     document.getElementById('scoreBar').style.width = health.score + "%";
+
+    // 資產概況
+    const invested = data.invested_cost;
+    if (invested && invested.enabled) {
+      document.getElementById('invested').innerText = formatNumber(invested.total);
+    } else {
+      document.getElementById('invested').innerText = 'N/A';
+    }
+
+    const assetValue = data.asset_value;
+    if (assetValue && assetValue.enabled) {
+      const totals = assetValue.total_by_account || {};
+      const cashValue = totals['現金'] || 0;
+      const marginValue = totals['融資'] || 0;
+      const totalValue = assetValue.total || (cashValue + marginValue);
+      document.getElementById('asset_total').innerText = formatNumber(totalValue);
+      document.getElementById('asset_cash').innerText = formatNumber(cashValue);
+      document.getElementById('asset_margin').innerText = formatNumber(marginValue);
+    } else {
+      document.getElementById('asset_total').innerText = 'N/A';
+      document.getElementById('asset_cash').innerText = 'N/A';
+      document.getElementById('asset_margin').innerText = 'N/A';
+    }
 
     // Insights（簡單規則）
     const insights = [];
@@ -133,8 +176,6 @@ fetch('./output.json')
       '融資': '#16a34a',
       'unknown': '#6b7280'
     };
-
-    const formatNumber = (value) => Number(value || 0).toFixed(2);
 
     const buildAccountSeries = (series) => {
       const accountSet = new Set();

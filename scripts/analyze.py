@@ -216,6 +216,89 @@ def _build_timeseries(realized: list[dict]) -> dict:
     }
 
 
+def _compute_invested_cost(df: pd.DataFrame) -> dict:
+    try:
+        action_col = _get_column(df, ["action", "side", "type"])
+        desc_col = _get_column(df, ["description", "desc", "memo"])
+        amount_col = _get_column(df, ["amount", "total", "cashflow"])
+    except ValueError as exc:
+        return {"enabled": False, "reason": str(exc)}
+
+    try:
+        account_col = _get_column(df, ["account_type", "account", "accounttype"])
+    except ValueError:
+        account_col = None
+
+    total = 0.0
+    by_account: dict[str, float] = {}
+
+    for _, row in df.iterrows():
+        action_raw = str(row[action_col]).strip()
+        desc = str(row[desc_col]).strip().lower()
+        amount = _to_float(row[amount_col])
+
+        is_deposit = action_raw == "存款" and "wire funds received" in desc
+        is_rebate = action_raw == "其他" and "rebate for wire" in desc
+
+        if not (is_deposit or is_rebate):
+            continue
+
+        total += amount
+        account = "unknown"
+        if account_col:
+            account = str(row[account_col]).strip() or "unknown"
+        by_account[account] = by_account.get(account, 0.0) + amount
+
+    return {"enabled": True, "total": total, "by_account": by_account}
+
+
+def _compute_asset_value(
+    df: pd.DataFrame, inventory: dict[str, list[dict]], prices: dict
+) -> dict:
+    try:
+        amount_col = _get_column(df, ["amount", "total", "cashflow"])
+    except ValueError as exc:
+        return {"enabled": False, "reason": str(exc)}
+
+    try:
+        account_col = _get_column(df, ["account_type", "account", "accounttype"])
+    except ValueError:
+        account_col = None
+
+    cash_by_account: dict[str, float] = {}
+    for _, row in df.iterrows():
+        account = "unknown"
+        if account_col:
+            account = str(row[account_col]).strip() or "unknown"
+        cash_by_account[account] = cash_by_account.get(account, 0.0) + _to_float(row[amount_col])
+
+    holdings_by_account: dict[str, float] = {}
+    for symbol, lots in inventory.items():
+        price = prices.get(symbol, 100.0)
+        for lot in lots:
+            account = str(lot.get("account_type", "unknown") or "unknown")
+            holdings_by_account[account] = holdings_by_account.get(account, 0.0) + (
+                float(lot["qty"]) * float(price)
+            )
+
+    total_by_account: dict[str, float] = {}
+    accounts = set(cash_by_account) | set(holdings_by_account)
+    for account in accounts:
+        total_by_account[account] = cash_by_account.get(account, 0.0) + holdings_by_account.get(
+            account, 0.0
+        )
+
+    total = sum(total_by_account.values())
+
+    return {
+        "enabled": True,
+        "cash_by_account": cash_by_account,
+        "holdings_by_account": holdings_by_account,
+        "total_by_account": total_by_account,
+        "total": total,
+    }
+
+
 def main() -> None:
     if not CSV_PATH.exists():
         raise FileNotFoundError(f"Missing CSV: {CSV_PATH}")
@@ -245,6 +328,8 @@ def main() -> None:
     health = calculate_health(realized, unrealized)
     reconciliation = _compute_reconciliation(df, realized, inventory)
     timeseries = _build_timeseries(realized)
+    invested_cost = _compute_invested_cost(df)
+    asset_value = _compute_asset_value(df, inventory, prices)
 
     output = {
         "realized": realized,
@@ -252,6 +337,8 @@ def main() -> None:
         "health": health,
         "reconciliation": reconciliation,
         "timeseries": timeseries,
+        "invested_cost": invested_cost,
+        "asset_value": asset_value,
     }
 
     JSON_PATH.parent.mkdir(parents=True, exist_ok=True)
