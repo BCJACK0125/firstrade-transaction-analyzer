@@ -127,7 +127,7 @@ def _fetch_risk_free_rate() -> dict:
     }
 
 
-def _mock_prices(df: pd.DataFrame) -> dict:
+def _last_trade_prices(df: pd.DataFrame) -> dict:
     symbol_col = _get_column(df, ["symbol", "ticker"])
     price_col = _get_column(df, ["price", "trade_price", "avg_price"])
     action_col = _get_column(df, ["action", "side", "type"])
@@ -153,7 +153,79 @@ def _mock_prices(df: pd.DataFrame) -> dict:
     return prices
 
 
-def _inventory_summary(inventory: dict[str, list[dict]], prices: dict) -> dict:
+def _positions_price_map(positions_df: pd.DataFrame | None) -> dict:
+    if positions_df is None:
+        return {}
+
+    prices = {}
+    for _, row in positions_df.iterrows():
+        symbol = str(row.get("代號", "")).strip().upper()
+        price = _to_float(row.get("價格"))
+        if symbol and symbol != "NAN" and price > 0:
+            prices[symbol] = price
+    return prices
+
+
+def _fetch_market_prices(symbols: list[str], fallback_prices: dict, reference_prices: dict) -> dict:
+    prices: dict[str, float] = {}
+    sources: dict[str, str] = {}
+    warnings: dict[str, str] = {}
+
+    clean_symbols = sorted({symbol.strip().upper() for symbol in symbols if symbol})
+    if clean_symbols:
+        try:
+            import yfinance as yf
+
+            data = yf.download(
+                tickers=" ".join(clean_symbols),
+                period="5d",
+                group_by="ticker",
+                progress=False,
+                auto_adjust=False,
+                threads=True,
+            )
+
+            for symbol in clean_symbols:
+                close = None
+                try:
+                    if len(clean_symbols) == 1:
+                        close = data["Close"].dropna()
+                    else:
+                        close = data[symbol]["Close"].dropna()
+                except Exception:
+                    close = None
+
+                if close is None or close.empty:
+                    continue
+
+                price = float(close.iloc[-1])
+                if price > 0:
+                    prices[symbol] = price
+                    sources[symbol] = "yfinance"
+        except Exception as exc:
+            warnings["yfinance"] = str(exc)
+
+    for symbol in clean_symbols:
+        if symbol in prices:
+            continue
+        reference_price = float(reference_prices.get(symbol, 0.0))
+        if reference_price > 0:
+            prices[symbol] = reference_price
+            sources[symbol] = "positions_reference"
+            continue
+        fallback_price = float(fallback_prices.get(symbol, 0.0))
+        if fallback_price > 0:
+            prices[symbol] = fallback_price
+            sources[symbol] = "last_transaction"
+
+    return {
+        "prices": prices,
+        "sources": sources,
+        "warnings": warnings,
+    }
+
+
+def _inventory_summary(inventory: dict[str, list[dict]], prices: dict, price_sources: dict) -> dict:
     summary: dict[str, dict] = {}
     for symbol, lots in inventory.items():
         qty = sum(float(lot["qty"]) for lot in lots)
@@ -168,6 +240,7 @@ def _inventory_summary(inventory: dict[str, list[dict]], prices: dict) -> dict:
             "avg_cost": cost / qty if qty else 0.0,
             "cost": cost,
             "last_price": price,
+            "price_source": price_sources.get(symbol, "missing"),
             "market_value": market_value,
             "unrealized_pnl": market_value - cost,
             "lots": lots,
@@ -413,6 +486,7 @@ def _compute_symbol_analysis(
                 "cost": float(inv.get("cost", ref.get("cost", 0.0))),
                 "avg_cost": float(inv.get("avg_cost", ref.get("cost", 0.0) / qty if qty else 0.0)),
                 "last_price": float(inv.get("last_price", ref.get("price", 0.0))),
+                "price_source": inv.get("price_source", "positions_reference" if ref else "missing"),
                 "last_trade_date": None if pd.isna(last_trade) else last_trade.strftime("%Y-%m-%d"),
                 "best_trade": max([float(item.get("pnl", 0.0)) for item in trades], default=0.0),
                 "worst_trade": min([float(item.get("pnl", 0.0)) for item in trades], default=0.0),
@@ -702,18 +776,29 @@ def main() -> None:
     else:
         df = df.sort_index()
 
+    positions_df = _read_positions_reference()
     realized, inventory = calculate_fifo_pnl(df)
 
-    prices = _mock_prices(df)
+    last_trade_prices = _last_trade_prices(df)
+    held_symbols = [
+        symbol
+        for symbol, lots in inventory.items()
+        if abs(sum(float(lot["qty"]) for lot in lots)) > 1e-9
+    ]
+    market_price_info = _fetch_market_prices(
+        held_symbols,
+        fallback_prices=last_trade_prices,
+        reference_prices=_positions_price_map(positions_df),
+    )
+    prices = {**last_trade_prices, **market_price_info["prices"]}
 
-    inventory_summary = _inventory_summary(inventory, prices)
-    positions_df = _read_positions_reference()
+    inventory_summary = _inventory_summary(inventory, prices, market_price_info["sources"])
 
     unrealized = []
     unrealized_by_account: dict[str, float] = {}
     for stock, lots in inventory.items():
         for lot in lots:
-            price = prices.get(stock, 100.0)
+            price = prices.get(stock, 0.0)
             pnl = (price - float(lot["price"])) * float(lot["qty"])
             unrealized.append(pnl)
             account = str(lot.get("account_type", "unknown") or "unknown")
@@ -750,6 +835,7 @@ def main() -> None:
         "asset_value": asset_value,
         "asset_allocation": asset_allocation,
         "pnl_by_account": pnl_by_account,
+        "market_prices": market_price_info,
         "risk_metrics": risk_metrics,
         "symbol_analysis": symbol_analysis,
         "metric_audit": metric_audit,

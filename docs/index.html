@@ -451,6 +451,7 @@
             <p class="label">Trades / Win</p>
             <p>${row.trade_count} / ${pct(row.win_rate)}</p>
             <p class="text-xs muted">Cost ${fmtMoney(row.cost)} · Value ${fmtMoney(row.market_value)}</p>
+            <p class="text-xs muted">Price source: ${row.price_source || 'missing'}</p>
           </div>
         </article>
       `).join('') || '<div class="p-4 text-sm muted">沒有符合條件的個股。</div>';
