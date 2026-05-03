@@ -98,6 +98,77 @@
     .recommendation.warn { border-color: rgba(245, 158, 11, 0.44); }
     .recommendation.info { border-color: rgba(34, 211, 238, 0.36); }
 
+    .app-section {
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.42s ease, transform 0.42s ease;
+    }
+
+    body.is-ready .app-section {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    body.is-loading .app-section {
+      position: absolute;
+      left: -9999px;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      opacity: 0;
+    }
+
+    body.is-ready #skeletonDashboard,
+    body.is-error #skeletonDashboard {
+      display: none;
+    }
+
+    .skeleton-line,
+    .skeleton-block,
+    .skeleton-pill {
+      position: relative;
+      overflow: hidden;
+      border-radius: 8px;
+      background: rgba(30, 41, 59, 0.72);
+      border: 1px solid rgba(125, 211, 252, 0.08);
+    }
+
+    .skeleton-line::after,
+    .skeleton-block::after,
+    .skeleton-pill::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      transform: translateX(-100%);
+      background: linear-gradient(90deg, transparent, rgba(125, 211, 252, 0.22), transparent);
+      animation: skeleton-scan 1.35s linear infinite;
+    }
+
+    .skeleton-line { height: 14px; }
+    .skeleton-block { min-height: 118px; }
+    .skeleton-pill { width: 84px; height: 24px; border-radius: 999px; }
+
+    .skeleton-card {
+      min-height: 112px;
+      padding: 16px;
+      border-radius: 8px;
+      background: rgba(15, 23, 42, 0.72);
+      border: 1px solid rgba(148, 163, 184, 0.16);
+    }
+
+    .skeleton-row {
+      display: grid;
+      grid-template-columns: minmax(120px, 0.9fr) repeat(4, minmax(96px, 1fr)) minmax(140px, 1.1fr);
+      gap: 14px;
+      align-items: center;
+      padding: 14px;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+    }
+
+    @keyframes skeleton-scan {
+      to { transform: translateX(100%); }
+    }
+
     select, button {
       border: 1px solid rgba(125, 211, 252, 0.26);
       border-radius: 8px;
@@ -141,11 +212,12 @@
     @media (max-width: 860px) {
       .shell { padding: 16px; }
       .symbol-row, .audit-row { grid-template-columns: 1fr; gap: 6px; }
+      .skeleton-row { grid-template-columns: 1fr; gap: 8px; }
       .chart-box { height: 240px; }
     }
   </style>
 </head>
-<body>
+<body class="is-loading">
   <main class="shell space-y-5">
     <header class="panel p-5">
       <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
@@ -177,7 +249,70 @@
       <p class="mt-2 text-sm muted">請確認 `docs/output.json` 已由分析流程產生。</p>
     </section>
 
-    <section class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+    <section id="skeletonDashboard" class="space-y-5">
+      <section class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <div class="skeleton-card"><div class="skeleton-line w-24"></div><div class="skeleton-line mt-5 w-36"></div><div class="skeleton-line mt-3 w-20"></div></div>
+        <div class="skeleton-card"><div class="skeleton-line w-28"></div><div class="skeleton-line mt-5 w-32"></div><div class="skeleton-line mt-3 w-24"></div></div>
+        <div class="skeleton-card"><div class="skeleton-line w-32"></div><div class="skeleton-line mt-5 w-28"></div><div class="skeleton-line mt-3 w-24"></div></div>
+        <div class="skeleton-card"><div class="skeleton-line w-28"></div><div class="skeleton-line mt-5 w-24"></div><div class="skeleton-line mt-3 w-36"></div></div>
+        <div class="skeleton-card"><div class="skeleton-line w-20"></div><div class="skeleton-line mt-5 w-24"></div><div class="skeleton-line mt-3 w-20"></div></div>
+        <div class="skeleton-card"><div class="skeleton-line w-28"></div><div class="skeleton-line mt-5 w-24"></div><div class="skeleton-line mt-3 w-24"></div></div>
+        <div class="skeleton-card"><div class="skeleton-line w-24"></div><div class="skeleton-line mt-5 w-20"></div><div class="skeleton-line mt-3 w-28"></div></div>
+        <div class="skeleton-card"><div class="skeleton-line w-24"></div><div class="skeleton-line mt-5 w-16"></div><div class="skeleton-line mt-3 w-24"></div></div>
+      </section>
+
+      <section class="panel p-5">
+        <div class="mb-4 flex items-center justify-between gap-3">
+          <div class="space-y-2">
+            <div class="skeleton-line w-28"></div>
+            <div class="skeleton-line w-40"></div>
+          </div>
+          <div class="skeleton-pill"></div>
+        </div>
+        <div class="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+          <div class="skeleton-block"></div>
+          <div class="skeleton-block"></div>
+          <div class="skeleton-block"></div>
+        </div>
+      </section>
+
+      <section class="grid gap-5 xl:grid-cols-3">
+        <div class="panel p-5 xl:col-span-2">
+          <div class="mb-4 flex items-center justify-between">
+            <div class="space-y-2"><div class="skeleton-line w-28"></div><div class="skeleton-line w-44"></div></div>
+            <div class="flex gap-2"><div class="skeleton-pill"></div><div class="skeleton-pill"></div><div class="skeleton-pill"></div></div>
+          </div>
+          <div class="skeleton-block" style="height:280px"></div>
+        </div>
+        <div class="panel p-5">
+          <div class="space-y-2"><div class="skeleton-line w-28"></div><div class="skeleton-line w-36"></div></div>
+          <div class="skeleton-block mt-4" style="height:280px"></div>
+          <div class="mt-4 space-y-2"><div class="skeleton-line"></div><div class="skeleton-line w-5/6"></div><div class="skeleton-line w-2/3"></div></div>
+        </div>
+      </section>
+
+      <section class="grid gap-5 xl:grid-cols-3">
+        <div class="panel p-5 xl:col-span-2">
+          <div class="mb-4 flex items-center justify-between">
+            <div class="space-y-2"><div class="skeleton-line w-32"></div><div class="skeleton-line w-44"></div></div>
+            <div class="flex gap-2"><div class="skeleton-pill"></div><div class="skeleton-pill"></div></div>
+          </div>
+          <div class="card">
+            <div class="skeleton-row"><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div></div>
+            <div class="skeleton-row"><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div></div>
+            <div class="skeleton-row"><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div></div>
+          </div>
+        </div>
+        <div class="panel p-5">
+          <div class="space-y-2"><div class="skeleton-line w-28"></div><div class="skeleton-line w-44"></div></div>
+          <div class="mt-5 grid grid-cols-2 gap-3">
+            <div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <section class="app-section grid gap-4 md:grid-cols-2 xl:grid-cols-4">
       <div class="card p-4">
         <p class="label">Total PnL</p>
         <p id="total" class="value mt-2">-</p>
@@ -218,7 +353,7 @@
       </div>
     </section>
 
-    <section class="panel p-5">
+    <section class="app-section panel p-5">
       <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
         <div>
           <p class="label">Advisor Notes</p>
@@ -229,7 +364,7 @@
       <div id="recommendationList" class="grid gap-3 md:grid-cols-2 xl:grid-cols-3"></div>
     </section>
 
-    <section class="grid gap-5 xl:grid-cols-3">
+    <section class="app-section grid gap-5 xl:grid-cols-3">
       <div class="panel p-5 xl:col-span-2">
         <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
           <div>
@@ -253,7 +388,7 @@
       </div>
     </section>
 
-    <section class="grid gap-5 xl:grid-cols-3">
+    <section class="app-section grid gap-5 xl:grid-cols-3">
       <div class="panel p-5 xl:col-span-2">
         <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
           <div>
@@ -303,7 +438,7 @@
       </div>
     </section>
 
-    <section class="grid gap-5 xl:grid-cols-2">
+    <section class="app-section grid gap-5 xl:grid-cols-2">
       <div class="panel p-5">
         <p class="label">Audit Layer</p>
         <h2 class="text-lg font-semibold">指標驗算</h2>
@@ -345,6 +480,11 @@
       const el = $('dataStatus');
       el.textContent = text;
       el.className = `tag ${cls}`;
+    };
+
+    const setAppState = (state) => {
+      document.body.classList.remove('is-loading', 'is-ready', 'is-error');
+      document.body.classList.add(state);
     };
 
     const renderKpis = (data) => {
@@ -564,6 +704,7 @@
         if (!data || !Array.isArray(data.realized) || data.realized.length === 0) {
           $('emptyState').classList.remove('hidden');
           setStatus('NO DATA', 'bad');
+          setAppState('is-error');
           return;
         }
         const last = (((data.timeseries || {}).daily || []).slice(-1)[0] || {}).date;
@@ -576,12 +717,14 @@
         renderAudit(data);
         renderRecommendations(data);
         bindControls();
+        requestAnimationFrame(() => setAppState('is-ready'));
       })
       .catch(error => {
         console.error(error);
         $('loadingOverlay').classList.add('hidden');
         $('emptyState').classList.remove('hidden');
         setStatus('ERROR', 'bad');
+        setAppState('is-error');
       });
   </script>
 </body>
