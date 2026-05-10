@@ -1,198 +1,6 @@
 {
   "realized": [
     {
-      "symbol": "NVDA",
-      "buy_date": "2025-12-23 00:00:00",
-      "buy_price": 184.0,
-      "sell_date": "2026-02-24 00:00:00",
-      "sell_price": 192.0,
-      "qty": 2.0,
-      "pnl": 16.0,
-      "side": "long",
-      "account_type": "\u73fe\u91d1",
-      "realized_date": "2026-02-24 00:00:00"
-    },
-    {
-      "symbol": "SNDK",
-      "buy_date": "2026-02-24 00:00:00",
-      "buy_price": 649.735,
-      "sell_date": "2026-02-25 00:00:00",
-      "sell_price": 660.0,
-      "qty": 1.0,
-      "pnl": 10.264999999999986,
-      "side": "long",
-      "account_type": "\u73fe\u91d1",
-      "realized_date": "2026-02-25 00:00:00"
-    },
-    {
-      "symbol": "NFLX",
-      "buy_date": "2026-01-20 00:00:00",
-      "buy_price": 89.0,
-      "sell_date": "2026-03-02 00:00:00",
-      "sell_price": 97.6,
-      "qty": 1.0,
-      "pnl": 8.599999999999994,
-      "side": "long",
-      "account_type": "\u73fe\u91d1",
-      "realized_date": "2026-03-02 00:00:00"
-    },
-    {
-      "symbol": "NVO",
-      "buy_date": "2025-12-29 00:00:00",
-      "buy_price": 51.8,
-      "sell_date": "2026-03-04 00:00:00",
-      "sell_price": 38.15,
-      "qty": 2.0,
-      "pnl": -27.299999999999997,
-      "side": "long",
-      "account_type": "\u73fe\u91d1",
-      "realized_date": "2026-03-04 00:00:00"
-    },
-    {
-      "symbol": "AMD",
-      "buy_date": "2026-03-03 00:00:00",
-      "buy_price": 190.5,
-      "sell_date": "2026-03-04 00:00:00",
-      "sell_price": 195.84,
-      "qty": 1.0,
-      "pnl": 5.340000000000003,
-      "side": "long",
-      "account_type": "\u73fe\u91d1",
-      "realized_date": "2026-03-04 00:00:00"
-    },
-    {
-      "symbol": "MSFT",
-      "buy_date": "2026-02-26 00:00:00",
-      "buy_price": 402.0,
-      "sell_date": "2026-03-04 00:00:00",
-      "sell_price": 406.3,
-      "qty": 1.0,
-      "pnl": 4.300000000000011,
-      "side": "long",
-      "account_type": "\u73fe\u91d1",
-      "realized_date": "2026-03-04 00:00:00"
-    },
-    {
-      "symbol": "TSLA",
-      "buy_date": "2025-12-23 00:00:00",
-      "buy_price": 490.8499,
-      "sell_date": "2026-03-05 00:00:00",
-      "sell_price": 408.0,
-      "qty": 1.0,
-      "pnl": -82.84989999999999,
-      "side": "long",
-      "account_type": "\u73fe\u91d1",
-      "realized_date": "2026-03-05 00:00:00"
-    },
-    {
-      "symbol": "SNDK",
-      "buy_date": "2026-03-05 00:00:00",
-      "buy_price": 582.5,
-      "sell_date": "2026-03-10 00:00:00",
-      "sell_price": 628.0,
-      "qty": 1.0,
-      "pnl": 45.5,
-      "side": "long",
-      "account_type": "\u73fe\u91d1",
-      "realized_date": "2026-03-10 00:00:00"
-    },
-    {
-      "symbol": "AMZN",
-      "buy_date": "2026-03-12 00:00:00",
-      "buy_price": 209.15,
-      "sell_date": "2026-03-17 00:00:00",
-      "sell_price": 214.0,
-      "qty": 1.0,
-      "pnl": 4.849999999999994,
-      "side": "long",
-      "account_type": "\u73fe\u91d1",
-      "realized_date": "2026-03-17 00:00:00"
-    },
-    {
-      "symbol": "AMD",
-      "buy_date": "2026-03-12 00:00:00",
-      "buy_price": 197.5,
-      "sell_date": "2026-03-25 00:00:00",
-      "sell_price": 214.0,
-      "qty": 1.0,
-      "pnl": 16.5,
-      "side": "long",
-      "account_type": "\u73fe\u91d1",
-      "realized_date": "2026-03-25 00:00:00"
-    },
-    {
-      "symbol": "AMD",
-      "buy_date": "2026-03-12 00:00:00",
-      "buy_price": 201.15,
-      "sell_date": "2026-03-25 00:00:00",
-      "sell_price": 214.0,
-      "qty": 1.0,
-      "pnl": 12.849999999999994,
-      "side": "long",
-      "account_type": "\u73fe\u91d1",
-      "realized_date": "2026-03-25 00:00:00"
-    },
-    {
-      "symbol": "SNDK",
-      "buy_date": "2026-03-26 00:00:00",
-      "buy_price": 644.5,
-      "sell_date": "2026-04-01 00:00:00",
-      "sell_price": 672.0,
-      "qty": 1.0,
-      "pnl": 27.5,
-      "side": "long",
-      "account_type": "\u73fe\u91d1",
-      "realized_date": "2026-04-01 00:00:00"
-    },
-    {
-      "symbol": "NVDA",
-      "buy_date": "2026-01-14 00:00:00",
-      "buy_price": 183.0,
-      "sell_date": "2026-04-09 00:00:00",
-      "sell_price": 183.0,
-      "qty": 1.0,
-      "pnl": 0.0,
-      "side": "long",
-      "account_type": "\u73fe\u91d1",
-      "realized_date": "2026-04-09 00:00:00"
-    },
-    {
-      "symbol": "NVDA",
-      "buy_date": "2026-02-27 00:00:00",
-      "buy_price": 178.5,
-      "sell_date": "2026-04-09 00:00:00",
-      "sell_price": 183.0,
-      "qty": 1.0,
-      "pnl": 4.5,
-      "side": "long",
-      "account_type": "\u73fe\u91d1",
-      "realized_date": "2026-04-09 00:00:00"
-    },
-    {
-      "symbol": "NFLX",
-      "buy_date": "2026-03-18 00:00:00",
-      "buy_price": 93.7,
-      "sell_date": "2026-04-09 00:00:00",
-      "sell_price": 100.0,
-      "qty": 1.0,
-      "pnl": 6.299999999999997,
-      "side": "long",
-      "account_type": "\u73fe\u91d1",
-      "realized_date": "2026-04-09 00:00:00"
-    },
-    {
-      "symbol": "SNDK",
-      "buy_date": "2026-04-13 00:00:00",
-      "buy_price": 901.0,
-      "sell_date": "2026-04-14 00:00:00",
-      "sell_price": 930.0,
-      "qty": 1.0,
-      "pnl": 29.0,
-      "side": "long",
-      "account_type": "\u73fe\u91d1",
-      "realized_date": "2026-04-14 00:00:00"
-    },
-    {
       "symbol": "SNDK",
       "buy_date": "2026-04-13 00:00:00",
       "buy_price": 880.5,
@@ -218,15 +26,39 @@
     },
     {
       "symbol": "SNDK",
-      "buy_date": "2026-04-14 00:00:00",
-      "buy_price": 905.0,
+      "buy_date": "2026-04-13 00:00:00",
+      "buy_price": 901.0,
       "sell_date": "2026-04-14 00:00:00",
       "sell_price": 930.0,
       "qty": 1.0,
-      "pnl": 25.0,
+      "pnl": 29.0,
       "side": "long",
       "account_type": "\u73fe\u91d1",
       "realized_date": "2026-04-14 00:00:00"
+    },
+    {
+      "symbol": "SNDK",
+      "buy_date": "2026-04-14 00:00:00",
+      "buy_price": 955.0,
+      "sell_date": "2026-04-14 00:00:00",
+      "sell_price": 930.0,
+      "qty": 1.0,
+      "pnl": -25.0,
+      "side": "long",
+      "account_type": "\u73fe\u91d1",
+      "realized_date": "2026-04-14 00:00:00"
+    },
+    {
+      "symbol": "SNDK",
+      "buy_date": "2026-04-14 00:00:00",
+      "buy_price": 905.0,
+      "sell_date": "2026-04-22 00:00:00",
+      "sell_price": 945.45,
+      "qty": 1.0,
+      "pnl": 40.450000000000045,
+      "side": "long",
+      "account_type": "\u73fe\u91d1",
+      "realized_date": "2026-04-22 00:00:00"
     },
     {
       "symbol": "SNDK",
@@ -260,18 +92,6 @@
       "sell_price": 945.45,
       "qty": 1.0,
       "pnl": 30.450000000000045,
-      "side": "long",
-      "account_type": "\u73fe\u91d1",
-      "realized_date": "2026-04-22 00:00:00"
-    },
-    {
-      "symbol": "SNDK",
-      "buy_date": "2026-04-14 00:00:00",
-      "buy_price": 955.0,
-      "sell_date": "2026-04-22 00:00:00",
-      "sell_price": 945.45,
-      "qty": 1.0,
-      "pnl": -9.549999999999955,
       "side": "long",
       "account_type": "\u73fe\u91d1",
       "realized_date": "2026-04-22 00:00:00"
@@ -351,6 +171,30 @@
     {
       "symbol": "SNDK",
       "buy_date": "2026-04-23 00:00:00",
+      "buy_price": 940.5,
+      "sell_date": "2026-04-27 00:00:00",
+      "sell_price": 1030.92,
+      "qty": 2.0,
+      "pnl": 180.84000000000015,
+      "side": "long",
+      "account_type": "\u73fe\u91d1",
+      "realized_date": "2026-04-27 00:00:00"
+    },
+    {
+      "symbol": "SNDK",
+      "buy_date": "2026-04-23 00:00:00",
+      "buy_price": 940.5,
+      "sell_date": "2026-04-27 00:00:00",
+      "sell_price": 1055.46,
+      "qty": 1.0,
+      "pnl": 114.96000000000004,
+      "side": "long",
+      "account_type": "\u73fe\u91d1",
+      "realized_date": "2026-04-27 00:00:00"
+    },
+    {
+      "symbol": "SNDK",
+      "buy_date": "2026-04-23 00:00:00",
       "buy_price": 935.45,
       "sell_date": "2026-04-27 00:00:00",
       "sell_price": 1055.46,
@@ -365,45 +209,21 @@
       "buy_date": "2026-04-23 00:00:00",
       "buy_price": 935.24,
       "sell_date": "2026-04-27 00:00:00",
-      "sell_price": 1055.46,
-      "qty": 1.0,
-      "pnl": 120.22000000000003,
-      "side": "long",
-      "account_type": "\u73fe\u91d1",
-      "realized_date": "2026-04-27 00:00:00"
-    },
-    {
-      "symbol": "SNDK",
-      "buy_date": "2026-04-23 00:00:00",
-      "buy_price": 935.24,
-      "sell_date": "2026-04-27 00:00:00",
       "sell_price": 1050.25,
-      "qty": 1.0,
-      "pnl": 115.00999999999999,
+      "qty": 2.0,
+      "pnl": 230.01999999999998,
       "side": "long",
       "account_type": "\u73fe\u91d1",
       "realized_date": "2026-04-27 00:00:00"
     },
     {
       "symbol": "SNDK",
-      "buy_date": "2026-04-23 00:00:00",
-      "buy_price": 940.5,
-      "sell_date": "2026-04-27 00:00:00",
-      "sell_price": 1050.25,
-      "qty": 1.0,
-      "pnl": 109.75,
-      "side": "long",
-      "account_type": "\u73fe\u91d1",
-      "realized_date": "2026-04-27 00:00:00"
-    },
-    {
-      "symbol": "SNDK",
-      "buy_date": "2026-04-23 00:00:00",
-      "buy_price": 940.5,
+      "buy_date": "2026-04-27 00:00:00",
+      "buy_price": 1028.22,
       "sell_date": "2026-04-27 00:00:00",
       "sell_price": 1035.1,
       "qty": 2.0,
-      "pnl": 189.19999999999982,
+      "pnl": 13.759999999999764,
       "side": "long",
       "account_type": "\u73fe\u91d1",
       "realized_date": "2026-04-27 00:00:00"
@@ -469,37 +289,13 @@
       "realized_date": "2026-04-27 00:00:00"
     },
     {
-      "symbol": "SNDK",
-      "buy_date": "2026-04-27 00:00:00",
-      "buy_price": 1028.22,
-      "sell_date": "2026-04-27 00:00:00",
-      "sell_price": 1030.92,
-      "qty": 2.0,
-      "pnl": 5.400000000000091,
-      "side": "short",
-      "account_type": "\u73fe\u91d1",
-      "realized_date": "2026-04-27 00:00:00"
-    },
-    {
-      "symbol": "SNDK",
-      "buy_date": "2026-04-28 00:00:00",
-      "buy_price": 1045.47,
-      "sell_date": "2026-04-29 00:00:00",
-      "sell_price": 1080.13,
-      "qty": 1.0,
-      "pnl": 34.66000000000008,
-      "side": "long",
-      "account_type": "\u73fe\u91d1",
-      "realized_date": "2026-04-29 00:00:00"
-    },
-    {
       "symbol": "LITE",
       "buy_date": "2026-04-14 00:00:00",
       "buy_price": 845.0,
       "sell_date": "2026-04-29 00:00:00",
-      "sell_price": 850.01,
+      "sell_price": 865.0,
       "qty": 1.0,
-      "pnl": 5.009999999999991,
+      "pnl": 20.0,
       "side": "long",
       "account_type": "\u73fe\u91d1",
       "realized_date": "2026-04-29 00:00:00"
@@ -517,25 +313,25 @@
       "realized_date": "2026-04-29 00:00:00"
     },
     {
-      "symbol": "LITE",
-      "buy_date": "2026-04-15 00:00:00",
-      "buy_price": 818.0,
+      "symbol": "SNDK",
+      "buy_date": "2026-04-28 00:00:00",
+      "buy_price": 1035.72,
       "sell_date": "2026-04-29 00:00:00",
-      "sell_price": 865.0,
+      "sell_price": 1080.62,
       "qty": 1.0,
-      "pnl": 47.0,
+      "pnl": 44.899999999999864,
       "side": "long",
       "account_type": "\u73fe\u91d1",
       "realized_date": "2026-04-29 00:00:00"
     },
     {
-      "symbol": "SNDK",
-      "buy_date": "2026-04-28 00:00:00",
-      "buy_price": 1025.07,
+      "symbol": "LITE",
+      "buy_date": "2026-04-15 00:00:00",
+      "buy_price": 818.0,
       "sell_date": "2026-04-29 00:00:00",
-      "sell_price": 1080.62,
+      "sell_price": 855.0,
       "qty": 1.0,
-      "pnl": 55.549999999999955,
+      "pnl": 37.0,
       "side": "long",
       "account_type": "\u73fe\u91d1",
       "realized_date": "2026-04-29 00:00:00"
@@ -553,37 +349,49 @@
       "realized_date": "2026-04-29 00:00:00"
     },
     {
-      "symbol": "LITE",
-      "buy_date": "2026-04-28 00:00:00",
-      "buy_price": 785.0,
-      "sell_date": "2026-04-29 00:00:00",
-      "sell_price": 855.0,
-      "qty": 1.0,
-      "pnl": 70.0,
-      "side": "long",
-      "account_type": "\u73fe\u91d1",
-      "realized_date": "2026-04-29 00:00:00"
-    },
-    {
-      "symbol": "SNDK",
-      "buy_date": "2026-04-28 00:00:00",
-      "buy_price": 1035.72,
-      "sell_date": "2026-04-29 00:00:00",
-      "sell_price": 1095.79,
-      "qty": 1.0,
-      "pnl": 60.069999999999936,
-      "side": "long",
-      "account_type": "\u73fe\u91d1",
-      "realized_date": "2026-04-29 00:00:00"
-    },
-    {
       "symbol": "SNDK",
       "buy_date": "2026-04-28 00:00:00",
       "buy_price": 1011.21,
       "sell_date": "2026-04-29 00:00:00",
+      "sell_price": 1095.79,
+      "qty": 1.0,
+      "pnl": 84.57999999999993,
+      "side": "long",
+      "account_type": "\u73fe\u91d1",
+      "realized_date": "2026-04-29 00:00:00"
+    },
+    {
+      "symbol": "SNDK",
+      "buy_date": "2026-04-28 00:00:00",
+      "buy_price": 990.57,
+      "sell_date": "2026-04-29 00:00:00",
       "sell_price": 1100.39,
       "qty": 1.0,
-      "pnl": 89.18000000000006,
+      "pnl": 109.82000000000005,
+      "side": "long",
+      "account_type": "\u73fe\u91d1",
+      "realized_date": "2026-04-29 00:00:00"
+    },
+    {
+      "symbol": "LITE",
+      "buy_date": "2026-04-28 00:00:00",
+      "buy_price": 785.0,
+      "sell_date": "2026-04-29 00:00:00",
+      "sell_price": 850.01,
+      "qty": 1.0,
+      "pnl": 65.00999999999999,
+      "side": "long",
+      "account_type": "\u73fe\u91d1",
+      "realized_date": "2026-04-29 00:00:00"
+    },
+    {
+      "symbol": "SNDK",
+      "buy_date": "2026-04-28 00:00:00",
+      "buy_price": 1045.47,
+      "sell_date": "2026-04-29 00:00:00",
+      "sell_price": 1080.13,
+      "qty": 1.0,
+      "pnl": 34.66000000000008,
       "side": "long",
       "account_type": "\u73fe\u91d1",
       "realized_date": "2026-04-29 00:00:00"
@@ -591,47 +399,23 @@
     {
       "symbol": "LITE",
       "buy_date": "2026-04-30 00:00:00",
-      "buy_price": 880.0,
+      "buy_price": 870.39,
       "sell_date": "2026-04-30 00:00:00",
       "sell_price": 915.7,
       "qty": 1.0,
-      "pnl": 35.700000000000045,
-      "side": "short",
+      "pnl": 45.31000000000006,
+      "side": "long",
       "account_type": "\u878d\u8cc7",
       "realized_date": "2026-04-30 00:00:00"
     },
     {
       "symbol": "SNDK",
       "buy_date": "2026-04-28 00:00:00",
-      "buy_price": 990.57,
+      "buy_price": 1025.07,
       "sell_date": "2026-05-01 00:00:00",
-      "sell_price": 1106.28,
+      "sell_price": 1085.14,
       "qty": 1.0,
-      "pnl": 115.70999999999992,
-      "side": "long",
-      "account_type": "\u73fe\u91d1",
-      "realized_date": "2026-05-01 00:00:00"
-    },
-    {
-      "symbol": "SNDK",
-      "buy_date": "2026-04-29 00:00:00",
-      "buy_price": 1078.71,
-      "sell_date": "2026-05-01 00:00:00",
-      "sell_price": 1106.28,
-      "qty": 1.0,
-      "pnl": 27.569999999999936,
-      "side": "long",
-      "account_type": "\u73fe\u91d1",
-      "realized_date": "2026-05-01 00:00:00"
-    },
-    {
-      "symbol": "SNDK",
-      "buy_date": "2026-04-29 00:00:00",
-      "buy_price": 1085.4,
-      "sell_date": "2026-05-01 00:00:00",
-      "sell_price": 1135.41,
-      "qty": 1.0,
-      "pnl": 50.00999999999999,
+      "pnl": 60.070000000000164,
       "side": "long",
       "account_type": "\u73fe\u91d1",
       "realized_date": "2026-05-01 00:00:00"
@@ -641,9 +425,9 @@
       "buy_date": "2026-04-29 00:00:00",
       "buy_price": 1085.91,
       "sell_date": "2026-05-01 00:00:00",
-      "sell_price": 1135.41,
+      "sell_price": 1085.14,
       "qty": 1.0,
-      "pnl": 49.5,
+      "pnl": -0.7699999999999818,
       "side": "long",
       "account_type": "\u73fe\u91d1",
       "realized_date": "2026-05-01 00:00:00"
@@ -653,9 +437,33 @@
       "buy_date": "2026-04-29 00:00:00",
       "buy_price": 1075.61,
       "sell_date": "2026-05-01 00:00:00",
-      "sell_price": 1106.17,
+      "sell_price": 1085.0001,
       "qty": 1.0,
-      "pnl": 30.560000000000173,
+      "pnl": 9.390100000000075,
+      "side": "long",
+      "account_type": "\u73fe\u91d1",
+      "realized_date": "2026-05-01 00:00:00"
+    },
+    {
+      "symbol": "SNDK",
+      "buy_date": "2026-04-29 00:00:00",
+      "buy_price": 1078.71,
+      "sell_date": "2026-05-01 00:00:00",
+      "sell_price": 1085.0001,
+      "qty": 1.0,
+      "pnl": 6.2900999999999385,
+      "side": "long",
+      "account_type": "\u73fe\u91d1",
+      "realized_date": "2026-05-01 00:00:00"
+    },
+    {
+      "symbol": "SNDK",
+      "buy_date": "2026-04-29 00:00:00",
+      "buy_price": 1085.4,
+      "sell_date": "2026-05-01 00:00:00",
+      "sell_price": 1105.85,
+      "qty": 1.0,
+      "pnl": 20.449999999999818,
       "side": "long",
       "account_type": "\u73fe\u91d1",
       "realized_date": "2026-05-01 00:00:00"
@@ -663,35 +471,11 @@
     {
       "symbol": "SNDK",
       "buy_date": "2026-04-30 00:00:00",
-      "buy_price": 1097.0,
-      "sell_date": "2026-05-01 00:00:00",
-      "sell_price": 1106.17,
-      "qty": 1.0,
-      "pnl": 9.170000000000073,
-      "side": "long",
-      "account_type": "\u878d\u8cc7",
-      "realized_date": "2026-05-01 00:00:00"
-    },
-    {
-      "symbol": "SNDK",
-      "buy_date": "2026-04-30 00:00:00",
-      "buy_price": 1097.0,
-      "sell_date": "2026-05-01 00:00:00",
-      "sell_price": 1125.04,
-      "qty": 1.0,
-      "pnl": 28.039999999999964,
-      "side": "long",
-      "account_type": "\u878d\u8cc7",
-      "realized_date": "2026-05-01 00:00:00"
-    },
-    {
-      "symbol": "SNDK",
-      "buy_date": "2026-04-30 00:00:00",
       "buy_price": 1085.99,
       "sell_date": "2026-05-01 00:00:00",
-      "sell_price": 1125.04,
+      "sell_price": 1105.85,
       "qty": 1.0,
-      "pnl": 39.049999999999955,
+      "pnl": 19.8599999999999,
       "side": "long",
       "account_type": "\u878d\u8cc7",
       "realized_date": "2026-05-01 00:00:00"
@@ -701,45 +485,33 @@
       "buy_date": "2026-04-30 00:00:00",
       "buy_price": 1100.75,
       "sell_date": "2026-05-01 00:00:00",
-      "sell_price": 1150.0,
+      "sell_price": 1130.0,
       "qty": 2.0,
-      "pnl": 98.5,
+      "pnl": 58.5,
       "side": "long",
       "account_type": "\u878d\u8cc7",
       "realized_date": "2026-05-01 00:00:00"
     },
     {
       "symbol": "SNDK",
-      "buy_date": "2026-05-01 00:00:00",
-      "buy_price": 1095.39,
+      "buy_date": "2026-04-30 00:00:00",
+      "buy_price": 1097.0,
       "sell_date": "2026-05-01 00:00:00",
-      "sell_price": 1085.0001,
-      "qty": 2.0,
-      "pnl": -20.77980000000025,
-      "side": "long",
-      "account_type": "\u878d\u8cc7",
-      "realized_date": "2026-05-01 00:00:00"
-    },
-    {
-      "symbol": "GOOG",
-      "buy_date": "2025-12-30 00:00:00",
-      "buy_price": 313.56,
-      "sell_date": "2026-05-01 00:00:00",
-      "sell_price": 380.0,
+      "sell_price": 1130.0,
       "qty": 1.0,
-      "pnl": 66.44,
+      "pnl": 33.0,
       "side": "long",
-      "account_type": "\u73fe\u91d1",
+      "account_type": "\u878d\u8cc7",
       "realized_date": "2026-05-01 00:00:00"
     },
     {
       "symbol": "SNDK",
-      "buy_date": "2026-05-01 00:00:00",
-      "buy_price": 1115.98,
+      "buy_date": "2026-04-30 00:00:00",
+      "buy_price": 1097.0,
       "sell_date": "2026-05-01 00:00:00",
-      "sell_price": 1085.14,
-      "qty": 2.0,
-      "pnl": -61.679999999999836,
+      "sell_price": 1100.03,
+      "qty": 1.0,
+      "pnl": 3.0299999999999727,
       "side": "long",
       "account_type": "\u878d\u8cc7",
       "realized_date": "2026-05-01 00:00:00"
@@ -747,23 +519,11 @@
     {
       "symbol": "SNDK",
       "buy_date": "2026-05-01 00:00:00",
-      "buy_price": 1095.41,
+      "buy_price": 1095.81,
       "sell_date": "2026-05-01 00:00:00",
-      "sell_price": 1120.41,
-      "qty": 2.0,
-      "pnl": 50.0,
-      "side": "long",
-      "account_type": "\u878d\u8cc7",
-      "realized_date": "2026-05-01 00:00:00"
-    },
-    {
-      "symbol": "SNDK",
-      "buy_date": "2026-05-01 00:00:00",
-      "buy_price": 1100.38,
-      "sell_date": "2026-05-01 00:00:00",
-      "sell_price": 1140.0,
-      "qty": 2.0,
-      "pnl": 79.23999999999978,
+      "sell_price": 1100.03,
+      "qty": 1.0,
+      "pnl": 4.220000000000027,
       "side": "long",
       "account_type": "\u878d\u8cc7",
       "realized_date": "2026-05-01 00:00:00"
@@ -783,35 +543,35 @@
     {
       "symbol": "SNDK",
       "buy_date": "2026-05-01 00:00:00",
-      "buy_price": 1095.81,
+      "buy_price": 1078.6,
       "sell_date": "2026-05-01 00:00:00",
-      "sell_price": 1115.13,
-      "qty": 1.0,
-      "pnl": 19.320000000000164,
+      "sell_price": 1140.0,
+      "qty": 2.0,
+      "pnl": 122.80000000000018,
       "side": "long",
+      "account_type": "\u878d\u8cc7",
+      "realized_date": "2026-05-01 00:00:00"
+    },
+    {
+      "symbol": "GOOG",
+      "buy_date": "2026-05-01 00:00:00",
+      "buy_price": 379.19,
+      "sell_date": "2026-05-01 00:00:00",
+      "sell_price": 380.0,
+      "qty": 1.0,
+      "pnl": 0.8100000000000023,
+      "side": "short",
       "account_type": "\u878d\u8cc7",
       "realized_date": "2026-05-01 00:00:00"
     },
     {
       "symbol": "SNDK",
       "buy_date": "2026-05-01 00:00:00",
-      "buy_price": 1078.6,
+      "buy_price": 1095.39,
       "sell_date": "2026-05-01 00:00:00",
-      "sell_price": 1115.13,
-      "qty": 1.0,
-      "pnl": 36.5300000000002,
-      "side": "long",
-      "account_type": "\u878d\u8cc7",
-      "realized_date": "2026-05-01 00:00:00"
-    },
-    {
-      "symbol": "SNDK",
-      "buy_date": "2026-05-01 00:00:00",
-      "buy_price": 1078.6,
-      "sell_date": "2026-05-01 00:00:00",
-      "sell_price": 1130.0,
-      "qty": 1.0,
-      "pnl": 51.40000000000009,
+      "sell_price": 1135.41,
+      "qty": 2.0,
+      "pnl": 80.03999999999996,
       "side": "long",
       "account_type": "\u878d\u8cc7",
       "realized_date": "2026-05-01 00:00:00"
@@ -821,21 +581,9 @@
       "buy_date": "2026-05-01 00:00:00",
       "buy_price": 1100.83,
       "sell_date": "2026-05-01 00:00:00",
-      "sell_price": 1130.0,
+      "sell_price": 1107.76,
       "qty": 2.0,
-      "pnl": 58.340000000000146,
-      "side": "long",
-      "account_type": "\u878d\u8cc7",
-      "realized_date": "2026-05-01 00:00:00"
-    },
-    {
-      "symbol": "SNDK",
-      "buy_date": "2026-05-01 00:00:00",
-      "buy_price": 1085.7,
-      "sell_date": "2026-05-01 00:00:00",
-      "sell_price": 1105.85,
-      "qty": 2.0,
-      "pnl": 40.29999999999973,
+      "pnl": 13.860000000000127,
       "side": "long",
       "account_type": "\u878d\u8cc7",
       "realized_date": "2026-05-01 00:00:00"
@@ -846,20 +594,8 @@
       "buy_price": 880.0,
       "sell_date": "2026-05-01 00:00:00",
       "sell_price": 920.78,
-      "qty": 1.0,
-      "pnl": 40.77999999999997,
-      "side": "long",
-      "account_type": "\u878d\u8cc7",
-      "realized_date": "2026-05-01 00:00:00"
-    },
-    {
-      "symbol": "LITE",
-      "buy_date": "2026-04-30 00:00:00",
-      "buy_price": 870.39,
-      "sell_date": "2026-05-01 00:00:00",
-      "sell_price": 920.78,
-      "qty": 1.0,
-      "pnl": 50.389999999999986,
+      "qty": 2.0,
+      "pnl": 81.55999999999995,
       "side": "long",
       "account_type": "\u878d\u8cc7",
       "realized_date": "2026-05-01 00:00:00"
@@ -867,11 +603,11 @@
     {
       "symbol": "SNDK",
       "buy_date": "2026-05-01 00:00:00",
-      "buy_price": 1090.245,
+      "buy_price": 1085.74,
       "sell_date": "2026-05-01 00:00:00",
-      "sell_price": 1108.58,
+      "sell_price": 1125.04,
       "qty": 2.0,
-      "pnl": 36.67000000000007,
+      "pnl": 78.59999999999991,
       "side": "short",
       "account_type": "\u878d\u8cc7",
       "realized_date": "2026-05-01 00:00:00"
@@ -879,11 +615,107 @@
     {
       "symbol": "SNDK",
       "buy_date": "2026-05-01 00:00:00",
-      "buy_price": 1100.03,
+      "buy_price": 1150.0,
       "sell_date": "2026-05-01 00:00:00",
-      "sell_price": 1107.76,
+      "sell_price": 1115.13,
       "qty": -2.0,
-      "pnl": -15.460000000000036,
+      "pnl": 69.73999999999978,
+      "side": "long",
+      "account_type": "\u878d\u8cc7",
+      "realized_date": "2026-05-01 00:00:00"
+    },
+    {
+      "symbol": "SNDK",
+      "buy_date": "2026-05-01 00:00:00",
+      "buy_price": 1095.41,
+      "sell_date": "2026-05-01 00:00:00",
+      "sell_price": 1115.13,
+      "qty": 2.0,
+      "pnl": 39.440000000000055,
+      "side": "short",
+      "account_type": "\u878d\u8cc7",
+      "realized_date": "2026-05-01 00:00:00"
+    },
+    {
+      "symbol": "SNDK",
+      "buy_date": "2026-05-01 00:00:00",
+      "buy_price": 1115.13,
+      "sell_date": "2026-05-01 00:00:00",
+      "sell_price": 1108.58,
+      "qty": -2.0,
+      "pnl": 13.100000000000364,
+      "side": "long",
+      "account_type": "\u878d\u8cc7",
+      "realized_date": "2026-05-01 00:00:00"
+    },
+    {
+      "symbol": "SNDK",
+      "buy_date": "2026-05-01 00:00:00",
+      "buy_price": 1108.58,
+      "sell_date": "2026-05-01 00:00:00",
+      "sell_price": 1120.41,
+      "qty": -4.0,
+      "pnl": -47.32000000000062,
+      "side": "long",
+      "account_type": "\u878d\u8cc7",
+      "realized_date": "2026-05-01 00:00:00"
+    },
+    {
+      "symbol": "SNDK",
+      "buy_date": "2026-05-01 00:00:00",
+      "buy_price": 1115.98,
+      "sell_date": "2026-05-01 00:00:00",
+      "sell_price": 1120.41,
+      "qty": 2.0,
+      "pnl": 8.860000000000127,
+      "side": "short",
+      "account_type": "\u878d\u8cc7",
+      "realized_date": "2026-05-01 00:00:00"
+    },
+    {
+      "symbol": "SNDK",
+      "buy_date": "2026-05-01 00:00:00",
+      "buy_price": 1120.41,
+      "sell_date": "2026-05-01 00:00:00",
+      "sell_price": 1106.28,
+      "qty": -4.0,
+      "pnl": 56.52000000000044,
+      "side": "long",
+      "account_type": "\u878d\u8cc7",
+      "realized_date": "2026-05-01 00:00:00"
+    },
+    {
+      "symbol": "SNDK",
+      "buy_date": "2026-05-01 00:00:00",
+      "buy_price": 1085.7,
+      "sell_date": "2026-05-01 00:00:00",
+      "sell_price": 1106.28,
+      "qty": 2.0,
+      "pnl": 41.159999999999854,
+      "side": "short",
+      "account_type": "\u878d\u8cc7",
+      "realized_date": "2026-05-01 00:00:00"
+    },
+    {
+      "symbol": "SNDK",
+      "buy_date": "2026-05-01 00:00:00",
+      "buy_price": 1100.38,
+      "sell_date": "2026-05-01 00:00:00",
+      "sell_price": 1106.28,
+      "qty": 2.0,
+      "pnl": 11.799999999999727,
+      "side": "short",
+      "account_type": "\u878d\u8cc7",
+      "realized_date": "2026-05-01 00:00:00"
+    },
+    {
+      "symbol": "SNDK",
+      "buy_date": "2026-05-01 00:00:00",
+      "buy_price": 1106.28,
+      "sell_date": "2026-05-01 00:00:00",
+      "sell_price": 1106.17,
+      "qty": -2.0,
+      "pnl": 0.2199999999997999,
       "side": "long",
       "account_type": "\u878d\u8cc7",
       "realized_date": "2026-05-01 00:00:00"
@@ -893,9 +725,9 @@
       "buy_date": "2026-05-01 00:00:00",
       "buy_price": 1105.56,
       "sell_date": "2026-05-01 00:00:00",
-      "sell_price": 1107.76,
+      "sell_price": 1106.17,
       "qty": 2.0,
-      "pnl": 4.400000000000091,
+      "pnl": 1.2200000000002547,
       "side": "short",
       "account_type": "\u878d\u8cc7",
       "realized_date": "2026-05-01 00:00:00"
@@ -903,170 +735,147 @@
     {
       "symbol": "SNDK",
       "buy_date": "2026-05-01 00:00:00",
-      "buy_price": 1085.74,
+      "buy_price": 1090.245,
       "sell_date": "2026-05-01 00:00:00",
-      "sell_price": 1107.76,
+      "sell_price": 1106.17,
       "qty": 2.0,
-      "pnl": 44.039999999999964,
+      "pnl": 31.850000000000364,
       "side": "short",
       "account_type": "\u878d\u8cc7",
       "realized_date": "2026-05-01 00:00:00"
+    },
+    {
+      "symbol": "LITE",
+      "buy_date": "2026-05-04 00:00:00",
+      "buy_price": 955.58,
+      "sell_date": "2026-05-05 00:00:00",
+      "sell_price": 1000.0,
+      "qty": 2.0,
+      "pnl": 88.83999999999992,
+      "side": "long",
+      "account_type": "\u878d\u8cc7",
+      "realized_date": "2026-05-05 00:00:00"
+    },
+    {
+      "symbol": "LITE",
+      "buy_date": "2026-05-04 00:00:00",
+      "buy_price": 960.62,
+      "sell_date": "2026-05-05 00:00:00",
+      "sell_price": 1015.28,
+      "qty": 2.0,
+      "pnl": 109.31999999999994,
+      "side": "long",
+      "account_type": "\u878d\u8cc7",
+      "realized_date": "2026-05-05 00:00:00"
+    },
+    {
+      "symbol": "LITE",
+      "buy_date": "2026-05-04 00:00:00",
+      "buy_price": 975.18,
+      "sell_date": "2026-05-05 00:00:00",
+      "sell_price": 1010.84,
+      "qty": 1.0,
+      "pnl": 35.66000000000008,
+      "side": "long",
+      "account_type": "\u878d\u8cc7",
+      "realized_date": "2026-05-05 00:00:00"
+    },
+    {
+      "symbol": "LITE",
+      "buy_date": "2026-05-04 00:00:00",
+      "buy_price": 965.45,
+      "sell_date": "2026-05-05 00:00:00",
+      "sell_price": 1010.84,
+      "qty": 1.0,
+      "pnl": 45.389999999999986,
+      "side": "long",
+      "account_type": "\u878d\u8cc7",
+      "realized_date": "2026-05-05 00:00:00"
+    },
+    {
+      "symbol": "LITE",
+      "buy_date": "2026-05-04 00:00:00",
+      "buy_price": 972.48,
+      "sell_date": "2026-05-05 00:00:00",
+      "sell_price": 1005.72,
+      "qty": 1.0,
+      "pnl": 33.24000000000001,
+      "side": "long",
+      "account_type": "\u878d\u8cc7",
+      "realized_date": "2026-05-05 00:00:00"
+    },
+    {
+      "symbol": "LITE",
+      "buy_date": "2026-05-04 00:00:00",
+      "buy_price": 980.77,
+      "sell_date": "2026-05-05 00:00:00",
+      "sell_price": 1005.72,
+      "qty": 1.0,
+      "pnl": 24.950000000000045,
+      "side": "long",
+      "account_type": "\u878d\u8cc7",
+      "realized_date": "2026-05-05 00:00:00"
     }
   ],
   "unrealized": [
-    33.02001953125,
-    54.6500244140625,
-    -78.05999267578125,
-    8.060002441406255,
-    -4.449999084472651,
-    -8.709999084472656,
-    -6.809999084472651,
-    -0.5000004577636687,
-    -0.4700004577636747,
-    -0.41000045776367244,
-    12.44000244140625,
-    43.44000244140625,
-    37.840008544921886,
-    31.660009765625006,
-    31.760009765625,
-    0.9100003051757852
+    -106.61001220703122,
+    -101.20001220703125,
+    -275.76003662109383,
+    -193.18002441406247,
+    -101.47001220703123,
+    -71.78001220703129,
+    -133.3000244140626,
+    -73.18001220703127,
+    -111.04004882812478,
+    -112.4000244140625,
+    -113.48002441406243,
+    -153.60002441406255,
+    -66.6500122070313,
+    -61.20001220703125,
+    98.15996337890613,
+    7.499963378906386,
+    36.079992675781256,
+    36.17999267578125,
+    132.49000244140626,
+    5.430000000000007,
+    17.859987792968752
   ],
   "health": {
-    "total": 2840.725388348389,
-    "win_rate": 0.881578947368421,
-    "profit_factor": 1.4384770382607135,
-    "score": 64.38477038260713
+    "total": 1564.6198093750004,
+    "win_rate": 0.9264705882352942,
+    "profit_factor": 2.417328203246681,
+    "score": 74.17328203246682
   },
   "reconciliation": {
     "enabled": true,
-    "total_buy_amount": -82234.74999999999,
-    "total_sell_amount": 80417.10999999997,
-    "net_cashflow": -1817.640000000014,
-    "remaining_cost_basis": 4502.24,
-    "realized_total": 2686.3553,
-    "expected_realized": 2684.599999999986,
-    "delta": 1.7553000000143584
+    "total_buy_amount": -110921.18,
+    "total_sell_amount": 83844.53999999998,
+    "net_cashflow": -27076.640000000014,
+    "remaining_cost_basis": 29980.45,
+    "realized_total": 2905.7702000000004,
+    "expected_realized": 2903.8099999999868,
+    "delta": 1.9602000000136286
   },
   "timeseries": {
     "daily": [
       {
-        "date": "2026-02-24",
-        "total": 16.0,
-        "by_account": {
-          "\u73fe\u91d1": 16.0,
-          "\u878d\u8cc7": 0.0
-        },
-        "cumulative_total": 16.0,
-        "drawdown": 0.0
-      },
-      {
-        "date": "2026-02-25",
-        "total": 10.264999999999986,
-        "by_account": {
-          "\u73fe\u91d1": 10.264999999999986,
-          "\u878d\u8cc7": 0.0
-        },
-        "cumulative_total": 26.264999999999986,
-        "drawdown": 0.0
-      },
-      {
-        "date": "2026-03-02",
-        "total": 8.599999999999994,
-        "by_account": {
-          "\u73fe\u91d1": 8.599999999999994,
-          "\u878d\u8cc7": 0.0
-        },
-        "cumulative_total": 34.86499999999998,
-        "drawdown": 0.0
-      },
-      {
-        "date": "2026-03-04",
-        "total": -17.659999999999982,
-        "by_account": {
-          "\u73fe\u91d1": -17.659999999999982,
-          "\u878d\u8cc7": 0.0
-        },
-        "cumulative_total": 17.205,
-        "drawdown": -17.659999999999982
-      },
-      {
-        "date": "2026-03-05",
-        "total": -82.84989999999999,
-        "by_account": {
-          "\u73fe\u91d1": -82.84989999999999,
-          "\u878d\u8cc7": 0.0
-        },
-        "cumulative_total": -65.64489999999999,
-        "drawdown": -100.50989999999997
-      },
-      {
-        "date": "2026-03-10",
-        "total": 45.5,
-        "by_account": {
-          "\u73fe\u91d1": 45.5,
-          "\u878d\u8cc7": 0.0
-        },
-        "cumulative_total": -20.144899999999993,
-        "drawdown": -55.00989999999997
-      },
-      {
-        "date": "2026-03-17",
-        "total": 4.849999999999994,
-        "by_account": {
-          "\u73fe\u91d1": 4.849999999999994,
-          "\u878d\u8cc7": 0.0
-        },
-        "cumulative_total": -15.294899999999998,
-        "drawdown": -50.15989999999998
-      },
-      {
-        "date": "2026-03-25",
-        "total": 29.349999999999994,
-        "by_account": {
-          "\u73fe\u91d1": 29.349999999999994,
-          "\u878d\u8cc7": 0.0
-        },
-        "cumulative_total": 14.055099999999996,
-        "drawdown": -20.809899999999985
-      },
-      {
-        "date": "2026-04-01",
-        "total": 27.5,
-        "by_account": {
-          "\u73fe\u91d1": 27.5,
-          "\u878d\u8cc7": 0.0
-        },
-        "cumulative_total": 41.555099999999996,
-        "drawdown": 0.0
-      },
-      {
-        "date": "2026-04-09",
-        "total": 10.799999999999997,
-        "by_account": {
-          "\u73fe\u91d1": 10.799999999999997,
-          "\u878d\u8cc7": 0.0
-        },
-        "cumulative_total": 52.35509999999999,
-        "drawdown": 0.0
-      },
-      {
         "date": "2026-04-14",
-        "total": 153.5,
+        "total": 103.5,
         "by_account": {
-          "\u73fe\u91d1": 153.5,
+          "\u73fe\u91d1": 103.5,
           "\u878d\u8cc7": 0.0
         },
-        "cumulative_total": 205.8551,
+        "cumulative_total": 103.5,
         "drawdown": 0.0
       },
       {
         "date": "2026-04-22",
-        "total": 259.2800000000003,
+        "total": 309.2800000000003,
         "by_account": {
-          "\u73fe\u91d1": 259.2800000000003,
+          "\u73fe\u91d1": 309.2800000000003,
           "\u878d\u8cc7": 0.0
         },
-        "cumulative_total": 465.1351000000003,
+        "cumulative_total": 412.7800000000003,
         "drawdown": 0.0
       },
       {
@@ -1076,7 +885,7 @@
           "\u73fe\u91d1": 36.350000000000136,
           "\u878d\u8cc7": 0.0
         },
-        "cumulative_total": 501.48510000000044,
+        "cumulative_total": 449.13000000000045,
         "drawdown": 0.0
       },
       {
@@ -1086,220 +895,129 @@
           "\u73fe\u91d1": 821.0299999999995,
           "\u878d\u8cc7": 0.0
         },
-        "cumulative_total": 1322.5151,
+        "cumulative_total": 1270.1599999999999,
         "drawdown": 0.0
       },
       {
         "date": "2026-04-29",
-        "total": 355.9100000000001,
+        "total": 390.40999999999997,
         "by_account": {
-          "\u73fe\u91d1": 355.9100000000001,
+          "\u73fe\u91d1": 390.40999999999997,
           "\u878d\u8cc7": 0.0
         },
-        "cumulative_total": 1678.4251000000002,
+        "cumulative_total": 1660.5699999999997,
         "drawdown": 0.0
       },
       {
         "date": "2026-04-30",
-        "total": 35.700000000000045,
+        "total": 45.31000000000006,
         "by_account": {
           "\u73fe\u91d1": 0.0,
-          "\u878d\u8cc7": 35.700000000000045
+          "\u878d\u8cc7": 45.31000000000006
         },
-        "cumulative_total": 1714.1251000000002,
+        "cumulative_total": 1705.8799999999997,
         "drawdown": 0.0
       },
       {
         "date": "2026-05-01",
-        "total": 972.2302000000002,
+        "total": 862.4902000000002,
         "by_account": {
-          "\u73fe\u91d1": 339.79,
-          "\u878d\u8cc7": 632.4402000000001
+          "\u73fe\u91d1": 95.43020000000001,
+          "\u878d\u8cc7": 767.0600000000002
         },
-        "cumulative_total": 2686.3553,
+        "cumulative_total": 2568.3702,
+        "drawdown": 0.0
+      },
+      {
+        "date": "2026-05-05",
+        "total": 337.4,
+        "by_account": {
+          "\u73fe\u91d1": 0.0,
+          "\u878d\u8cc7": 337.4
+        },
+        "cumulative_total": 2905.7702,
         "drawdown": 0.0
       }
     ],
     "weekly": [
       {
-        "date": "2026-02-23",
-        "total": 26.264999999999986,
-        "by_account": {
-          "\u73fe\u91d1": 26.264999999999986,
-          "\u878d\u8cc7": 0.0
-        },
-        "cumulative_total": 26.264999999999986,
-        "drawdown": 0.0
-      },
-      {
-        "date": "2026-03-02",
-        "total": -91.90989999999998,
-        "by_account": {
-          "\u73fe\u91d1": -91.90989999999998,
-          "\u878d\u8cc7": 0.0
-        },
-        "cumulative_total": -65.64489999999999,
-        "drawdown": -91.90989999999998
-      },
-      {
-        "date": "2026-03-09",
-        "total": 45.5,
-        "by_account": {
-          "\u73fe\u91d1": 45.5,
-          "\u878d\u8cc7": 0.0
-        },
-        "cumulative_total": -20.144899999999993,
-        "drawdown": -46.40989999999998
-      },
-      {
-        "date": "2026-03-16",
-        "total": 4.849999999999994,
-        "by_account": {
-          "\u73fe\u91d1": 4.849999999999994,
-          "\u878d\u8cc7": 0.0
-        },
-        "cumulative_total": -15.294899999999998,
-        "drawdown": -41.559899999999985
-      },
-      {
-        "date": "2026-03-23",
-        "total": 29.349999999999994,
-        "by_account": {
-          "\u73fe\u91d1": 29.349999999999994,
-          "\u878d\u8cc7": 0.0
-        },
-        "cumulative_total": 14.055099999999996,
-        "drawdown": -12.20989999999999
-      },
-      {
-        "date": "2026-03-30",
-        "total": 27.5,
-        "by_account": {
-          "\u73fe\u91d1": 27.5,
-          "\u878d\u8cc7": 0.0
-        },
-        "cumulative_total": 41.555099999999996,
-        "drawdown": 0.0
-      },
-      {
-        "date": "2026-04-06",
-        "total": 10.799999999999997,
-        "by_account": {
-          "\u73fe\u91d1": 10.799999999999997,
-          "\u878d\u8cc7": 0.0
-        },
-        "cumulative_total": 52.35509999999999,
-        "drawdown": 0.0
-      },
-      {
         "date": "2026-04-13",
-        "total": 153.5,
+        "total": 103.5,
         "by_account": {
-          "\u73fe\u91d1": 153.5,
+          "\u73fe\u91d1": 103.5,
           "\u878d\u8cc7": 0.0
         },
-        "cumulative_total": 205.8551,
+        "cumulative_total": 103.5,
         "drawdown": 0.0
       },
       {
         "date": "2026-04-20",
-        "total": 295.63000000000045,
+        "total": 345.63000000000045,
         "by_account": {
-          "\u73fe\u91d1": 295.63000000000045,
+          "\u73fe\u91d1": 345.63000000000045,
           "\u878d\u8cc7": 0.0
         },
-        "cumulative_total": 501.48510000000044,
+        "cumulative_total": 449.13000000000045,
         "drawdown": 0.0
       },
       {
         "date": "2026-04-27",
-        "total": 2184.8702,
+        "total": 2119.2401999999997,
         "by_account": {
-          "\u73fe\u91d1": 1516.7299999999996,
-          "\u878d\u8cc7": 668.1402000000002
+          "\u73fe\u91d1": 1306.8701999999994,
+          "\u878d\u8cc7": 812.3700000000003
         },
-        "cumulative_total": 2686.3553,
+        "cumulative_total": 2568.3702000000003,
+        "drawdown": 0.0
+      },
+      {
+        "date": "2026-05-04",
+        "total": 337.4,
+        "by_account": {
+          "\u73fe\u91d1": 0.0,
+          "\u878d\u8cc7": 337.4
+        },
+        "cumulative_total": 2905.7702000000004,
         "drawdown": 0.0
       }
     ],
     "monthly": [
       {
-        "date": "2026-02-01",
-        "total": 26.264999999999986,
-        "by_account": {
-          "\u73fe\u91d1": 26.264999999999986,
-          "\u878d\u8cc7": 0.0
-        },
-        "cumulative_total": 26.264999999999986,
-        "drawdown": 0.0
-      },
-      {
-        "date": "2026-03-01",
-        "total": -12.20989999999999,
-        "by_account": {
-          "\u73fe\u91d1": -12.20989999999999,
-          "\u878d\u8cc7": 0.0
-        },
-        "cumulative_total": 14.055099999999996,
-        "drawdown": -12.20989999999999
-      },
-      {
         "date": "2026-04-01",
-        "total": 1700.0700000000002,
+        "total": 1705.88,
         "by_account": {
-          "\u73fe\u91d1": 1664.3700000000001,
-          "\u878d\u8cc7": 35.700000000000045
+          "\u73fe\u91d1": 1660.57,
+          "\u878d\u8cc7": 45.31000000000006
         },
-        "cumulative_total": 1714.1251000000002,
+        "cumulative_total": 1705.88,
         "drawdown": 0.0
       },
       {
         "date": "2026-05-01",
-        "total": 972.2302000000002,
+        "total": 1199.8902000000003,
         "by_account": {
-          "\u73fe\u91d1": 339.79,
-          "\u878d\u8cc7": 632.4402000000001
+          "\u73fe\u91d1": 95.43020000000001,
+          "\u878d\u8cc7": 1104.4600000000003
         },
-        "cumulative_total": 2686.3553,
+        "cumulative_total": 2905.7702000000004,
         "drawdown": 0.0
       }
     ],
     "max_drawdown": {
-      "daily": -100.50989999999997,
-      "weekly": -91.90989999999998,
-      "monthly": -12.20989999999999
+      "daily": 0.0,
+      "weekly": 0.0,
+      "monthly": 0.0
     }
   },
   "invested_cost": {
     "enabled": true,
-    "total": 16563.87,
-    "deposit_total": 16513.87,
-    "rebate_total": 50.0,
+    "total": 25.0,
+    "deposit_total": 0.0,
+    "rebate_total": 25.0,
     "by_account": {
-      "\u73fe\u91d1": 16563.87
+      "\u73fe\u91d1": 25.0
     },
     "rows": [
-      {
-        "date": "2025-12-15 00:00:00",
-        "account_type": "\u73fe\u91d1",
-        "type": "deposit",
-        "description": "Wire Funds Received FedRef null SEN(20251215055072)",
-        "amount": 3854.94
-      },
-      {
-        "date": "2025-12-16 00:00:00",
-        "account_type": "\u73fe\u91d1",
-        "type": "wire_rebate",
-        "description": "rebate for wire 2025-12-15",
-        "amount": 25.0
-      },
-      {
-        "date": "2026-04-09 00:00:00",
-        "account_type": "\u73fe\u91d1",
-        "type": "deposit",
-        "description": "Wire Funds Received FedRef null SEN(20260409052266)",
-        "amount": 12658.93
-      },
       {
         "date": "2026-04-13 00:00:00",
         "account_type": "\u73fe\u91d1",
@@ -1312,165 +1030,155 @@
   },
   "performance_summary": {
     "enabled": true,
-    "invested_cost": 16563.87,
-    "realized_pnl": 2686.3553,
-    "unrealized_pnl": 154.37008834838872,
-    "total_pnl": 2840.725388348389,
-    "return_pct": 0.17150130907501623,
-    "realized_return_pct": 0.16218162180698112,
-    "unrealized_return_pct": 0.00931968726803511
+    "invested_cost": 25.0,
+    "realized_pnl": 2905.7702000000004,
+    "unrealized_pnl": -1341.150390625,
+    "total_pnl": 1564.6198093750004,
+    "return_pct": 62.58479237500001,
+    "realized_return_pct": 116.23080800000001,
+    "unrealized_return_pct": -53.646015625
   },
   "asset_value": {
     "enabled": true,
     "cash_by_account": {
-      "\u73fe\u91d1": 0.8499999999967258,
-      "\u878d\u8cc7": 14748.210000000003
+      "\u73fe\u91d1": -13453.830000000002,
+      "\u878d\u8cc7": -13597.809999999996
     },
     "holdings_by_account": {
-      "\u73fe\u91d1": 3890.1700859069824,
-      "\u878d\u8cc7": 766.4400024414062
+      "\u878d\u8cc7": 27511.04962158203,
+      "\u73fe\u91d1": 1128.2499877929688
     },
     "total_by_account": {
-      "\u878d\u8cc7": 15514.650002441409,
-      "\u73fe\u91d1": 3891.020085906979
+      "\u73fe\u91d1": -12325.580012207032,
+      "\u878d\u8cc7": 13913.239621582035
     },
-    "total": 19405.670088348386
+    "total": 1587.6596093750031
   },
   "asset_allocation": {
     "enabled": true,
-    "cash_balance": 0.8499999999967258,
-    "cash_stock": 3890.1700859069824,
-    "margin_stock": 766.4400024414062,
-    "other": 14748.210000000001,
-    "total": 19405.670088348386,
+    "cash_balance": -13453.830000000002,
+    "cash_stock": 1128.2499877929688,
+    "margin_stock": 27511.04962158203,
+    "other": -13597.809999999996,
+    "total": 1587.6596093750031,
     "ratios": {
-      "cash_balance": 4.380163097316003e-05,
-      "cash_stock": 0.20046564061927089,
-      "margin_stock": 0.03949567311780666,
-      "other": 0.7599948846319493
+      "cash_balance": -8.474001555847494,
+      "cash_stock": 0.7106372053119843,
+      "margin_stock": 17.328052851588264,
+      "other": -8.564688501052753
     }
   },
   "pnl_by_account": {
     "enabled": true,
     "realized": {
-      "\u73fe\u91d1": 2018.2151000000006,
-      "\u878d\u8cc7": 668.1402000000002
+      "\u73fe\u91d1": 1756.0002000000002,
+      "\u878d\u8cc7": 1149.7700000000004
     },
     "unrealized": {
-      "\u73fe\u91d1": 146.31008590698247,
-      "\u878d\u8cc7": 8.060002441406255
+      "\u878d\u8cc7": -1551.3303784179686,
+      "\u73fe\u91d1": 210.17998779296877
     },
     "total": {
-      "\u878d\u8cc7": 676.2002024414064,
-      "\u73fe\u91d1": 2164.525185906983
+      "\u73fe\u91d1": 1966.180187792969,
+      "\u878d\u8cc7": -401.5603784179682
     },
-    "total_all": 2840.7253883483895
+    "total_all": 1564.6198093750008
   },
   "market_prices": {
     "prices": {
-      "AMD": 360.5400085449219,
-      "AMZN": 268.260009765625,
-      "CPER": 36.22999954223633,
-      "GOOG": 383.2200012207031,
-      "MSFT": 414.44000244140625,
-      "QQQ": 674.1500244140625,
-      "SATS": 123.18000030517578,
-      "SLV": 68.29000091552734,
-      "TSLA": 390.82000732421875,
-      "VOO": 662.52001953125
+      "AMD": 455.19000244140625,
+      "AMZN": 272.67999267578125,
+      "GOOG": 397.04998779296875,
+      "LITE": 903.7999877929688,
+      "SATS": 127.7
     },
     "sources": {
       "AMD": "yfinance",
       "AMZN": "yfinance",
-      "CPER": "yfinance",
       "GOOG": "yfinance",
-      "MSFT": "yfinance",
-      "QQQ": "yfinance",
-      "SATS": "yfinance",
-      "SLV": "yfinance",
-      "TSLA": "yfinance",
-      "VOO": "yfinance"
+      "LITE": "yfinance",
+      "SATS": "positions_reference"
     },
     "warnings": {}
   },
   "risk_metrics": {
     "enabled": true,
-    "sharpe_ratio": 8.278928282184543,
-    "annualized_return": 2.404104040903485,
-    "annualized_volatility": 0.2861452243030358,
-    "average_daily_return": 0.009540095400410654,
+    "sharpe_ratio": 17.751249885973134,
+    "annualized_return": 3661.2704519999998,
+    "annualized_volatility": 206.2522444426581,
+    "average_daily_return": 14.528851,
     "risk_free": {
-      "annual_rate": 0.03575000047683716,
+      "annual_rate": 0.0359500002861023,
       "source": "yfinance:^IRX",
       "label": "13-week Treasury Bill (^IRX)"
     },
-    "capital_base": 16563.87,
+    "capital_base": 25.0,
     "method": "Daily realized PnL divided by total external capital, annualized with 252 trading days.",
     "interpretation": "strong"
   },
   "symbol_analysis": {
     "enabled": true,
-    "current_count": 10,
-    "closed_count": 5,
+    "current_count": 11,
+    "closed_count": 1,
     "symbols": [
       {
         "symbol": "AMD",
         "status": "current",
         "qty": 1.0,
-        "trade_count": 5,
+        "trade_count": 2,
         "win_rate": 1.0,
-        "realized_pnl": 146.27000000000004,
-        "unrealized_pnl": 37.840008544921886,
-        "total_pnl": 184.11000854492193,
-        "market_value": 360.5400085449219,
+        "realized_pnl": 111.58000000000004,
+        "unrealized_pnl": 132.49000244140626,
+        "total_pnl": 244.0700024414063,
+        "market_value": 455.19000244140625,
         "cost": 322.7,
         "avg_cost": 322.7,
-        "last_price": 360.5400085449219,
+        "last_price": 455.19000244140625,
         "price_source": "yfinance",
         "last_trade_date": "2026-04-22",
         "best_trade": 56.04000000000002,
-        "worst_trade": 5.340000000000003,
+        "worst_trade": 55.54000000000002,
         "reference": {
           "qty": 1.0,
-          "price": 361.8502,
-          "market_value": 361.85,
+          "price": 461.2,
+          "market_value": 461.2,
           "cost": 322.7,
-          "unrealized_pnl": 39.15,
-          "unrealized_pct": 0.1213,
-          "day_pnl": 7.36,
-          "weight": 0.07780000000000001,
-          "beta": 1.96,
-          "pe": 127.21
+          "unrealized_pnl": 138.5,
+          "unrealized_pct": 0.4292,
+          "day_pnl": 52.74,
+          "weight": 0.0144,
+          "beta": 2.4,
+          "pe": 159.02
         }
       },
       {
         "symbol": "AMZN",
         "status": "current",
         "qty": 2.0,
-        "trade_count": 1,
-        "win_rate": 1.0,
-        "realized_pnl": 4.849999999999994,
-        "unrealized_pnl": 63.42001953124998,
-        "total_pnl": 68.27001953124997,
-        "market_value": 536.52001953125,
+        "trade_count": 0,
+        "win_rate": 0.0,
+        "realized_pnl": 0,
+        "unrealized_pnl": 72.25998535156248,
+        "total_pnl": 72.25998535156248,
+        "market_value": 545.3599853515625,
         "cost": 473.1,
         "avg_cost": 236.55,
-        "last_price": 268.260009765625,
+        "last_price": 272.67999267578125,
         "price_source": "yfinance",
-        "last_trade_date": "2026-03-17",
-        "best_trade": 4.849999999999994,
-        "worst_trade": 4.849999999999994,
+        "last_trade_date": null,
+        "best_trade": 0.0,
+        "worst_trade": 0.0,
         "reference": {
           "qty": 2.0,
-          "price": 267.5501,
-          "market_value": 535.1,
+          "price": 272.7,
+          "market_value": 545.4,
           "cost": 473.1,
-          "unrealized_pnl": 62.0,
-          "unrealized_pct": 0.1311,
-          "day_pnl": 4.98,
-          "weight": 0.115,
-          "beta": 1.38,
-          "pe": 36.69
+          "unrealized_pnl": 72.3,
+          "unrealized_pct": 0.1528,
+          "day_pnl": 3.06,
+          "weight": 0.0171,
+          "beta": 1.47,
+          "pe": 38.35
         }
       },
       {
@@ -1480,164 +1188,118 @@
         "trade_count": 0,
         "win_rate": 0.0,
         "realized_pnl": 0,
-        "unrealized_pnl": -1.3800013732910088,
-        "total_pnl": -1.3800013732910088,
-        "market_value": 108.68999862670898,
+        "unrealized_pnl": 4.74,
+        "total_pnl": 4.74,
+        "market_value": 114.81,
         "cost": 110.07,
         "avg_cost": 36.69,
-        "last_price": 36.22999954223633,
-        "price_source": "yfinance",
+        "last_price": 38.27,
+        "price_source": "positions_reference",
         "last_trade_date": null,
         "best_trade": 0.0,
         "worst_trade": 0.0,
         "reference": {
           "qty": 3.0,
-          "price": 36.4,
-          "market_value": 109.2,
+          "price": 38.27,
+          "market_value": 114.81,
           "cost": 110.07,
-          "unrealized_pnl": -0.87,
-          "unrealized_pct": -0.0079,
-          "day_pnl": -0.39,
-          "weight": 0.0235,
-          "beta": 0.49,
+          "unrealized_pnl": 4.74,
+          "unrealized_pct": 0.0431,
+          "day_pnl": 2.76,
+          "weight": 0.0036,
+          "beta": 0.46,
           "pe": 0.0
         }
       },
       {
         "symbol": "GOOG",
         "status": "current",
-        "qty": 2.0,
+        "qty": 1.0,
         "trade_count": 1,
         "win_rate": 1.0,
-        "realized_pnl": 66.44,
-        "unrealized_pnl": 8.060002441406255,
-        "total_pnl": 74.50000244140625,
-        "market_value": 766.4400024414062,
-        "cost": 758.38,
+        "realized_pnl": 0.8100000000000023,
+        "unrealized_pnl": 17.859987792968752,
+        "total_pnl": 18.669987792968755,
+        "market_value": 397.04998779296875,
+        "cost": 379.19,
         "avg_cost": 379.19,
-        "last_price": 383.2200012207031,
+        "last_price": 397.04998779296875,
         "price_source": "yfinance",
         "last_trade_date": "2026-05-01",
-        "best_trade": 66.44,
-        "worst_trade": 66.44,
+        "best_trade": 0.8100000000000023,
+        "worst_trade": 0.8100000000000023,
         "reference": {
           "qty": 2.0,
-          "price": 382.45,
-          "market_value": 764.9,
+          "price": 395.7999,
+          "market_value": 791.6,
           "cost": 758.38,
-          "unrealized_pnl": 6.52,
-          "unrealized_pct": 0.0086,
-          "day_pnl": 1.02,
-          "weight": 0.16440000000000002,
-          "beta": 1.13,
-          "pe": 32.13
+          "unrealized_pnl": 33.22,
+          "unrealized_pct": 0.0438,
+          "day_pnl": 1.0,
+          "weight": 0.0248,
+          "beta": 1.26,
+          "pe": 36.55
         }
       },
       {
         "symbol": "LITE",
-        "status": "closed",
-        "qty": 0.0,
-        "trade_count": 11,
-        "win_rate": 0.8181818181818182,
-        "realized_pnl": 279.6700000000002,
-        "unrealized_pnl": 0.0,
-        "total_pnl": 279.6700000000002,
-        "market_value": 0.0,
-        "cost": 0.0,
-        "avg_cost": 0.0,
-        "last_price": 0.0,
-        "price_source": "missing",
-        "last_trade_date": "2026-05-01",
-        "best_trade": 70.0,
+        "status": "current",
+        "qty": 30.0,
+        "trade_count": 16,
+        "win_rate": 0.875,
+        "realized_pnl": 617.0700000000002,
+        "unrealized_pnl": -1569.1903662109362,
+        "total_pnl": -952.120366210936,
+        "market_value": 27113.999633789062,
+        "cost": 28683.19,
+        "avg_cost": 956.1063333333333,
+        "last_price": 903.7999877929688,
+        "price_source": "yfinance",
+        "last_trade_date": "2026-05-05",
+        "best_trade": 109.31999999999994,
         "worst_trade": -20.0,
-        "reference": {}
+        "reference": {
+          "qty": 30.0,
+          "price": 901.5,
+          "market_value": 27045.0,
+          "cost": 28683.19,
+          "unrealized_pnl": -1638.19,
+          "unrealized_pct": -0.0571,
+          "day_pnl": 267.6,
+          "weight": 0.8464,
+          "beta": 1.53,
+          "pe": 277.73
+        }
       },
       {
         "symbol": "MSFT",
         "status": "current",
         "qty": 2.0,
-        "trade_count": 1,
-        "win_rate": 1.0,
-        "realized_pnl": 4.300000000000011,
-        "unrealized_pnl": 55.8800048828125,
-        "total_pnl": 60.18000488281251,
-        "market_value": 828.8800048828125,
+        "trade_count": 0,
+        "win_rate": 0.0,
+        "realized_pnl": 0,
+        "unrealized_pnl": 57.19,
+        "total_pnl": 57.19,
+        "market_value": 830.19,
         "cost": 773.0,
         "avg_cost": 386.5,
-        "last_price": 414.44000244140625,
-        "price_source": "yfinance",
-        "last_trade_date": "2026-03-04",
-        "best_trade": 4.300000000000011,
-        "worst_trade": 4.300000000000011,
+        "last_price": 415.0953,
+        "price_source": "positions_reference",
+        "last_trade_date": null,
+        "best_trade": 0.0,
+        "worst_trade": 0.0,
         "reference": {
           "qty": 2.0,
-          "price": 413.2416,
-          "market_value": 826.48,
+          "price": 415.0953,
+          "market_value": 830.19,
           "cost": 773.0,
-          "unrealized_pnl": 53.48,
-          "unrealized_pct": 0.0692,
-          "day_pnl": 10.92,
-          "weight": 0.1777,
-          "beta": 1.11,
-          "pe": 26.55
+          "unrealized_pnl": 57.19,
+          "unrealized_pct": 0.07400000000000001,
+          "day_pnl": -11.35,
+          "weight": 0.026000000000000002,
+          "beta": 1.1,
+          "pe": 25.89
         }
-      },
-      {
-        "symbol": "NFLX",
-        "status": "closed",
-        "qty": 0.0,
-        "trade_count": 2,
-        "win_rate": 1.0,
-        "realized_pnl": 14.899999999999991,
-        "unrealized_pnl": 0.0,
-        "total_pnl": 14.899999999999991,
-        "market_value": 0.0,
-        "cost": 0.0,
-        "avg_cost": 0.0,
-        "last_price": 0.0,
-        "price_source": "missing",
-        "last_trade_date": "2026-04-09",
-        "best_trade": 8.599999999999994,
-        "worst_trade": 6.299999999999997,
-        "reference": {}
-      },
-      {
-        "symbol": "NVDA",
-        "status": "closed",
-        "qty": 0.0,
-        "trade_count": 3,
-        "win_rate": 0.6666666666666666,
-        "realized_pnl": 20.5,
-        "unrealized_pnl": 0.0,
-        "total_pnl": 20.5,
-        "market_value": 0.0,
-        "cost": 0.0,
-        "avg_cost": 0.0,
-        "last_price": 0.0,
-        "price_source": "missing",
-        "last_trade_date": "2026-04-09",
-        "best_trade": 16.0,
-        "worst_trade": 0.0,
-        "reference": {}
-      },
-      {
-        "symbol": "NVO",
-        "status": "closed",
-        "qty": 0.0,
-        "trade_count": 1,
-        "win_rate": 0.0,
-        "realized_pnl": -27.299999999999997,
-        "unrealized_pnl": 0.0,
-        "total_pnl": -27.299999999999997,
-        "market_value": 0.0,
-        "cost": 0.0,
-        "avg_cost": 0.0,
-        "last_price": 0.0,
-        "price_source": "missing",
-        "last_trade_date": "2026-03-04",
-        "best_trade": -27.299999999999997,
-        "worst_trade": -27.299999999999997,
-        "reference": {}
       },
       {
         "symbol": "QQQ",
@@ -1646,26 +1308,26 @@
         "trade_count": 0,
         "win_rate": 0.0,
         "realized_pnl": 0,
-        "unrealized_pnl": 54.6500244140625,
-        "total_pnl": 54.6500244140625,
-        "market_value": 674.1500244140625,
+        "unrealized_pnl": 92.61,
+        "total_pnl": 92.61,
+        "market_value": 712.11,
         "cost": 619.5,
         "avg_cost": 619.5,
-        "last_price": 674.1500244140625,
-        "price_source": "yfinance",
+        "last_price": 712.105,
+        "price_source": "positions_reference",
         "last_trade_date": null,
         "best_trade": 0.0,
         "worst_trade": 0.0,
         "reference": {
           "qty": 1.0,
-          "price": 673.5501,
-          "market_value": 673.55,
+          "price": 712.105,
+          "market_value": 712.11,
           "cost": 619.5,
-          "unrealized_pnl": 54.05,
-          "unrealized_pct": 0.0872,
-          "day_pnl": 5.81,
-          "weight": 0.1448,
-          "beta": 1.19,
+          "unrealized_pnl": 92.61,
+          "unrealized_pct": 0.1495,
+          "day_pnl": 17.17,
+          "weight": 0.0223,
+          "beta": 1.21,
           "pe": 33.49
         }
       },
@@ -1676,26 +1338,26 @@
         "trade_count": 0,
         "win_rate": 0.0,
         "realized_pnl": 0,
-        "unrealized_pnl": 0.9100003051757852,
-        "total_pnl": 0.9100003051757852,
-        "market_value": 123.18000030517578,
+        "unrealized_pnl": 5.430000000000007,
+        "total_pnl": 5.430000000000007,
+        "market_value": 127.7,
         "cost": 122.27,
         "avg_cost": 122.27,
-        "last_price": 123.18000030517578,
-        "price_source": "yfinance",
+        "last_price": 127.7,
+        "price_source": "positions_reference",
         "last_trade_date": null,
         "best_trade": 0.0,
         "worst_trade": 0.0,
         "reference": {
           "qty": 1.0,
-          "price": 123.0,
-          "market_value": 123.0,
+          "price": 127.7,
+          "market_value": 127.7,
           "cost": 122.27,
-          "unrealized_pnl": 0.73,
-          "unrealized_pct": 0.006,
-          "day_pnl": -0.14,
-          "weight": 0.0264,
-          "beta": 1.0,
+          "unrealized_pnl": 5.43,
+          "unrealized_pct": 0.0444,
+          "day_pnl": 5.08,
+          "weight": 0.004,
+          "beta": 0.96,
           "pe": 0.0
         }
       },
@@ -1706,26 +1368,26 @@
         "trade_count": 0,
         "win_rate": 0.0,
         "realized_pnl": 0,
-        "unrealized_pnl": -19.969997253417944,
-        "total_pnl": -19.969997253417944,
-        "market_value": 204.87000274658203,
-        "cost": 224.83999999999997,
-        "avg_cost": 74.94666666666666,
-        "last_price": 68.29000091552734,
-        "price_source": "yfinance",
+        "unrealized_pnl": -6.5,
+        "total_pnl": -6.5,
+        "market_value": 218.34,
+        "cost": 224.84,
+        "avg_cost": 74.94666666666667,
+        "last_price": 72.78,
+        "price_source": "positions_reference",
         "last_trade_date": null,
         "best_trade": 0.0,
         "worst_trade": 0.0,
         "reference": {
           "qty": 3.0,
-          "price": 68.1896,
-          "market_value": 204.57,
+          "price": 72.78,
+          "market_value": 218.34,
           "cost": 224.84,
-          "unrealized_pnl": -20.27,
-          "unrealized_pct": -0.0902,
-          "day_pnl": 4.59,
-          "weight": 0.044000000000000004,
-          "beta": 0.53,
+          "unrealized_pnl": -6.5,
+          "unrealized_pct": -0.028900000000000002,
+          "day_pnl": 3.54,
+          "weight": 0.0068000000000000005,
+          "beta": 0.45,
           "pe": 0.0
         }
       },
@@ -1733,49 +1395,49 @@
         "symbol": "SNDK",
         "status": "closed",
         "qty": 0.0,
-        "trade_count": 50,
-        "win_rate": 0.92,
-        "realized_pnl": 2259.5752,
+        "trade_count": 49,
+        "win_rate": 0.9387755102040817,
+        "realized_pnl": 2176.3102,
         "unrealized_pnl": 0.0,
-        "total_pnl": 2259.5752,
+        "total_pnl": 2176.3102,
         "market_value": 0.0,
         "cost": 0.0,
         "avg_cost": 0.0,
         "last_price": 0.0,
         "price_source": "missing",
         "last_trade_date": "2026-05-01",
-        "best_trade": 189.19999999999982,
-        "worst_trade": -61.679999999999836,
+        "best_trade": 230.01999999999998,
+        "worst_trade": -47.32000000000062,
         "reference": {}
       },
       {
         "symbol": "TSLA",
         "status": "current",
         "qty": 1.0,
-        "trade_count": 1,
+        "trade_count": 0,
         "win_rate": 0.0,
-        "realized_pnl": -82.84989999999999,
-        "unrealized_pnl": -78.05999267578125,
-        "total_pnl": -160.90989267578124,
-        "market_value": 390.82000732421875,
+        "realized_pnl": 0,
+        "unrealized_pnl": -40.9,
+        "total_pnl": -40.9,
+        "market_value": 427.98,
         "cost": 468.88,
         "avg_cost": 468.88,
-        "last_price": 390.82000732421875,
-        "price_source": "yfinance",
-        "last_trade_date": "2026-03-05",
-        "best_trade": -82.84989999999999,
-        "worst_trade": -82.84989999999999,
+        "last_price": 427.98,
+        "price_source": "positions_reference",
+        "last_trade_date": null,
+        "best_trade": 0.0,
+        "worst_trade": 0.0,
         "reference": {
           "qty": 1.0,
-          "price": 391.34,
-          "market_value": 391.34,
+          "price": 427.98,
+          "market_value": 427.98,
           "cost": 468.88,
-          "unrealized_pnl": -77.54,
-          "unrealized_pct": -0.1654,
-          "day_pnl": 9.71,
-          "weight": 0.08410000000000001,
-          "beta": 1.92,
-          "pe": 342.02
+          "unrealized_pnl": -40.9,
+          "unrealized_pct": -0.0872,
+          "day_pnl": 16.19,
+          "weight": 0.0134,
+          "beta": 1.79,
+          "pe": 365.81
         }
       },
       {
@@ -1785,25 +1447,25 @@
         "trade_count": 0,
         "win_rate": 0.0,
         "realized_pnl": 0,
-        "unrealized_pnl": 33.02001953125,
-        "total_pnl": 33.02001953125,
-        "market_value": 662.52001953125,
+        "unrealized_pnl": 48.92,
+        "total_pnl": 48.92,
+        "market_value": 678.43,
         "cost": 629.5,
         "avg_cost": 629.5,
-        "last_price": 662.52001953125,
-        "price_source": "yfinance",
+        "last_price": 678.425,
+        "price_source": "positions_reference",
         "last_trade_date": null,
         "best_trade": 0.0,
         "worst_trade": 0.0,
         "reference": {
           "qty": 1.0,
-          "price": 661.95,
-          "market_value": 661.95,
+          "price": 678.425,
+          "market_value": 678.43,
           "cost": 629.5,
-          "unrealized_pnl": 32.45,
-          "unrealized_pct": 0.051500000000000004,
-          "day_pnl": 1.37,
-          "weight": 0.1423,
+          "unrealized_pnl": 48.92,
+          "unrealized_pct": 0.07769999999999999,
+          "day_pnl": 5.89,
+          "weight": 0.0212,
           "beta": 1.0,
           "pe": 26.2
         }
@@ -1817,9 +1479,9 @@
       "body": "\u76ee\u524d\u5831\u916c\u7387\u5df2\u9054\u96d9\u4f4d\u6578\uff0c\u4ee3\u8868\u4ea4\u6613\u6210\u679c\u76f8\u5c0d\u6295\u5165\u6210\u672c\u6709\u660e\u78ba\u8ca2\u737b\u3002"
     },
     {
-      "tone": "praise",
-      "title": "\u5df2\u5be6\u73fe\u8207\u672a\u5be6\u73fe\u6536\u76ca\u540c\u6b65",
-      "body": "\u5df2\u843d\u888b\u8207\u73fe\u5009\u6d6e\u76c8\u7686\u70ba\u6b63\uff0c\u8868\u793a\u4ea4\u6613\u7bc0\u594f\u8207\u6301\u5009\u54c1\u8cea\u76ee\u524d\u914d\u5408\u826f\u597d\u3002"
+      "tone": "warn",
+      "title": "\u73fe\u5009\u62d6\u7d2f\u90e8\u5206\u7372\u5229",
+      "body": "\u5df2\u5be6\u73fe\u640d\u76ca\u70ba\u6b63\uff0c\u4f46\u672a\u5be6\u73fe\u640d\u76ca\u70ba\u8ca0\uff0c\u5efa\u8b70\u6aa2\u67e5\u6d6e\u8667\u90e8\u4f4d\u662f\u5426\u4ecd\u7b26\u5408\u539f\u59cb\u4ea4\u6613\u5047\u8a2d\u3002"
     },
     {
       "tone": "praise",
@@ -1833,7 +1495,12 @@
     },
     {
       "tone": "warn",
-      "title": "TSLA \u662f\u76ee\u524d\u4e3b\u8981\u6d6e\u8667\u4f86\u6e90",
+      "title": "\u878d\u8cc7\u80a1\u7968\u5360\u6bd4\u504f\u9ad8",
+      "body": "\u878d\u8cc7\u66dd\u96aa\u6703\u653e\u5927\u56de\u64a4\uff0c\u82e5\u5e02\u5834\u6ce2\u52d5\u5347\u9ad8\uff0c\u5efa\u8b70\u9810\u5148\u8a2d\u5b9a\u964d\u69d3\u687f\u689d\u4ef6\u3002"
+    },
+    {
+      "tone": "warn",
+      "title": "LITE \u662f\u76ee\u524d\u4e3b\u8981\u6d6e\u8667\u4f86\u6e90",
       "body": "\u5efa\u8b70\u78ba\u8a8d\u5b83\u7684\u90e8\u4f4d\u5927\u5c0f\u3001\u505c\u640d\u7dda\u8207\u6301\u6709\u7406\u7531\u662f\u5426\u4ecd\u7136\u4e00\u81f4\u3002"
     }
   ],
@@ -1843,8 +1510,8 @@
       {
         "name": "Total PnL",
         "formula": "sum(realized pnl) + sum(unrealized pnl)",
-        "expected": 2840.725388348389,
-        "actual": 2840.725388348389,
+        "expected": 1564.6198093750004,
+        "actual": 1564.6198093750004,
         "delta": 0.0,
         "tolerance": 0.01,
         "status": "ok"
@@ -1852,8 +1519,8 @@
       {
         "name": "Win Rate",
         "formula": "winning realized trades / realized trades",
-        "expected": 0.881578947368421,
-        "actual": 0.881578947368421,
+        "expected": 0.9264705882352942,
+        "actual": 0.9264705882352942,
         "delta": 0.0,
         "tolerance": 0.0001,
         "status": "ok"
@@ -1861,8 +1528,8 @@
       {
         "name": "Profit Factor",
         "formula": "average win / abs(average loss)",
-        "expected": 1.4384770382607135,
-        "actual": 1.4384770382607135,
+        "expected": 2.417328203246681,
+        "actual": 2.417328203246681,
         "delta": 0.0,
         "tolerance": 0.0001,
         "status": "ok"
@@ -1870,8 +1537,8 @@
       {
         "name": "Health Score",
         "formula": "clamp(50 + profit_factor * 10, 0, 100)",
-        "expected": 64.38477038260713,
-        "actual": 64.38477038260713,
+        "expected": 74.17328203246682,
+        "actual": 74.17328203246682,
         "delta": 0.0,
         "tolerance": 0.0001,
         "status": "ok"
@@ -1879,17 +1546,17 @@
       {
         "name": "Daily Realized Sum",
         "formula": "last daily cumulative total",
-        "expected": 2686.3553,
-        "actual": 2686.3553,
-        "delta": 0.0,
+        "expected": 2905.7702000000004,
+        "actual": 2905.7702,
+        "delta": -4.547473508864641e-13,
         "tolerance": 0.01,
         "status": "ok"
       },
       {
         "name": "Reconciliation Delta",
         "formula": "realized_total - (net_cashflow + remaining_cost_basis)",
-        "expected": 1.7553000000143584,
-        "actual": 1.7553000000143584,
+        "expected": 1.9602000000136286,
+        "actual": 1.9602000000136286,
         "delta": 0.0,
         "tolerance": 0.01,
         "status": "ok"
@@ -1897,8 +1564,8 @@
       {
         "name": "Asset Value",
         "formula": "sum(total_by_account)",
-        "expected": 19405.670088348386,
-        "actual": 19405.670088348386,
+        "expected": 1587.6596093750031,
+        "actual": 1587.6596093750031,
         "delta": 0.0,
         "tolerance": 0.01,
         "status": "ok"
@@ -1907,8 +1574,8 @@
         "name": "Allocation Ratio",
         "formula": "cash + cash stock + margin stock + other ratios",
         "expected": 1.0,
-        "actual": 1.0,
-        "delta": 0.0,
+        "actual": 1.0000000000000016,
+        "delta": 1.5543122344752192e-15,
         "tolerance": 0.001,
         "status": "ok"
       }
@@ -1940,42 +1607,52 @@
         {
           "symbol": "CPER",
           "reference_qty": 3.0,
-          "calculated_qty": 3.0,
-          "qty_delta": 0.0,
+          "calculated_qty": 0.0,
+          "qty_delta": -3.0,
           "reference_cost": 110.07,
-          "calculated_cost": 110.07,
-          "cost_delta": 0.0,
-          "status": "ok"
+          "calculated_cost": 0.0,
+          "cost_delta": -110.07,
+          "status": "warn"
         },
         {
           "symbol": "GOOG",
           "reference_qty": 2.0,
-          "calculated_qty": 2.0,
-          "qty_delta": 0.0,
+          "calculated_qty": 1.0,
+          "qty_delta": -1.0,
           "reference_cost": 758.38,
-          "calculated_cost": 758.38,
+          "calculated_cost": 379.19,
+          "cost_delta": -379.19,
+          "status": "warn"
+        },
+        {
+          "symbol": "LITE",
+          "reference_qty": 30.0,
+          "calculated_qty": 30.0,
+          "qty_delta": 0.0,
+          "reference_cost": 28683.19,
+          "calculated_cost": 28683.19,
           "cost_delta": 0.0,
           "status": "ok"
         },
         {
           "symbol": "MSFT",
           "reference_qty": 2.0,
-          "calculated_qty": 2.0,
-          "qty_delta": 0.0,
+          "calculated_qty": 0.0,
+          "qty_delta": -2.0,
           "reference_cost": 773.0,
-          "calculated_cost": 773.0,
-          "cost_delta": 0.0,
-          "status": "ok"
+          "calculated_cost": 0.0,
+          "cost_delta": -773.0,
+          "status": "warn"
         },
         {
           "symbol": "QQQ",
           "reference_qty": 1.0,
-          "calculated_qty": 1.0,
-          "qty_delta": 0.0,
+          "calculated_qty": 0.0,
+          "qty_delta": -1.0,
           "reference_cost": 619.5,
-          "calculated_cost": 619.5,
-          "cost_delta": 0.0,
-          "status": "ok"
+          "calculated_cost": 0.0,
+          "cost_delta": -619.5,
+          "status": "warn"
         },
         {
           "symbol": "SATS",
@@ -1990,32 +1667,32 @@
         {
           "symbol": "SLV",
           "reference_qty": 3.0,
-          "calculated_qty": 3.0,
-          "qty_delta": 0.0,
+          "calculated_qty": 0.0,
+          "qty_delta": -3.0,
           "reference_cost": 224.84,
-          "calculated_cost": 224.83999999999997,
-          "cost_delta": -2.842170943040401e-14,
-          "status": "ok"
+          "calculated_cost": 0.0,
+          "cost_delta": -224.84,
+          "status": "warn"
         },
         {
           "symbol": "TSLA",
           "reference_qty": 1.0,
-          "calculated_qty": 1.0,
-          "qty_delta": 0.0,
+          "calculated_qty": 0.0,
+          "qty_delta": -1.0,
           "reference_cost": 468.88,
-          "calculated_cost": 468.88,
-          "cost_delta": 0.0,
-          "status": "ok"
+          "calculated_cost": 0.0,
+          "cost_delta": -468.88,
+          "status": "warn"
         },
         {
           "symbol": "VOO",
           "reference_qty": 1.0,
-          "calculated_qty": 1.0,
-          "qty_delta": 0.0,
+          "calculated_qty": 0.0,
+          "qty_delta": -1.0,
           "reference_cost": 629.5,
-          "calculated_cost": 629.5,
-          "cost_delta": 0.0,
-          "status": "ok"
+          "calculated_cost": 0.0,
+          "cost_delta": -629.5,
+          "status": "warn"
         }
       ]
     },
