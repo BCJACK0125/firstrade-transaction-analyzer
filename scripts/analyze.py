@@ -972,8 +972,10 @@ def _extract_llm_content(response: dict) -> str | None:
 def _generate_llm_checkup(summary: dict) -> dict:
     api_key = os.getenv("LLM_API_KEY", "").strip()
     api_url = os.getenv("LLM_API_URL", "").strip()
+    fallback_url = os.getenv("LLM_FALLBACK_API_URL", "").strip()
     model = os.getenv("LLM_MODEL", "").strip()
     is_gemini = "generativelanguage.googleapis.com" in api_url
+    is_gemini_fallback = "generativelanguage.googleapis.com" in fallback_url if fallback_url else False
     if not api_key or not api_url or (not model and not is_gemini):
         return {
             "enabled": False,
@@ -1037,6 +1039,22 @@ def _generate_llm_checkup(summary: dict) -> dict:
             "max_tokens": max_tokens,
         }
 
+    if fallback_url:
+        if is_gemini_fallback:
+            fallback_payload = {
+                "contents": payload.get("contents"),
+                "generationConfig": payload.get("generationConfig"),
+            }
+        else:
+            fallback_payload = {
+                "model": model,
+                "messages": payload.get("messages"),
+                "temperature": temperature,
+                "max_tokens": max_tokens,
+            }
+    else:
+        fallback_payload = None
+
     attempts = max(1, retries + 1)
     last_error: str | None = None
     for attempt in range(1, attempts + 1):
@@ -1059,6 +1077,31 @@ def _generate_llm_checkup(summary: dict) -> dict:
 
         if attempt < attempts:
             time.sleep(backoff * attempt)
+
+    if fallback_url and fallback_payload:
+        fallback_is_gemini = is_gemini_fallback
+        fallback_model = model if not fallback_is_gemini else (fallback_url.rsplit("/", 1)[-1] or "gemini")
+        for attempt in range(1, attempts + 1):
+            try:
+                response = _request_llm(fallback_payload, fallback_url, api_key, timeout)
+                content = _extract_llm_content(response)
+                if not content:
+                    last_error = "LLM response missing content"
+                else:
+                    return {
+                        "enabled": True,
+                        "model": fallback_model,
+                        "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+                        "content": content,
+                        "fallback_used": True,
+                    }
+            except error.HTTPError as exc:
+                last_error = f"HTTP {exc.code}"
+            except Exception as exc:
+                last_error = str(exc)
+
+            if attempt < attempts:
+                time.sleep(backoff * attempt)
 
     return {
         "enabled": False,
