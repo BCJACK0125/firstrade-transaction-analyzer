@@ -984,12 +984,12 @@ def _generate_llm_checkup(summary: dict) -> dict:
 
     temp_raw = os.getenv("LLM_TEMPERATURE", "0.2").strip()
     tokens_raw = os.getenv("LLM_MAX_TOKENS", "900").strip()
-    timeout_raw = os.getenv("LLM_TIMEOUT", "45").strip()
+    timeout_raw = os.getenv("LLM_TIMEOUT", "120").strip()
     retries_raw = os.getenv("LLM_RETRIES", "2").strip()
     backoff_raw = os.getenv("LLM_RETRY_BACKOFF", "2").strip()
     temperature = float(temp_raw or "0.2")
     max_tokens = int(tokens_raw or "900")
-    timeout = int(timeout_raw or "45")
+    timeout = int(timeout_raw or "120")
     retries = int(retries_raw or "2")
     backoff = float(backoff_raw or "2")
 
