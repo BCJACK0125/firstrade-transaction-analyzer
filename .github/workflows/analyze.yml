@@ -30,6 +30,15 @@ jobs:
         run: pip install pandas numpy openpyxl yfinance
 
       - name: Run analysis
+        env:
+          LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
+          LLM_API_URL: ${{ secrets.LLM_API_URL }}
+          LLM_MODEL: ${{ secrets.LLM_MODEL }}
+          LLM_TEMPERATURE: ${{ secrets.LLM_TEMPERATURE }}
+          LLM_MAX_TOKENS: ${{ secrets.LLM_MAX_TOKENS }}
+          LLM_TIMEOUT: ${{ secrets.LLM_TIMEOUT }}
+          LLM_HTTP_REFERER: ${{ secrets.LLM_HTTP_REFERER }}
+          LLM_APP_TITLE: ${{ secrets.LLM_APP_TITLE }}
         run: python scripts/analyze.py
 
       - name: Sync outputs to docs

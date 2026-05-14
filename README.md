@@ -223,6 +223,28 @@ python -m http.server 8000 --directory docs
 4. 將 `data/output.json` 複製到 `docs/output.json`。
 5. 自動 commit 分析結果。
 
+## LLM 投資健檢 (可選)
+
+分析流程支援在 GitHub Actions 內呼叫 LLM，將投資健檢結果寫入 `output.json` 並顯示於前端。
+
+### 必要 Secrets
+
+在 GitHub repo 的 Settings → Secrets and variables → Actions → Secrets 新增：
+
+- `LLM_API_KEY`：你的 API key
+- `LLM_API_URL`：API endpoint（例如 Gemini 的 `https://generativelanguage.googleapis.com/v1beta/models/gemma-4-26b-a4b-it:generateContent`）
+- `LLM_MODEL`：模型名稱（OpenAI-compatible 需要；Gemini REST 可省略）
+
+### 可選 Secrets
+
+- `LLM_TEMPERATURE`（預設 0.2）
+- `LLM_MAX_TOKENS`（預設 900）
+- `LLM_TIMEOUT`（預設 45 秒）
+- `LLM_HTTP_REFERER`（部分供應商需要）
+- `LLM_APP_TITLE`（部分供應商需要）
+
+若不設定 LLM 參數，流程會自動跳過，不會使分析失敗。
+
 ## GitHub Pages 設定
 
 建議 GitHub Pages 設定：

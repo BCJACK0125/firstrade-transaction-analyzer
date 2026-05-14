@@ -4,6 +4,9 @@ from __future__ import annotations
 
 import json
 import math
+import os
+from datetime import datetime, timezone
+from urllib import error, request
 from pathlib import Path
 
 import numpy as np
@@ -831,6 +834,220 @@ def _compute_asset_allocation(asset_value: dict) -> dict:
     }
 
 
+def _build_llm_summary(
+    performance_summary: dict,
+    health: dict,
+    risk_metrics: dict,
+    timeseries: dict,
+    invested_cost: dict,
+    asset_allocation: dict,
+    symbol_analysis: dict,
+) -> dict:
+    symbols = symbol_analysis.get("symbols", []) if symbol_analysis.get("enabled") else []
+    ranked = sorted(symbols, key=lambda row: float(row.get("total_pnl", 0.0)), reverse=True)
+    winners = ranked[:3]
+    losers = list(reversed(ranked[-3:])) if ranked else []
+    current_losers = [
+        row
+        for row in symbols
+        if row.get("status") == "current" and float(row.get("unrealized_pnl", 0.0)) < 0
+    ]
+    current_losers = sorted(current_losers, key=lambda row: float(row.get("unrealized_pnl", 0.0)))[:3]
+
+    last_daily = ((timeseries.get("daily") or [])[-1:] or [{}])[0]
+    max_drawdown = (timeseries.get("max_drawdown") or {}).get("daily", 0.0)
+
+    return {
+        "last_update": last_daily.get("date"),
+        "total_pnl": float(health.get("total", 0.0)),
+        "return_pct": float(performance_summary.get("return_pct", 0.0)),
+        "realized_pnl": float(performance_summary.get("realized_pnl", 0.0)),
+        "unrealized_pnl": float(performance_summary.get("unrealized_pnl", 0.0)),
+        "win_rate": float(health.get("win_rate", 0.0)),
+        "profit_factor": float(health.get("profit_factor", 0.0)),
+        "health_score": float(health.get("score", 0.0)),
+        "sharpe_ratio": float(risk_metrics.get("sharpe_ratio", 0.0))
+        if risk_metrics.get("enabled")
+        else None,
+        "max_drawdown_daily": float(max_drawdown),
+        "invested_cost": float(invested_cost.get("total", 0.0)) if invested_cost.get("enabled") else 0.0,
+        "asset_allocation": {
+            "cash_balance": float(asset_allocation.get("cash_balance", 0.0)),
+            "cash_stock": float(asset_allocation.get("cash_stock", 0.0)),
+            "margin_stock": float(asset_allocation.get("margin_stock", 0.0)),
+            "other": float(asset_allocation.get("other", 0.0)),
+            "ratios": asset_allocation.get("ratios", {}),
+        }
+        if asset_allocation.get("enabled")
+        else None,
+        "top_winners": [
+            {
+                "symbol": row.get("symbol"),
+                "total_pnl": float(row.get("total_pnl", 0.0)),
+                "realized_pnl": float(row.get("realized_pnl", 0.0)),
+                "unrealized_pnl": float(row.get("unrealized_pnl", 0.0)),
+            }
+            for row in winners
+        ],
+        "top_losers": [
+            {
+                "symbol": row.get("symbol"),
+                "total_pnl": float(row.get("total_pnl", 0.0)),
+                "realized_pnl": float(row.get("realized_pnl", 0.0)),
+                "unrealized_pnl": float(row.get("unrealized_pnl", 0.0)),
+            }
+            for row in losers
+        ],
+        "current_losers": [
+            {
+                "symbol": row.get("symbol"),
+                "unrealized_pnl": float(row.get("unrealized_pnl", 0.0)),
+                "qty": float(row.get("qty", 0.0)),
+            }
+            for row in current_losers
+        ],
+    }
+
+
+def _request_llm(payload: dict, api_url: str, api_key: str, timeout: int) -> dict:
+    body = json.dumps(payload).encode("utf-8")
+    headers = {
+        "Content-Type": "application/json",
+    }
+    referer = os.getenv("LLM_HTTP_REFERER", "").strip()
+    title = os.getenv("LLM_APP_TITLE", "").strip()
+    if referer:
+        headers["HTTP-Referer"] = referer
+    if title:
+        headers["X-Title"] = title
+
+    if "generativelanguage.googleapis.com" in api_url:
+        sep = "&" if "?" in api_url else "?"
+        api_url = f"{api_url}{sep}key={api_key}"
+    else:
+        headers["Authorization"] = f"Bearer {api_key}"
+
+    req = request.Request(api_url, data=body, headers=headers, method="POST")
+    with request.urlopen(req, timeout=timeout) as resp:
+        raw = resp.read().decode("utf-8")
+        return json.loads(raw)
+
+
+def _extract_llm_content(response: dict) -> str | None:
+    if not response:
+        return None
+    if isinstance(response, dict):
+        if "candidates" in response and response["candidates"]:
+            candidate = response["candidates"][0]
+            content = candidate.get("content") if isinstance(candidate, dict) else None
+            parts = content.get("parts") if isinstance(content, dict) else None
+            if isinstance(parts, list):
+                texts = [str(p.get("text", "")) for p in parts if isinstance(p, dict)]
+                joined = "\n".join(t for t in texts if t).strip()
+                if joined:
+                    return joined
+        if "choices" in response and response["choices"]:
+            choice = response["choices"][0]
+            if isinstance(choice, dict):
+                message = choice.get("message") or {}
+                content = message.get("content") or choice.get("text")
+                if content:
+                    return str(content).strip()
+        if "output" in response:
+            return str(response["output"]).strip()
+        if "content" in response:
+            return str(response["content"]).strip()
+    return None
+
+
+def _generate_llm_checkup(summary: dict) -> dict:
+    api_key = os.getenv("LLM_API_KEY", "").strip()
+    api_url = os.getenv("LLM_API_URL", "").strip()
+    model = os.getenv("LLM_MODEL", "").strip()
+    is_gemini = "generativelanguage.googleapis.com" in api_url
+    if not api_key or not api_url or (not model and not is_gemini):
+        return {
+            "enabled": False,
+            "reason": "LLM_API_KEY, LLM_API_URL, or LLM_MODEL not configured",
+        }
+
+    temperature = float(os.getenv("LLM_TEMPERATURE", "0.2"))
+    max_tokens = int(os.getenv("LLM_MAX_TOKENS", "900"))
+    timeout = int(os.getenv("LLM_TIMEOUT", "45"))
+
+    system_prompt = (
+        "You are a cautious investment health-check assistant. "
+        "Provide educational insights based on the provided portfolio summary, "
+        "avoid personal financial advice, and call out risks clearly. "
+        "Write in Traditional Chinese (zh-Hant)."
+    )
+
+    user_prompt = (
+        "請根據以下摘要做投資健檢：\n"
+        "- 以風險控制、部位集中、已實現與未實現結構、報酬/波動關係為核心。\n"
+        "- 請用 4 個區塊輸出，且每個區塊用 Markdown 標題：\n"
+        "  1) 概況摘要 (2-3 句)\n"
+        "  2) 優勢亮點 (2-4 點)\n"
+        "  3) 風險與盲點 (2-4 點)\n"
+        "  4) 可執行的下一步 (3-5 點)\n"
+        "- 請保留數字，不要重新計算。\n"
+        "- 末尾加上『非投資建議』一句提醒。\n"
+        f"\n摘要資料(JSON):\n{json.dumps(summary, ensure_ascii=False)}"
+    )
+
+    if is_gemini:
+        payload = {
+            "contents": [
+                {
+                    "parts": [
+                        {"text": system_prompt},
+                        {"text": user_prompt},
+                    ]
+                }
+            ],
+            "generationConfig": {
+                "temperature": temperature,
+                "maxOutputTokens": max_tokens,
+            },
+        }
+    else:
+        payload = {
+            "model": model,
+            "messages": [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt},
+            ],
+            "temperature": temperature,
+            "max_tokens": max_tokens,
+        }
+
+    try:
+        response = _request_llm(payload, api_url, api_key, timeout)
+        content = _extract_llm_content(response)
+        if not content:
+            return {
+                "enabled": False,
+                "reason": "LLM response missing content",
+                "raw": response,
+            }
+        return {
+            "enabled": True,
+            "model": model,
+            "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+            "content": content,
+        }
+    except error.HTTPError as exc:
+        return {
+            "enabled": False,
+            "reason": f"HTTP {exc.code}",
+        }
+    except Exception as exc:
+        return {
+            "enabled": False,
+            "reason": str(exc),
+        }
+
+
 def _compute_pnl_by_account(realized: list[dict], unrealized_by_account: dict) -> dict:
     realized_by_account: dict[str, float] = {}
     for item in realized:
@@ -927,6 +1144,17 @@ def main() -> None:
         positions_df,
     )
 
+    llm_summary = _build_llm_summary(
+        performance_summary,
+        health,
+        risk_metrics,
+        timeseries,
+        invested_cost,
+        asset_allocation,
+        symbol_analysis,
+    )
+    llm_checkup = _generate_llm_checkup(llm_summary)
+
     output = {
         "realized": realized,
         "unrealized": unrealized,
@@ -943,6 +1171,7 @@ def main() -> None:
         "symbol_analysis": symbol_analysis,
         "recommendations": recommendations,
         "metric_audit": metric_audit,
+        "llm_checkup": llm_checkup,
     }
 
     JSON_PATH.parent.mkdir(parents=True, exist_ok=True)

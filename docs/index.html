@@ -98,6 +98,18 @@
     .recommendation.warn { border-color: rgba(245, 158, 11, 0.44); }
     .recommendation.info { border-color: rgba(34, 211, 238, 0.36); }
 
+    .llm-content h3 { font-size: 1.05rem; font-weight: 700; margin-top: 12px; }
+    .llm-content p { margin-top: 8px; color: var(--text); }
+    .llm-content ul { margin-top: 6px; padding-left: 18px; list-style: disc; color: var(--text); }
+    .llm-content li { margin-top: 4px; }
+    .llm-content code {
+      padding: 1px 4px;
+      border-radius: 6px;
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      font-size: 0.85em;
+    }
+
     .app-section {
       opacity: 0;
       transform: translateY(8px);
@@ -364,6 +376,21 @@
       <div id="recommendationList" class="grid gap-3 md:grid-cols-2 xl:grid-cols-3"></div>
     </section>
 
+    <section id="llmPanel" class="app-section panel p-5">
+      <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <p class="label">LLM Checkup</p>
+          <h2 class="text-lg font-semibold">投資健檢 (AI)</h2>
+        </div>
+        <div class="flex flex-wrap items-center gap-2 text-xs">
+          <span id="llmModel" class="tag">Model</span>
+          <span id="llmGeneratedAt" class="tag">Generated</span>
+        </div>
+      </div>
+      <div id="llmContent" class="llm-content text-sm muted"></div>
+      <p class="mt-4 text-xs muted">AI 產出僅供參考，請自行判斷風險。</p>
+    </section>
+
     <section class="app-section grid gap-5 xl:grid-cols-3">
       <div class="panel p-5 xl:col-span-2">
         <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
@@ -534,6 +561,71 @@
           <p class="mt-2 text-sm muted">${row.body}</p>
         </article>
       `).join('') || '<p class="text-sm muted">目前沒有特別需要提醒的事項。</p>';
+    };
+
+    const escapeHtml = (value) => String(value || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+
+    const renderMarkdown = (text) => {
+      const lines = String(text || '').split(/\r?\n/);
+      let html = '';
+      let inList = false;
+      const flushList = () => {
+        if (inList) {
+          html += '</ul>';
+          inList = false;
+        }
+      };
+
+      lines.forEach(line => {
+        const trimmed = line.trim();
+        if (!trimmed) {
+          flushList();
+          return;
+        }
+        if (trimmed.startsWith('## ')) {
+          flushList();
+          const safe = escapeHtml(trimmed.slice(3));
+          html += `<h3>${safe}</h3>`;
+          return;
+        }
+        if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
+          if (!inList) {
+            html += '<ul>';
+            inList = true;
+          }
+          let item = escapeHtml(trimmed.slice(2));
+          item = item.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+          item = item.replace(/`([^`]+)`/g, '<code>$1</code>');
+          html += `<li>${item}</li>`;
+          return;
+        }
+        flushList();
+        let paragraph = escapeHtml(trimmed);
+        paragraph = paragraph.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+        paragraph = paragraph.replace(/`([^`]+)`/g, '<code>$1</code>');
+        html += `<p>${paragraph}</p>`;
+      });
+
+      flushList();
+      return html || '<p class="text-sm muted">目前沒有 AI 健檢內容。</p>';
+    };
+
+    const renderLlmCheckup = (data) => {
+      const llm = data.llm_checkup || {};
+      if (!llm.enabled || !llm.content) {
+        $('llmContent').innerHTML = '<p class="text-sm muted">尚未啟用 LLM 健檢或 API 失敗。</p>';
+        $('llmModel').textContent = 'LLM OFF';
+        $('llmGeneratedAt').textContent = '---';
+        return;
+      }
+      $('llmModel').textContent = llm.model || 'LLM';
+      $('llmGeneratedAt').textContent = llm.generated_at || '---';
+      $('llmContent').innerHTML = renderMarkdown(llm.content);
     };
 
     const renderAllocation = (data) => {
@@ -716,6 +808,7 @@
         renderSymbols();
         renderAudit(data);
         renderRecommendations(data);
+        renderLlmCheckup(data);
         bindControls();
         requestAnimationFrame(() => setAppState('is-ready'));
       })
