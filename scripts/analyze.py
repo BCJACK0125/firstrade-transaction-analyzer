@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import math
 import os
+import time
 from datetime import datetime, timezone
 from urllib import error, request
 from pathlib import Path
@@ -982,9 +983,13 @@ def _generate_llm_checkup(summary: dict) -> dict:
     temp_raw = os.getenv("LLM_TEMPERATURE", "0.2").strip()
     tokens_raw = os.getenv("LLM_MAX_TOKENS", "900").strip()
     timeout_raw = os.getenv("LLM_TIMEOUT", "45").strip()
+    retries_raw = os.getenv("LLM_RETRIES", "2").strip()
+    backoff_raw = os.getenv("LLM_RETRY_BACKOFF", "2").strip()
     temperature = float(temp_raw or "0.2")
     max_tokens = int(tokens_raw or "900")
     timeout = int(timeout_raw or "45")
+    retries = int(retries_raw or "2")
+    backoff = float(backoff_raw or "2")
 
     system_prompt = (
         "You are a cautious investment health-check assistant. "
@@ -1032,31 +1037,33 @@ def _generate_llm_checkup(summary: dict) -> dict:
             "max_tokens": max_tokens,
         }
 
-    try:
-        response = _request_llm(payload, api_url, api_key, timeout)
-        content = _extract_llm_content(response)
-        if not content:
-            return {
-                "enabled": False,
-                "reason": "LLM response missing content",
-                "raw": response,
-            }
-        return {
-            "enabled": True,
-            "model": model,
-            "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
-            "content": content,
-        }
-    except error.HTTPError as exc:
-        return {
-            "enabled": False,
-            "reason": f"HTTP {exc.code}",
-        }
-    except Exception as exc:
-        return {
-            "enabled": False,
-            "reason": str(exc),
-        }
+    attempts = max(1, retries + 1)
+    last_error: str | None = None
+    for attempt in range(1, attempts + 1):
+        try:
+            response = _request_llm(payload, api_url, api_key, timeout)
+            content = _extract_llm_content(response)
+            if not content:
+                last_error = "LLM response missing content"
+            else:
+                return {
+                    "enabled": True,
+                    "model": model,
+                    "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+                    "content": content,
+                }
+        except error.HTTPError as exc:
+            last_error = f"HTTP {exc.code}"
+        except Exception as exc:
+            last_error = str(exc)
+
+        if attempt < attempts:
+            time.sleep(backoff * attempt)
+
+    return {
+        "enabled": False,
+        "reason": last_error or "LLM request failed",
+    }
 
 
 def _compute_pnl_by_account(realized: list[dict], unrealized_by_account: dict) -> dict:
