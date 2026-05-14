@@ -979,9 +979,12 @@ def _generate_llm_checkup(summary: dict) -> dict:
             "reason": "LLM_API_KEY, LLM_API_URL, or LLM_MODEL not configured",
         }
 
-    temperature = float(os.getenv("LLM_TEMPERATURE", "0.2"))
-    max_tokens = int(os.getenv("LLM_MAX_TOKENS", "900"))
-    timeout = int(os.getenv("LLM_TIMEOUT", "45"))
+    temp_raw = os.getenv("LLM_TEMPERATURE", "0.2").strip()
+    tokens_raw = os.getenv("LLM_MAX_TOKENS", "900").strip()
+    timeout_raw = os.getenv("LLM_TIMEOUT", "45").strip()
+    temperature = float(temp_raw or "0.2")
+    max_tokens = int(tokens_raw or "900")
+    timeout = int(timeout_raw or "45")
 
     system_prompt = (
         "You are a cautious investment health-check assistant. "
