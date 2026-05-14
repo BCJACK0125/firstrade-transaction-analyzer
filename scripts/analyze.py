@@ -942,8 +942,16 @@ def _extract_llm_content(response: dict) -> str | None:
             content = candidate.get("content") if isinstance(candidate, dict) else None
             parts = content.get("parts") if isinstance(content, dict) else None
             if isinstance(parts, list):
-                texts = [str(p.get("text", "")) for p in parts if isinstance(p, dict)]
-                joined = "\n".join(t for t in texts if t).strip()
+                texts = []
+                for part in parts:
+                    if not isinstance(part, dict):
+                        continue
+                    if part.get("thought") is True:
+                        continue
+                    text = str(part.get("text", "")).strip()
+                    if text:
+                        texts.append(text)
+                joined = "\n".join(texts).strip()
                 if joined:
                     return joined
         if "choices" in response and response["choices"]:
