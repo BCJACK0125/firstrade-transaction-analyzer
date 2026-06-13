@@ -2453,8 +2453,8 @@
       "\u878d\u8cc7": 10999.73999595642
     },
     "total_by_account": {
-      "\u878d\u8cc7": 21701.679995956427,
-      "\u73fe\u91d1": 2471.5400405883793
+      "\u73fe\u91d1": 2471.5400405883793,
+      "\u878d\u8cc7": 21701.679995956427
     },
     "total": 24173.220036544808
   },
@@ -2483,8 +2483,8 @@
       "\u878d\u8cc7": 282.4319959564209
     },
     "total": {
-      "\u878d\u8cc7": 5452.902195956418,
-      "\u73fe\u91d1": 2187.645140588379
+      "\u73fe\u91d1": 2187.645140588379,
+      "\u878d\u8cc7": 5452.902195956418
     },
     "total_all": 7640.547336544797
   },
@@ -3543,6 +3543,6 @@
   },
   "llm_checkup": {
     "enabled": false,
-    "reason": "LLM response missing content (keys=candidates,modelVersion,responseId,usageMetadata; finishReason=MAX_TOKENS; candidate_content_type=dict)"
+    "reason": "HTTP 500"
   }
 }
