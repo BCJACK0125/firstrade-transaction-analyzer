@@ -209,6 +209,7 @@ python -m http.server 8000 --directory docs
 `.github/workflows/analyze.yml` 會在以下情況執行：
 
 - 手動觸發 `workflow_dispatch`
+- 週二到週六台灣時間 07:00 自動執行每日報告，用來整理前一個美股交易日資料
 - push 修改：
   - `data/transactions.csv`
   - `data/*-positions.xlsx`
@@ -219,21 +220,26 @@ python -m http.server 8000 --directory docs
 
 1. 安裝 Python 3.12。
 2. 安裝 `pandas numpy openpyxl yfinance`。
-3. 執行 `python scripts/analyze.py`。
-4. 將 `data/output.json` 複製到 `docs/output.json`。
-5. 自動 commit 分析結果。
+3. 使用 GitHub Models 產生每日 LLM 投資健檢。
+4. 排程或手動觸發時，透過 Gmail SMTP 寄送每日摘要。
+5. 執行 `python scripts/analyze.py`。
+6. 將 `data/output.json` 複製到 `docs/output.json`。
+7. 自動 commit 分析結果。
 
-## LLM 投資健檢 (可選)
+## LLM 投資健檢與 Email
 
-分析流程支援在 GitHub Actions 內呼叫 LLM，將投資健檢結果寫入 `output.json` 並顯示於前端。
+分析流程支援在 GitHub Actions 內呼叫 LLM，將投資健檢結果寫入 `output.json` 並顯示於前端。預設會使用 GitHub Actions 內建的 `GITHUB_TOKEN` 呼叫 GitHub Models，不需要另外準備 LLM API key。
 
-### 必要 Secrets
+預設值：
 
-在 GitHub repo 的 Settings → Secrets and variables → Actions → Secrets 新增：
+- `LLM_API_URL`: `https://models.github.ai/inference/chat/completions`
+- `LLM_MODEL`: `openai/gpt-4o-mini`
 
-- `LLM_API_KEY`：你的 API key
-- `LLM_API_URL`：API endpoint（例如 Gemini 的 `https://generativelanguage.googleapis.com/v1beta/models/gemma-4-26b-a4b-it:generateContent`）
-- `LLM_MODEL`：模型名稱（OpenAI-compatible 需要；Gemini REST 可省略）
+若要改用自己的供應商，可在 GitHub repo 的 Settings → Secrets and variables → Actions → Secrets 新增：
+
+- `LLM_API_KEY`: 你的外部 API key
+- `LLM_API_URL`: 外部 API endpoint
+- `LLM_MODEL`: 模型名稱
 
 ### 可選 Secrets
 
@@ -243,7 +249,30 @@ python -m http.server 8000 --directory docs
 - `LLM_HTTP_REFERER`（部分供應商需要）
 - `LLM_APP_TITLE`（部分供應商需要）
 
-若不設定 LLM 參數，流程會自動跳過，不會使分析失敗。
+若 GitHub Models 或外部 LLM 呼叫失敗，流程會在 JSON 中標記原因，Email 會 fallback 成規則式摘要。
+
+### Gmail SMTP Secrets
+
+每日 Email 只會在 `schedule` 或 `workflow_dispatch` 觸發時寄送，push 更新資料時不會寄信。請在 GitHub repo 的 Settings → Secrets and variables → Actions → Secrets 新增：
+
+- `SMTP_USERNAME`: Gmail 帳號，例如 `yourname@gmail.com`
+- `SMTP_PASSWORD`: Gmail App Password，不是 Google 登入密碼
+- `EMAIL_FROM`: 寄件人信箱，通常同 `SMTP_USERNAME`
+- `EMAIL_TO`: 收件人信箱
+
+可選：
+
+- `SMTP_HOST`: 預設 `smtp.gmail.com`
+- `SMTP_PORT`: 預設 `587`
+- `EMAIL_SUBJECT_PREFIX`: 預設 `[Firstrade]`
+- `EMAIL_FAIL_ON_ERROR`: 設成 `true` 時，寄信失敗會讓 workflow fail
+
+Gmail App Password 建立方式：
+
+1. Google 帳號開啟 2-Step Verification。
+2. 到 Google Account → Security → App passwords。
+3. 建立一組給 GitHub Actions 使用的 app password。
+4. 將產生的 16 碼密碼放到 GitHub Secret `SMTP_PASSWORD`。
 
 ## GitHub Pages 設定
 

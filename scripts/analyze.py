@@ -5,8 +5,12 @@ from __future__ import annotations
 import json
 import math
 import os
+import smtplib
+import ssl
 import time
 from datetime import datetime, timezone
+from email.message import EmailMessage
+from html import escape
 from urllib import error, request
 from pathlib import Path
 
@@ -24,6 +28,8 @@ REPORT_PATH = DATA_DIR / "report.html"
 POSITIONS_PATH = DATA_DIR / "67744964-positions.xlsx"
 TRADING_DAYS = 252
 DEFAULT_RISK_FREE_RATE = 0.05
+GITHUB_MODELS_API_URL = "https://models.github.ai/inference/chat/completions"
+DEFAULT_GITHUB_MODEL = "openai/gpt-4o-mini"
 
 
 def _get_column(df: pd.DataFrame, candidates: list[str]) -> str:
@@ -854,6 +860,12 @@ def _build_llm_summary(
         if row.get("status") == "current" and float(row.get("unrealized_pnl", 0.0)) < 0
     ]
     current_losers = sorted(current_losers, key=lambda row: float(row.get("unrealized_pnl", 0.0)))[:3]
+    current_positions = [row for row in symbols if row.get("status") == "current"]
+    current_positions = sorted(
+        current_positions,
+        key=lambda row: abs(float(row.get("market_value", 0.0))),
+        reverse=True,
+    )
 
     last_daily = ((timeseries.get("daily") or [])[-1:] or [{}])[0]
     max_drawdown = (timeseries.get("max_drawdown") or {}).get("daily", 0.0)
@@ -904,8 +916,29 @@ def _build_llm_summary(
                 "symbol": row.get("symbol"),
                 "unrealized_pnl": float(row.get("unrealized_pnl", 0.0)),
                 "qty": float(row.get("qty", 0.0)),
+                "last_price": float(row.get("last_price", 0.0)),
+                "avg_cost": float(row.get("avg_cost", 0.0)),
+                "price_source": row.get("price_source"),
             }
             for row in current_losers
+        ],
+        "current_positions": [
+            {
+                "symbol": row.get("symbol"),
+                "qty": float(row.get("qty", 0.0)),
+                "avg_cost": float(row.get("avg_cost", 0.0)),
+                "last_price": float(row.get("last_price", 0.0)),
+                "price_source": row.get("price_source"),
+                "market_value": float(row.get("market_value", 0.0)),
+                "cost": float(row.get("cost", 0.0)),
+                "unrealized_pnl": float(row.get("unrealized_pnl", 0.0)),
+                "unrealized_pct": (
+                    float(row.get("unrealized_pnl", 0.0)) / float(row.get("cost", 0.0))
+                    if float(row.get("cost", 0.0))
+                    else 0.0
+                ),
+            }
+            for row in current_positions
         ],
     }
 
@@ -913,8 +946,12 @@ def _build_llm_summary(
 def _request_llm(payload: dict, api_url: str, api_key: str, timeout: int) -> dict:
     body = json.dumps(payload).encode("utf-8")
     headers = {
+        "Accept": "application/json",
         "Content-Type": "application/json",
     }
+    if "models.github.ai" in api_url:
+        headers["Accept"] = "application/vnd.github+json"
+        headers["X-GitHub-Api-Version"] = "2022-11-28"
     referer = os.getenv("LLM_HTTP_REFERER", "").strip()
     title = os.getenv("LLM_APP_TITLE", "").strip()
     if referer:
@@ -970,10 +1007,15 @@ def _extract_llm_content(response: dict) -> str | None:
 
 
 def _generate_llm_checkup(summary: dict) -> dict:
-    api_key = os.getenv("LLM_API_KEY", "").strip()
+    github_token = os.getenv("GITHUB_TOKEN", "").strip()
+    api_key = os.getenv("LLM_API_KEY", "").strip() or github_token
     api_url = os.getenv("LLM_API_URL", "").strip()
     fallback_url = os.getenv("LLM_FALLBACK_API_URL", "").strip()
     model = os.getenv("LLM_MODEL", "").strip()
+    if not api_url and github_token:
+        api_url = GITHUB_MODELS_API_URL
+    if not model and "models.github.ai" in api_url:
+        model = DEFAULT_GITHUB_MODEL
     is_gemini = "generativelanguage.googleapis.com" in api_url
     is_gemini_fallback = "generativelanguage.googleapis.com" in fallback_url if fallback_url else False
     if not api_key or not api_url or (not model and not is_gemini):
@@ -994,22 +1036,23 @@ def _generate_llm_checkup(summary: dict) -> dict:
     backoff = float(backoff_raw or "2")
 
     system_prompt = (
-        "You are a cautious investment health-check assistant. "
-        "Provide educational insights based on the provided portfolio summary, "
-        "avoid personal financial advice, and call out risks clearly. "
-        "Write in Traditional Chinese (zh-Hant)."
+        "You are a cautious portfolio review assistant. Use only the supplied "
+        "accounting, position, and yfinance price data. Do not invent prices, "
+        "targets, news, or external facts. Provide educational decision support, "
+        "not personalized financial advice. Write in Traditional Chinese (zh-Hant)."
     )
 
     user_prompt = (
-        "請根據以下摘要做投資健檢：\n"
-        "- 以風險控制、部位集中、已實現與未實現結構、報酬/波動關係為核心。\n"
-        "- 請用 4 個區塊輸出，且每個區塊用 Markdown 標題：\n"
-        "  1) 概況摘要 (2-3 句)\n"
-        "  2) 優勢亮點 (2-4 點)\n"
-        "  3) 風險與盲點 (2-4 點)\n"
-        "  4) 可執行的下一步 (3-5 點)\n"
-        "- 請保留數字，不要重新計算。\n"
-        "- 末尾加上『非投資建議』一句提醒。\n"
+        "請根據以下 Firstrade 帳務摘要、FIFO 損益、風險指標、資產配置與 yfinance 現價資料，"
+        "產出每日投資健檢與操作觀察。\n"
+        "- 請保留重要數字與股票代號，不要重新計算，也不要捏造資料沒有的價格或新聞。\n"
+        "- 以 Markdown 輸出以下區塊：\n"
+        "  1) 今日總結：2-3 句，說明整體績效、現倉狀態與主要風險。\n"
+        "  2) 持倉觀察：列出最值得注意的 3-6 個標的，包含現價、成本、未實現損益與價格來源。\n"
+        "  3) 風險檢查：聚焦集中度、融資曝險、浮虧、Sharpe、最大回撤與勝率/盈虧比。\n"
+        "  4) 建議操作：用『觀察/減碼/加碼前條件/停損檢查/不動作』這類風險控管語氣，給 3-6 點可執行清單。\n"
+        "- 若資料不足，請明確說資料不足並改給檢查清單。\n"
+        "- 末尾加上『以上為資料整理與風險控管觀察，非投資建議。』\n"
         f"\n摘要資料(JSON):\n{json.dumps(summary, ensure_ascii=False)}"
     )
 
@@ -1107,6 +1150,133 @@ def _generate_llm_checkup(summary: dict) -> dict:
         "enabled": False,
         "reason": last_error or "LLM request failed",
     }
+
+
+def _env_flag(name: str, default: bool = False) -> bool:
+    raw = os.getenv(name, "").strip().lower()
+    if not raw:
+        return default
+    return raw in {"1", "true", "yes", "y", "on"}
+
+
+def _format_usd(value: object) -> str:
+    try:
+        return f"${float(value):,.2f}"
+    except (TypeError, ValueError):
+        return "$0.00"
+
+
+def _format_pct(value: object) -> str:
+    try:
+        return f"{float(value) * 100:.2f}%"
+    except (TypeError, ValueError):
+        return "0.00%"
+
+
+def _build_daily_email_text(output: dict) -> str:
+    performance = output.get("performance_summary", {})
+    health = output.get("health", {})
+    risk = output.get("risk_metrics", {})
+    llm = output.get("llm_checkup", {})
+    market_prices = output.get("market_prices", {})
+
+    lines = [
+        "Firstrade Daily Portfolio Briefing",
+        f"Generated at: {datetime.now(timezone.utc).isoformat(timespec='seconds')}",
+        "",
+        "Key metrics",
+        f"- Total PnL: {_format_usd(health.get('total', 0.0))}",
+        f"- Return: {_format_pct(performance.get('return_pct', 0.0))}",
+        f"- Realized PnL: {_format_usd(performance.get('realized_pnl', 0.0))}",
+        f"- Unrealized PnL: {_format_usd(performance.get('unrealized_pnl', 0.0))}",
+        f"- Win rate: {_format_pct(health.get('win_rate', 0.0))}",
+        f"- Profit factor: {float(health.get('profit_factor', 0.0)):.2f}",
+    ]
+
+    if risk.get("enabled"):
+        lines.append(f"- Sharpe ratio: {float(risk.get('sharpe_ratio', 0.0)):.2f}")
+
+    warnings = market_prices.get("warnings", {})
+    if warnings:
+        lines.extend(["", "Price warnings"])
+        lines.extend(f"- {name}: {message}" for name, message in warnings.items())
+
+    lines.append("")
+    if llm.get("enabled") and llm.get("content"):
+        lines.extend(
+            [
+                f"AI briefing ({llm.get('model', 'LLM')})",
+                "",
+                str(llm["content"]).strip(),
+            ]
+        )
+    else:
+        lines.extend(
+            [
+                "AI briefing unavailable",
+                f"Reason: {llm.get('reason', 'LLM not configured')}",
+                "",
+                "Rule-based recommendations",
+            ]
+        )
+        for item in output.get("recommendations", []):
+            lines.append(f"- {item.get('title')}: {item.get('body')}")
+
+    return "\n".join(lines).strip() + "\n"
+
+
+def _send_daily_email(output: dict) -> dict:
+    if not _env_flag("DAILY_EMAIL_ENABLED", False):
+        return {"enabled": False, "reason": "DAILY_EMAIL_ENABLED is not true"}
+
+    smtp_host = os.getenv("SMTP_HOST", "smtp.gmail.com").strip()
+    smtp_port = int(os.getenv("SMTP_PORT", "587").strip() or "587")
+    smtp_user = os.getenv("SMTP_USERNAME", "").strip()
+    smtp_password = os.getenv("SMTP_PASSWORD", "").strip()
+    email_from = os.getenv("EMAIL_FROM", smtp_user).strip()
+    email_to = os.getenv("EMAIL_TO", "").strip()
+    subject_prefix = os.getenv("EMAIL_SUBJECT_PREFIX", "[Firstrade]").strip()
+
+    missing = [
+        name
+        for name, value in {
+            "SMTP_USERNAME": smtp_user,
+            "SMTP_PASSWORD": smtp_password,
+            "EMAIL_FROM": email_from,
+            "EMAIL_TO": email_to,
+        }.items()
+        if not value
+    ]
+    if missing:
+        return {"enabled": False, "reason": f"Missing email settings: {', '.join(missing)}"}
+
+    text = _build_daily_email_text(output)
+    html = (
+        "<!doctype html><html><body>"
+        "<pre style=\"font-family: ui-monospace, SFMono-Regular, Consolas, monospace; "
+        "white-space: pre-wrap; line-height: 1.5;\">"
+        f"{escape(text)}"
+        "</pre></body></html>"
+    )
+
+    msg = EmailMessage()
+    msg["Subject"] = f"{subject_prefix} Daily Portfolio Briefing"
+    msg["From"] = email_from
+    msg["To"] = email_to
+    msg.set_content(text)
+    msg.add_alternative(html, subtype="html")
+
+    try:
+        context = ssl.create_default_context()
+        with smtplib.SMTP(smtp_host, smtp_port, timeout=60) as smtp:
+            smtp.starttls(context=context)
+            smtp.login(smtp_user, smtp_password)
+            smtp.send_message(msg)
+        return {"enabled": True, "sent": True, "to": email_to}
+    except Exception as exc:
+        if _env_flag("EMAIL_FAIL_ON_ERROR", False):
+            raise
+        return {"enabled": True, "sent": False, "reason": str(exc)}
 
 
 def _compute_pnl_by_account(realized: list[dict], unrealized_by_account: dict) -> dict:
@@ -1260,6 +1430,9 @@ def main() -> None:
         ),
         encoding="utf-8",
     )
+
+    email_status = _send_daily_email(output)
+    print(f"Daily email status: {json.dumps(email_status, ensure_ascii=False)}")
 
 
 if __name__ == "__main__":
