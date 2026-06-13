@@ -3543,6 +3543,6 @@
   },
   "llm_checkup": {
     "enabled": false,
-    "reason": "LLM response missing content"
+    "reason": "LLM response missing content (keys=candidates,modelVersion,responseId,usageMetadata; finishReason=MAX_TOKENS; candidate_content_type=dict)"
   }
 }
