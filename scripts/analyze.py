@@ -939,7 +939,7 @@ def _build_llm_summary(
                     else 0.0
                 ),
             }
-            for row in current_positions
+            for row in current_positions[:15]
         ],
     }
 
@@ -1052,35 +1052,44 @@ def _llm_model_candidates(primary: str, backups_raw: str) -> list[str]:
 def _extract_llm_content(response: dict) -> str | None:
     if not response:
         return None
-    if isinstance(response, dict):
-        if "candidates" in response and response["candidates"]:
-            candidate = response["candidates"][0]
-            content = candidate.get("content") if isinstance(candidate, dict) else None
-            parts = content.get("parts") if isinstance(content, dict) else None
+    if not isinstance(response, dict):
+        return None
+
+    # Handle Gemini structure
+    if "candidates" in response and response["candidates"]:
+        candidate = response["candidates"][0]
+        content = candidate.get("content")
+        if isinstance(content, dict):
+            parts = content.get("parts")
             if isinstance(parts, list):
                 texts = []
                 for part in parts:
                     if not isinstance(part, dict):
                         continue
-                    if part.get("thought") is True:
-                        continue
+                    # Keep text even if it has a thought marker, unless specifically requested otherwise
+                    # or handle the thought block separately if needed.
                     text = _content_to_text(part.get("text"))
                     if text:
                         texts.append(text)
                 joined = "\n".join(texts).strip()
                 if joined:
                     return joined
-        if "choices" in response and response["choices"]:
-            choice = response["choices"][0]
-            if isinstance(choice, dict):
-                message = choice.get("message") or {}
-                content = _content_to_text(message.get("content") or choice.get("text"))
-                if content:
-                    return content
-        if "output" in response:
-            return _content_to_text(response["output"])
-        if "content" in response:
-            return _content_to_text(response["content"])
+
+    # Handle OpenAI/Generic structure
+    if "choices" in response and response["choices"]:
+        choice = response["choices"][0]
+        if isinstance(choice, dict):
+            message = choice.get("message") or {}
+            content = _content_to_text(message.get("content") or choice.get("text"))
+            if content:
+                return content
+
+    # Fallbacks
+    if "output" in response:
+        return _content_to_text(response["output"])
+    if "content" in response:
+        return _content_to_text(response["content"])
+
     return None
 
 
@@ -1105,7 +1114,7 @@ def _generate_llm_checkup(summary: dict) -> dict:
         }
 
     temp_raw = os.getenv("LLM_TEMPERATURE", "0.2").strip()
-    tokens_raw = os.getenv("LLM_MAX_TOKENS", "900").strip()
+    tokens_raw = os.getenv("LLM_MAX_TOKENS", "1024").strip()
     timeout_raw = os.getenv("LLM_TIMEOUT", "120").strip()
     retries_raw = os.getenv("LLM_RETRIES", "2").strip()
     backoff_raw = os.getenv("LLM_RETRY_BACKOFF", "2").strip()
