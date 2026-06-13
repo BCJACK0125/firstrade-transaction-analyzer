@@ -971,6 +971,63 @@ def _request_llm(payload: dict, api_url: str, api_key: str, timeout: int) -> dic
         return json.loads(raw)
 
 
+def _content_to_text(content: object) -> str:
+    if content is None:
+        return ""
+    if isinstance(content, str):
+        return content.strip()
+    if isinstance(content, list):
+        texts = []
+        for part in content:
+            if isinstance(part, str):
+                texts.append(part.strip())
+            elif isinstance(part, dict):
+                text = part.get("text") or part.get("content") or part.get("value")
+                if text:
+                    texts.append(str(text).strip())
+        return "\n".join(text for text in texts if text).strip()
+    if isinstance(content, dict):
+        text = content.get("text") or content.get("content") or content.get("value")
+        if text:
+            return str(text).strip()
+    return ""
+
+
+def _describe_llm_response(response: dict) -> str:
+    if not isinstance(response, dict):
+        return f"response_type={type(response).__name__}"
+
+    details = [f"keys={','.join(sorted(str(key) for key in response.keys()))}"]
+    choices = response.get("choices")
+    if isinstance(choices, list) and choices:
+        choice = choices[0]
+        if isinstance(choice, dict):
+            if choice.get("finish_reason"):
+                details.append(f"finish_reason={choice.get('finish_reason')}")
+            message = choice.get("message")
+            if isinstance(message, dict):
+                details.append(f"message_keys={','.join(sorted(str(key) for key in message.keys()))}")
+                content = message.get("content")
+                details.append(f"content_type={type(content).__name__}")
+                if isinstance(content, str):
+                    details.append(f"content_length={len(content)}")
+                refusal = message.get("refusal")
+                if refusal:
+                    details.append("refusal_present=true")
+    candidates = response.get("candidates")
+    if isinstance(candidates, list) and candidates:
+        candidate = candidates[0]
+        if isinstance(candidate, dict):
+            if candidate.get("finishReason"):
+                details.append(f"finishReason={candidate.get('finishReason')}")
+            content = candidate.get("content")
+            details.append(f"candidate_content_type={type(content).__name__}")
+    error_obj = response.get("error")
+    if error_obj:
+        details.append("error_present=true")
+    return "; ".join(details)
+
+
 def _extract_llm_content(response: dict) -> str | None:
     if not response:
         return None
@@ -986,7 +1043,7 @@ def _extract_llm_content(response: dict) -> str | None:
                         continue
                     if part.get("thought") is True:
                         continue
-                    text = str(part.get("text", "")).strip()
+                    text = _content_to_text(part.get("text"))
                     if text:
                         texts.append(text)
                 joined = "\n".join(texts).strip()
@@ -996,13 +1053,13 @@ def _extract_llm_content(response: dict) -> str | None:
             choice = response["choices"][0]
             if isinstance(choice, dict):
                 message = choice.get("message") or {}
-                content = message.get("content") or choice.get("text")
+                content = _content_to_text(message.get("content") or choice.get("text"))
                 if content:
-                    return str(content).strip()
+                    return content
         if "output" in response:
-            return str(response["output"]).strip()
+            return _content_to_text(response["output"])
         if "content" in response:
-            return str(response["content"]).strip()
+            return _content_to_text(response["content"])
     return None
 
 
@@ -1012,6 +1069,7 @@ def _generate_llm_checkup(summary: dict) -> dict:
     api_url = os.getenv("LLM_API_URL", "").strip()
     fallback_url = os.getenv("LLM_FALLBACK_API_URL", "").strip()
     model = os.getenv("LLM_MODEL", "").strip()
+    fallback_model = os.getenv("LLM_FALLBACK_MODEL", "").strip()
     if not api_url and github_token:
         api_url = GITHUB_MODELS_API_URL
     if not model and "models.github.ai" in api_url:
@@ -1090,7 +1148,7 @@ def _generate_llm_checkup(summary: dict) -> dict:
             }
         else:
             fallback_payload = {
-                "model": model,
+                "model": fallback_model or model,
                 "messages": payload.get("messages"),
                 "temperature": temperature,
                 "max_tokens": max_tokens,
@@ -1105,7 +1163,7 @@ def _generate_llm_checkup(summary: dict) -> dict:
             response = _request_llm(payload, api_url, api_key, timeout)
             content = _extract_llm_content(response)
             if not content:
-                last_error = "LLM response missing content"
+                last_error = f"LLM response missing content ({_describe_llm_response(response)})"
             else:
                 return {
                     "enabled": True,
@@ -1123,17 +1181,20 @@ def _generate_llm_checkup(summary: dict) -> dict:
 
     if fallback_url and fallback_payload:
         fallback_is_gemini = is_gemini_fallback
-        fallback_model = model if not fallback_is_gemini else (fallback_url.rsplit("/", 1)[-1] or "gemini")
+        fallback_used_model = (
+            fallback_model
+            or (model if not fallback_is_gemini else (fallback_url.rsplit("/", 1)[-1] or "gemini"))
+        )
         for attempt in range(1, attempts + 1):
             try:
                 response = _request_llm(fallback_payload, fallback_url, api_key, timeout)
                 content = _extract_llm_content(response)
                 if not content:
-                    last_error = "LLM response missing content"
+                    last_error = f"LLM response missing content ({_describe_llm_response(response)})"
                 else:
                     return {
                         "enabled": True,
-                        "model": fallback_model,
+                        "model": fallback_used_model,
                         "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
                         "content": content,
                         "fallback_used": True,

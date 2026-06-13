@@ -246,10 +246,14 @@ python -m http.server 8000 --directory docs
 - `LLM_TEMPERATURE`（預設 0.2）
 - `LLM_MAX_TOKENS`（預設 900）
 - `LLM_TIMEOUT`（預設 45 秒）
+- `LLM_RETRIES`（預設 2）
+- `LLM_RETRY_BACKOFF`（預設 2 秒，會依重試次數遞增）
+- `LLM_FALLBACK_API_URL`（主要 LLM 失敗後改打的備援 endpoint）
+- `LLM_FALLBACK_MODEL`（備援 endpoint 使用的模型名稱）
 - `LLM_HTTP_REFERER`（部分供應商需要）
 - `LLM_APP_TITLE`（部分供應商需要）
 
-若 GitHub Models 或外部 LLM 呼叫失敗，流程會在 JSON 中標記原因，Email 會 fallback 成規則式摘要。
+若 GitHub Models 或外部 LLM 呼叫失敗，流程會先依 `LLM_RETRIES` 與 `LLM_RETRY_BACKOFF` 重試，再嘗試 `LLM_FALLBACK_API_URL`，最後才在 JSON 中標記原因；Email 會 fallback 成規則式摘要。
 
 ### Gmail SMTP Secrets
 
