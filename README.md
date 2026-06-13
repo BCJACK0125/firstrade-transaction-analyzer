@@ -233,7 +233,8 @@ python -m http.server 8000 --directory docs
 預設值：
 
 - `LLM_API_URL`: `https://models.github.ai/inference/chat/completions`
-- `LLM_MODEL`: `openai/gpt-4o-mini`
+- `LLM_MODEL`: `openai/gpt-4.1`
+- `LLM_BACKUP_MODELS`: `openai/gpt-4o-mini`
 
 若要改用自己的供應商，可在 GitHub repo 的 Settings → Secrets and variables → Actions → Secrets 新增：
 
@@ -248,6 +249,7 @@ python -m http.server 8000 --directory docs
 - `LLM_TIMEOUT`（預設 45 秒）
 - `LLM_RETRIES`（預設 2）
 - `LLM_RETRY_BACKOFF`（預設 2 秒，會依重試次數遞增）
+- `LLM_BACKUP_MODELS`（同一個 API endpoint 內的備援模型，逗號分隔）
 - `LLM_FALLBACK_API_URL`（主要 LLM 失敗後改打的備援 endpoint）
 - `LLM_FALLBACK_MODEL`（備援 endpoint 使用的模型名稱）
 - `LLM_HTTP_REFERER`（部分供應商需要）

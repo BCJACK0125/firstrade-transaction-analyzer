@@ -29,7 +29,8 @@ POSITIONS_PATH = DATA_DIR / "67744964-positions.xlsx"
 TRADING_DAYS = 252
 DEFAULT_RISK_FREE_RATE = 0.05
 GITHUB_MODELS_API_URL = "https://models.github.ai/inference/chat/completions"
-DEFAULT_GITHUB_MODEL = "openai/gpt-4o-mini"
+DEFAULT_GITHUB_MODEL = "openai/gpt-4.1"
+DEFAULT_LLM_BACKUP_MODELS = "openai/gpt-4o-mini"
 
 
 def _get_column(df: pd.DataFrame, candidates: list[str]) -> str:
@@ -1028,6 +1029,26 @@ def _describe_llm_response(response: dict) -> str:
     return "; ".join(details)
 
 
+def _http_error_message(exc: error.HTTPError) -> str:
+    detail = ""
+    try:
+        detail = exc.read().decode("utf-8", errors="replace").strip()
+    except Exception:
+        detail = ""
+    if len(detail) > 500:
+        detail = f"{detail[:500]}..."
+    return f"HTTP {exc.code}" + (f": {detail}" if detail else "")
+
+
+def _llm_model_candidates(primary: str, backups_raw: str) -> list[str]:
+    models: list[str] = []
+    for candidate in [primary, *backups_raw.split(",")]:
+        clean = candidate.strip()
+        if clean and clean not in models:
+            models.append(clean)
+    return models
+
+
 def _extract_llm_content(response: dict) -> str | None:
     if not response:
         return None
@@ -1070,6 +1091,7 @@ def _generate_llm_checkup(summary: dict) -> dict:
     fallback_url = os.getenv("LLM_FALLBACK_API_URL", "").strip()
     model = os.getenv("LLM_MODEL", "").strip()
     fallback_model = os.getenv("LLM_FALLBACK_MODEL", "").strip()
+    backup_models_raw = os.getenv("LLM_BACKUP_MODELS", DEFAULT_LLM_BACKUP_MODELS).strip()
     if not api_url and github_token:
         api_url = GITHUB_MODELS_API_URL
     if not model and "models.github.ai" in api_url:
@@ -1157,27 +1179,33 @@ def _generate_llm_checkup(summary: dict) -> dict:
         fallback_payload = None
 
     attempts = max(1, retries + 1)
+    model_candidates = [model] if is_gemini else _llm_model_candidates(model, backup_models_raw)
     last_error: str | None = None
-    for attempt in range(1, attempts + 1):
-        try:
-            response = _request_llm(payload, api_url, api_key, timeout)
-            content = _extract_llm_content(response)
-            if not content:
-                last_error = f"LLM response missing content ({_describe_llm_response(response)})"
-            else:
-                return {
-                    "enabled": True,
-                    "model": model,
-                    "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
-                    "content": content,
-                }
-        except error.HTTPError as exc:
-            last_error = f"HTTP {exc.code}"
-        except Exception as exc:
-            last_error = str(exc)
 
-        if attempt < attempts:
-            time.sleep(backoff * attempt)
+    for candidate_model in model_candidates:
+        if not is_gemini:
+            payload["model"] = candidate_model
+        for attempt in range(1, attempts + 1):
+            try:
+                response = _request_llm(payload, api_url, api_key, timeout)
+                content = _extract_llm_content(response)
+                if not content:
+                    last_error = f"LLM response missing content ({_describe_llm_response(response)})"
+                else:
+                    return {
+                        "enabled": True,
+                        "model": candidate_model,
+                        "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+                        "content": content,
+                        "model_fallback_used": candidate_model != model,
+                    }
+            except error.HTTPError as exc:
+                last_error = _http_error_message(exc)
+            except Exception as exc:
+                last_error = str(exc)
+
+            if attempt < attempts:
+                time.sleep(backoff * attempt)
 
     if fallback_url and fallback_payload:
         fallback_is_gemini = is_gemini_fallback
@@ -1200,7 +1228,7 @@ def _generate_llm_checkup(summary: dict) -> dict:
                         "fallback_used": True,
                     }
             except error.HTTPError as exc:
-                last_error = f"HTTP {exc.code}"
+                last_error = _http_error_message(exc)
             except Exception as exc:
                 last_error = str(exc)
 

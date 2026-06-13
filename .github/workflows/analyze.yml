@@ -38,7 +38,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           LLM_API_KEY: ${{ secrets.LLM_API_KEY || secrets.GITHUB_TOKEN }}
           LLM_API_URL: ${{ secrets.LLM_API_URL || 'https://models.github.ai/inference/chat/completions' }}
-          LLM_MODEL: ${{ secrets.LLM_MODEL || 'openai/gpt-4o-mini' }}
+          LLM_MODEL: ${{ secrets.LLM_MODEL || 'openai/gpt-4.1' }}
+          LLM_BACKUP_MODELS: ${{ secrets.LLM_BACKUP_MODELS || 'openai/gpt-4o-mini' }}
           LLM_FALLBACK_API_URL: ${{ secrets.LLM_FALLBACK_API_URL }}
           LLM_FALLBACK_MODEL: ${{ secrets.LLM_FALLBACK_MODEL }}
           LLM_TEMPERATURE: ${{ secrets.LLM_TEMPERATURE }}
