@@ -1815,7 +1815,7 @@
   ],
   "unrealized": [
     121.1199951171875,
-    -62.77999999999997,
+    -68.390009765625,
     58.6099853515625,
     -23.460017089843745,
     -13.230001678466792,
@@ -1844,7 +1844,7 @@
     38.42000732421877
   ],
   "health": {
-    "total": 8633.66714436035,
+    "total": 8628.057134594725,
     "win_rate": 0.8344370860927153,
     "profit_factor": 0.6149630784153592,
     "score": 56.149630784153594
@@ -2436,11 +2436,11 @@
     "enabled": true,
     "invested_cost": 16563.87,
     "realized_pnl": 7303.245299999999,
-    "unrealized_pnl": 1330.4218443603515,
-    "total_pnl": 8633.66714436035,
-    "return_pct": 0.5212349012857714,
+    "unrealized_pnl": 1324.8118345947266,
+    "total_pnl": 8628.057134594725,
+    "return_pct": 0.5208962117303942,
     "realized_return_pct": 0.4409141885320278,
-    "unrealized_return_pct": 0.08032071275374364
+    "unrealized_return_pct": 0.07998202319836649
   },
   "asset_value": {
     "enabled": true,
@@ -2449,27 +2449,27 @@
       "\u878d\u8cc7": 10701.940000000006
     },
     "holdings_by_account": {
-      "\u73fe\u91d1": 2502.1399742126464,
+      "\u73fe\u91d1": 2496.5299644470215,
       "\u878d\u8cc7": 11961.409870147705
     },
     "total_by_account": {
-      "\u73fe\u91d1": 2502.9899742126468,
-      "\u878d\u8cc7": 22663.34987014771
+      "\u878d\u8cc7": 22663.34987014771,
+      "\u73fe\u91d1": 2497.379964447022
     },
-    "total": 25166.33984436036
+    "total": 25160.729834594735
   },
   "asset_allocation": {
     "enabled": true,
     "cash_balance": 0.8500000000003638,
-    "cash_stock": 2502.1399742126464,
+    "cash_stock": 2496.5299644470215,
     "margin_stock": 11961.409870147705,
-    "other": 10701.940000000006,
-    "total": 25166.33984436036,
+    "other": 10701.940000000008,
+    "total": 25160.729834594735,
     "ratios": {
-      "cash_balance": 3.3775273053496664e-05,
-      "cash_stock": 0.09942407158478242,
-      "margin_stock": 0.47529398172806575,
-      "other": 0.4252481714140983
+      "cash_balance": 3.378280382120143e-05,
+      "cash_stock": 0.09922327296779836,
+      "margin_stock": 0.4753999565505993,
+      "other": 0.4253429876777811
     }
   },
   "pnl_by_account": {
@@ -2479,14 +2479,14 @@
       "\u878d\u8cc7": 5170.470199999997
     },
     "unrealized": {
-      "\u73fe\u91d1": 86.31997421264653,
+      "\u73fe\u91d1": 80.7099644470215,
       "\u878d\u8cc7": 1244.101870147705
     },
     "total": {
-      "\u73fe\u91d1": 2219.095074212647,
-      "\u878d\u8cc7": 6414.572070147702
+      "\u878d\u8cc7": 6414.572070147702,
+      "\u73fe\u91d1": 2213.4850644470216
     },
-    "total_all": 8633.667144360348
+    "total_all": 8628.057134594725
   },
   "market_prices": {
     "prices": {
@@ -2506,8 +2506,8 @@
       "NOWL": 4.079999923706055,
       "QQQ": 740.6199951171875,
       "SLV": 59.5099983215332,
-      "VOO": 688.1099853515625,
-      "TSLA": 406.1
+      "TSLA": 400.489990234375,
+      "VOO": 688.1099853515625
     },
     "sources": {
       "AMD": "yfinance",
@@ -2526,8 +2526,8 @@
       "NOWL": "yfinance",
       "QQQ": "yfinance",
       "SLV": "yfinance",
-      "VOO": "yfinance",
-      "TSLA": "positions_reference"
+      "TSLA": "yfinance",
+      "VOO": "yfinance"
     },
     "warnings": {}
   },
@@ -3190,13 +3190,13 @@
         "trade_count": 1,
         "win_rate": 0.0,
         "realized_pnl": -82.84989999999999,
-        "unrealized_pnl": -62.77999999999997,
-        "total_pnl": -145.62989999999996,
-        "market_value": 406.1,
+        "unrealized_pnl": -68.390009765625,
+        "total_pnl": -151.239909765625,
+        "market_value": 400.489990234375,
         "cost": 468.88,
         "avg_cost": 468.88,
-        "last_price": 406.1,
-        "price_source": "positions_reference",
+        "last_price": 400.489990234375,
+        "price_source": "yfinance",
         "last_trade_date": "2026-03-05",
         "best_trade": -82.84989999999999,
         "worst_trade": -82.84989999999999,
@@ -3273,7 +3273,7 @@
     },
     {
       "tone": "warn",
-      "title": "NOWL \u662f\u76ee\u524d\u4e3b\u8981\u6d6e\u8667\u4f86\u6e90",
+      "title": "TSLA \u662f\u76ee\u524d\u4e3b\u8981\u6d6e\u8667\u4f86\u6e90",
       "body": "\u5efa\u8b70\u78ba\u8a8d\u5b83\u7684\u90e8\u4f4d\u5927\u5c0f\u3001\u505c\u640d\u7dda\u8207\u6301\u6709\u7406\u7531\u662f\u5426\u4ecd\u7136\u4e00\u81f4\u3002"
     }
   ],
@@ -3283,8 +3283,8 @@
       {
         "name": "Total PnL",
         "formula": "sum(realized pnl) + sum(unrealized pnl)",
-        "expected": 8633.66714436035,
-        "actual": 8633.66714436035,
+        "expected": 8628.057134594725,
+        "actual": 8628.057134594725,
         "delta": 0.0,
         "tolerance": 0.01,
         "status": "ok"
@@ -3337,8 +3337,8 @@
       {
         "name": "Asset Value",
         "formula": "sum(total_by_account)",
-        "expected": 25166.33984436036,
-        "actual": 25166.33984436036,
+        "expected": 25160.729834594735,
+        "actual": 25160.729834594735,
         "delta": 0.0,
         "tolerance": 0.01,
         "status": "ok"
@@ -3544,8 +3544,8 @@
   "llm_checkup": {
     "enabled": true,
     "model": "openai/gpt-4.1",
-    "generated_at": "2026-06-19T00:23:55+00:00",
-    "content": "Cautious Portfolio Review Assistant.\nSupplied JSON data (accounting, positions, yfinance prices).\nNo inventing prices, targets, news, or external facts. Educational support, not financial advice.\nTraditional Chinese (zh-Hant).\n\n        1.  Today's Summary (2-3 sentences).\n        2.  Position Observation (3-6 key tickers: price, cost, unrealized PnL, source).\n        3.  Risk Check (Concentration, Margin, Floating Loss, Sharpe, Max Drawdown, Win Rate/Profit Factor).\n        4.  Suggested Actions (Risk control tone: Observe/Reduce/Condition for Add/Stop-loss check/No action).\n        *   If data is insufficient, state it and provide a checklist.\n        *   Mandatory footer: \"\u4ee5\u4e0a\u70ba\u8cc7\u6599\u6574\u7406\u8207\u98a8\u96aa\u63a7\u7ba1\u89c0\u5bdf\uff0c\u975e\u6295\u8cc7\u5efa\u8b70\u3002\"\n\n    *   *General Stats:*\n        *   Last Update: 2026-06-12\n        *   Total PnL: 8633.67\n        *   Return %: 0.52%\n        *   Realized PnL: 7303.25\n        *   Unrealized PnL: 1330.42\n        *   Win Rate: 83.44%\n        *   Profit Factor: 0.61 (Wait, Profit Factor < 1 usually means losses outweigh gains in terms of magnitude, despite a high win rate).\n        *   Health Score: 56.15\n        *   Sharpe Ratio: 5.31\n        *   Max Drawdown (Daily): -2369.59\n        *   Invested Cost: 16563.87\n\n    *   *Asset Allocation:*\n        *   Cash Balance: 0.85 (Very low ratio: 3.37e-05)\n        *   Cash Stock: 2502.14 (9.94%)\n        *   Margin Stock: 11961.41 (47.53%) -> *High margin exposure.*\n        *   Other: 10701.94 (42.52%)\n\n    *   *Positions (Current):*\n        *   MU: Price 1133.99, Cost 970.47, PnL +817.59 (yfinance) - *Largest position by value.*\n        *   LITE: Price 850.0, Cost 874.63, PnL -49.26 (yfinance)\n        *   MUU: Price 1080.08, Cost 765.97, PnL +314.11 (yfinance)\n        *   QQQ: Price 740.62, Cost 619.5, PnL +121.12 (yfinance)\n        *   TSLA: Price 406.1, Cost 468.88, PnL -62.78 (positions_reference)\n        *   NOWL: Price 4.08, Cost 7.34, PnL -65.20 (yfinance) - *Significant % loss.*\n        *   SLV: Price 59.51, Cost 74.95, PnL -46.31 (yfinance)\n\n    *   *Summary:* Overall positive PnL (8633.67), but high reliance on margin (47.53%). The portfolio is heavily weighted in semiconductor-related assets (MU, MUU, AMD, AVGO, MRVL).\n\n    *   *Position Observation:*\n        1.  MU: Price 1133.99, Cost 970.47, PnL +817.59 (yfinance)\n        2.  MUU: Price 1",
+    "generated_at": "2026-06-20T00:06:33+00:00",
+    "content": "Cautious Portfolio Review Assistant.\nSupplied JSON data (accounting, positions, yfinance prices).\nNo inventing prices, targets, news, or external facts. Educational decision support, not personalized financial advice.\nTraditional Chinese (zh-Hant).\n\n        1.  Today's Summary (2-3 sentences).\n        2.  Position Observation (3-6 key tickers: price, cost, unrealized PnL, source).\n        3.  Risk Check (Concentration, Margin, Floating Loss, Sharpe, Max Drawdown, Win Rate/Profit Factor).\n        4.  Suggested Actions (Risk control tone: Observe/Reduce/Condition for Add/Stop-loss check/No action).\n        *   If data is insufficient, state it and provide a checklist.\n        *   Mandatory footer: \"\u4ee5\u4e0a\u70ba\u8cc7\u6599\u6574\u7406\u8207\u98a8\u96aa\u63a7\u7ba1\u89c0\u5bdf\uff0c\u975e\u6295\u8cc7\u5efa\u8b70\u3002\"\n\n    *   *General Stats:*\n        *   Update Date: 2026-06-12\n        *   Total PnL: 8628.06\n        *   Return %: 0.52%\n        *   Realized PnL: 7303.25\n        *   Unrealized PnL: 1324.81\n        *   Win Rate: 83.44%\n        *   Profit Factor: 0.615\n        *   Health Score: 56.15\n        *   Sharpe Ratio: 5.31\n        *   Max Drawdown (Daily): -2369.59\n        *   Invested Cost: 16563.87\n\n    *   *Asset Allocation:*\n        *   Cash Balance: ~0% (3.37e-05)\n        *   Cash Stock: 9.92%\n        *   Margin Stock: 47.54% (High margin usage)\n        *   Other: 42.53%\n\n    *   *Key Positions (Current):*\n        *   MU: Price 1133.99, Cost 970.47, Unrealized PnL +817.59 (Winner)\n        *   LITE: Price 850.0, Cost 874.63, Unrealized PnL -49.26 (Loser)\n        *   MUU: Price 1080.08, Cost 765.97, Unrealized PnL +314.11 (Winner)\n        *   TSLA: Price 400.49, Cost 468.88, Unrealized PnL -68.39 (Loser)\n        *   NOWL: (In `current_losers` but not in `current_positions` list? Wait, let me check the JSON again. `current_losers` has NOWL, but `current_positions` doesn't. I should stick to `current_positions` for current holdings, but `current_losers` provides a snapshot. Actually, looking at the JSON, `current_positions` is the master list of what's held *now*. I will prioritize `current_positions` but note the losers listed in the summary).\n        *   SLV: Price 59.51, Cost 74.95, Unrealized PnL -46.31 (Loser)\n\n    *   *Summary:* Overall positive total PnL, but high margin exposure. The portfolio is heavily weighted in MU.\n    *   *Observations:*\n        *   MU: Strong gain.\n        *   TSLA: Significant unrealized loss.\n        *   LITE: Slight loss.\n        *   MUU: Strong gain.\n        *   SLV: Significant percentage loss.\n    *   *Risk:*\n        *   Concentration: MU is a huge part of the portfolio.\n        *   Margin: 47.54% is margin stock. This is",
     "model_fallback_used": false
   }
 }
